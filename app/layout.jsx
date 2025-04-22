@@ -9,7 +9,6 @@ import Providers from "./providers";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import meta from "@/lib/meta";
-import MobileMenu from "./components/MobileMenu";
 import { cn } from "@/lib/utils";
 
 const TopLink = ({ href, text, target = "_self" }) => {
@@ -37,14 +36,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={cn(dmSans.className, "dark")}>
       <body
-        className="bg-background flex flex-col min-h-screen antialiased"
+        className="bg-background min-h-screen"
       >
         <Providers>
-          <main className="flex-grow flex justify-center p-4 bg-background">
-            <div className="container py-10 relative">
-              <div className="relative z-10">{children}</div>
-            </div>
-          </main>
+        <main>{children}</main>
         </Providers>
       </body>
     </html>

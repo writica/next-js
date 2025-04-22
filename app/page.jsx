@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import Header from "@components/Header/index.jsx";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const [input, setInput] = useState("");
-  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -21,10 +20,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-80px)] bg-gradient-to-b p-4">
-      <div className="relative w-full max-w-5xl">
-        <Header />
-      </div>
-    </div>
+    <>
+        <Header
+          logo="/your-logo.svg"
+          logoAlt="Your Company"
+          menuItems={[
+            { label: "Home", href: "/" },
+            { label: "Features", href: "/features" },
+            { label: "Pricing", href: "/pricing" },
+            { label: "About", href: "/about" }
+          ]}
+          rightItems={[
+            <Button key="login">Sign In</Button>,
+            <Button key="signup" variant="primary">Sign Up</Button>
+          ]}
+          glassMorphism={true}
+         />
+    </>
   );
 }
