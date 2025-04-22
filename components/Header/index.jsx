@@ -110,7 +110,7 @@ export const Header = ({
               <motion.div key={index} variants={menuItemVariant}>
                 <Link 
                   href={item.href} 
-                  className="text-gray-300 hover:text-white transition-colors px-2 py-1 font-medium text-sm"
+                  className="text-gray-300 font-semibold hover:opacity-90 transition-colors px-2 py-1"
                 >
                   {item.label}
                 </Link>
@@ -130,39 +130,6 @@ export const Header = ({
                 {item}
               </motion.div>
             ))}
-
-            {/* Default right items if none provided */}
-            {rightItems.length === 0 && (
-              <>
-                <motion.div variants={menuItemVariant}>
-                  <div className="flex items-center bg-gray-800/50 rounded-lg px-3 py-1.5">
-                    <span className="text-gray-300 text-xs mr-2">Search Docs</span>
-                    <kbd className="bg-gray-700 text-gray-300 px-1.5 py-0.5 text-xs rounded">CTRL K</kbd>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={menuItemVariant}>
-                  <select className="bg-gray-800/60 text-gray-300 text-sm rounded-md border-none outline-none px-3 py-1.5 appearance-none cursor-pointer">
-                    <option value="JS">JS</option>
-                    <option value="TS">TS</option>
-                  </select>
-                </motion.div>
-
-                <motion.div variants={menuItemVariant}>
-                  <a 
-                    href="https://github.com/DavidHDev/react-bits" 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex items-center space-x-2 bg-gray-800/70 hover:bg-gray-700/90 text-white rounded-lg px-4 py-2 transition-all"
-                  >
-                    <span className="text-sm font-medium">GitHub</span>
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 0a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.2-1.8-1.2-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17 .7 18 1 18 1c.7 1.7.2 3 .1 3.3.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.4 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 0z"/>
-                    </svg>
-                  </a>
-                </motion.div>
-              </>
-            )}
           </motion.div>
 
           {/* Mobile menu button */}
