@@ -39,7 +39,7 @@ const handleAddNetworkk = async (chain, setLoading, setAdded) => {
       ],
     };
 
-    await window.ethereum?.request(o).then((res) => {
+    await window?.ethereum?.request(o).then((res) => {
       console.log(res);
       setAdded(true);
       setTimeout(() => setAdded(false), 3000);

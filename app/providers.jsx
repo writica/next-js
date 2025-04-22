@@ -27,9 +27,10 @@ const AutoSwitchNetwork = () => {
   useEffect(() => {
     if (isConnected) {
       // if chain id not in list allChainsIds then switch to arbitrum sepolia
+      console.log(chainList);
 
       if (!allChainsIds.includes(chainId)) {
-        console.log(`switching to arbitrum sepolia`);
+        console.log(`switching to ${chainList[0].name}`);
         switchChain(chainList[0].id); // arbitrum sepolia
       }
       

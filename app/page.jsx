@@ -7,7 +7,6 @@ export default function Home() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, isThinking } = useAgent();
   const messagesEndRef = useRef(null);
-  const [showParticles, setShowParticles] = useState(false);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -26,10 +25,6 @@ export default function Home() {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    // Show particles after initial render for better performance
-    setShowParticles(true);
-  }, []);
 
   const onSendMessage = async () => {
     if (!input.trim() || isThinking) return;
