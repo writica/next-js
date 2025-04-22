@@ -2,17 +2,16 @@
 import Header from "@/components/Header";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CustomConnectButton, WalletProvider } from "@/components/wallet/WalletProvider";
+import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
 
 const AppsLayout = ({ children }) => {
     return (
-        <WalletProvider>
             <main>
                 <Header
                   logo="/your-logo.svg"
                   logoAlt="Your Company"
                   menuItems={[
-
+                    { label: "Campaign", href: "/" },
                   ]}
                   rightItems={[
                     <CustomConnectButton key="connect" />,
@@ -23,7 +22,6 @@ const AppsLayout = ({ children }) => {
                     {children}
                 </div>
             </main>
-        </WalletProvider>
     )
 };
 
