@@ -7,7 +7,7 @@ import { WagmiProvider, useSwitchChain, useAccount } from "wagmi";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import chainList from "@/lib/chains.js";
 import { Toaster } from "@/components/ui/toaster";
-
+import { ModalProvider } from "@/hooks/use-modal";
 
 const config = getDefaultConfig({
   autoConnect: true,
@@ -61,9 +61,11 @@ export default function Providers({ children }) {
               overlayBlur: 'small',
             })}
           >
-            <AutoSwitchNetwork />
-            {children}
-            <Toaster />
+            <ModalProvider>
+              <AutoSwitchNetwork />
+              {children}
+              <Toaster />
+            </ModalProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

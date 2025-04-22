@@ -10,6 +10,7 @@ import Link from "next/link";
 import meta from "@/lib/meta";
 import { cn } from "@/lib/utils";
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
+import AccountModal from "@/components/wallet/AccountModal";
 
 const TopLink = ({ href, text, target = "_self" }) => {
   return (
@@ -24,7 +25,11 @@ const TopLink = ({ href, text, target = "_self" }) => {
   );
 };
 
-export const metadata = meta;
+export const metadata = {
+  title: 'WriteTo Earn',
+  description: 'A platform to earn by writing',
+};
+
 /**
  * Root layout for the page
  *
@@ -34,12 +39,13 @@ export const metadata = meta;
  */
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={cn(dmSans.className, "dark")}>
+    <html lang="en" className={cn(dmSans.className, "dark")} suppressHydrationWarning>
       <body
         className="bg-background min-h-screen"
       >
         <Providers>
           <main>{children}</main>
+          <AccountModal />
         </Providers>
       </body>
     </html>

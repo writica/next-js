@@ -9,21 +9,65 @@ import {
   CardFooter 
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar } from '@/components/ui/avatar';
 import { truncateAddress } from '@/lib/utils';
 import { useDisconnect, useAccount, useBalance } from 'wagmi';
 import { Copy, ExternalLink, LogOut, Check, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useModal } from '@/hooks/use-modal';
+import { fetchBalance } from '@/lib/web3-call';
 
-// We no longer need to receive most props as we'll use RainbowKit and wagmi hooks
-export default function AccountModal({ 
-  isOpen, 
-  onClose 
-}) {
+// Using our custom modal hook instead of props
+export default function AccountModal() {
+  const { isAccountModalOpen, closeAccountModal } = useModal();
   const [copied, setCopied] = useState(false);
+  const [balance, setBalance] = useState(null);
   const { disconnect } = useDisconnect();
-  const { address, connector } = useAccount();
-  const { data: balance } = useBalance({ address });
+  const { address, connector, chainId, isConnected } = useAccount();
+
+  // Fetch the balance when address or chainId changes
+  useEffect(() => {
+    const getBalance = async () => {
+      if (address && chainId) {
+        try {
+          const result = await fetchBalance(address, chainId);
+          setBalance({
+            formatted: result.toString(),
+            symbol: connector?.chains?.find(c => c.id === chainId)?.nativeCurrency?.symbol || 'ETH'
+          });
+        } catch (error) {
+          console.error('Failed to fetch balance:', error);
+        }
+      }
+    };
+
+    if (isConnected && address) {
+      getBalance();
+    }
+  }, [address, chainId, connector, isConnected]);
+
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (isAccountModalOpen && e.target.id === 'modal-backdrop') {
+        closeAccountModal();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isAccountModalOpen, closeAccountModal]);
+
+  // Handle escape key press
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (isAccountModalOpen && e.key === 'Escape') {
+        closeAccountModal();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [isAccountModalOpen, closeAccountModal]);
 
   // Get chain info from the connector
   const chain = connector?.chains?.[0];
@@ -36,32 +80,6 @@ export default function AccountModal({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Close modal when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (isOpen && e.target.id === 'modal-backdrop') {
-        onClose();
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, onClose]);
-
-  // Handle escape key press
-  useEffect(() => {
-    const handleEscapeKey = (e) => {
-      if (isOpen && e.key === 'Escape') {
-        onClose();
-      }
-    };
-    
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => document.removeEventListener('keydown', handleEscapeKey);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
   const openExplorer = () => {
     if (chain?.blockExplorers?.default?.url && address) {
       window.open(`${chain.blockExplorers.default.url}/address/${address}`, '_blank');
@@ -70,11 +88,15 @@ export default function AccountModal({
 
   const handleDisconnect = () => {
     disconnect();
-    onClose();
+    closeAccountModal();
   };
 
   // Get ENS info or displayName from account info
   const displayName = address ? truncateAddress(address) : '';
+
+  // Early returns after all hooks have been called
+  if(!isConnected) return null; // If not connected, don't show the modal
+  if(!isAccountModalOpen) return null; // If modal is closed, don't render it
 
   return (
     <div
@@ -95,7 +117,7 @@ export default function AccountModal({
                 variant="ghost" 
                 size="sm" 
                 className="rounded-full h-8 w-8 p-0" 
-                onClick={onClose}
+                onClick={closeAccountModal}
               >
                 ✕
               </Button>

@@ -1,18 +1,20 @@
 'use client';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccountModal, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { truncateAddress } from '@/lib/utils';
 import { useAccount } from 'wagmi';
-import {getChainById} from '@/lib/chains';
+import { getChainById } from '@/lib/chains';
+import { useModal } from '@/hooks/use-modal';
 
 export function CustomConnectButton() {
   // Using RainbowKit hooks for modal management
   const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();
+  // Use our custom hook for account modal
+  const { openAccountModal } = useModal();
   
   // Get account information with wagmi
   const { address, chainId, connector, isConnected, isConnecting } = useAccount();
@@ -42,8 +44,6 @@ export function CustomConnectButton() {
   }
 
   const chain = getChainById(chainId);
-  console.log(chain);
-  console.log( isConnected);
 
   if (!chain) {
     return (
