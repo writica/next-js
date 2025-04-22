@@ -1,0 +1,21 @@
+
+
+What is Open Campus? 
+Open Campus, also known as EDU Chain, is the first Layer 3 (L3) blockchain built 
+specifically for the education industry. It aims to leverage the traditional educational 
+landscape by bringing it on-chain, creating a secure and transparent ecosystem for all 
+educational activities. 
+• Educational Blockchain: The first of its kind L3 blockchain tailored for 
+educational purposes. 
+• Learn-to-Earn Ecosystem: A vibrant platform that links learning with earning, 
+providing real-world value to educational achievements. 
+• Transparency and Security: Blockchain technology ensures that all educational 
+records and transactions are secure, immutable, and transparent. 
+• Trackable Learning Journey: Every educational milestone and achievement is 
+recorded on the blockchain, making it easy to track and verify progress. 
+ 
+ 
+️ Arbitrum Orbit Overview 
+️ Setup Codex RPC Node 
+️ Block Explorer 
+ 

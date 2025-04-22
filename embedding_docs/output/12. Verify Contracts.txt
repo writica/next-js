@@ -1,0 +1,73 @@
+
+
+Verify Contracts 
+Once verified, a smart contract or token contract's source code becomes publicly available and 
+verifiable, creating transparency and trust. 
+There are several ways to verify a contract, programmatically or manually on the UI. 
+Verify on the UI  
+1. Go the the verify contract page (Other -> Verify Contract) 
+2. Enter in the contract address you received during deployment. The dropdown will show 
+you several available verification options. Select the one you would like to use and 
+continue. 
+i. Solidity (Flattended source code) 
+ii. Solidity (Standard JSON Input) 
+
+Solidity (Flattened Source Code)  
+ 
+1. Contract Address: The 0x address supplied on contract creation (added above) 
+2. Is Yul Contract: Select if the contract is coded in Yul for efficiency. 
+3. Include Nightly Builds: Select if you want to show nightly builds. 
+4. Compiler: derived from the first line in the contract pragma solidity X.X.X. Use the 
+corresponding compiler version rather than the nightly build. 
+5. EVM Version: Select the correct EVM version if known, otherwise use default. 
+6. EVM Version: Select the correct EVM version if known, otherwise use default. 
+7. Enter the Solidity Contract Code: You may need to flatten your solidity code if it utilizes a 
+library or inherits dependencies from another contract. We recommend hardhat or the 
+POA solidity flattener. To flatten your contract using contract, run: 
+yarn hardhat flatten .\contracts\<your-contract>.sol > flattened.sol 
+8. Add Contract Libraries: Enter the name and 0x address for any required libraries called 
+in the .sol file. You can add multiple contracts with the "+" button. 
+
+9. Click the Verify and Publish button. 
+10. If all goes well, you will see a checkmark next to Code in the code tab, and an additional 
+tab called Read Contract. The contract name will now appear in BlockScout with any 
+transactions related to your contract. 
+Solidity (Standard JSON Input)  
+ 
+1. Include nightly builds. You can choose Yes or No depending on your compiler. 
+2. Compiler. Choose the compiler version used to compile your smart contract. If you 
+selected yes for nightly builds, use the compiler version rather than the build. 
+3. Standard Input JSON. Upload your Standard Input JSON file. File should follows solidity 
+format and all the sources must be in Literal Content format, not a URL. 
+Click the Verify & publish button and wait for the response. 
+Verify Programmatically  
+To verify contracts please follow the Verifying a Smart Contract guide to learn the different 
+options. 
+In particular, to be able to verify the contracts programatically we will need following steps: 
+1- Install @nomiclabs/hardhat-etherscan package: 
+yarn add --dev @nomiclabs/hardhat-etherscan 
+2- Import into hardhat.config.ts 
+
+import "@nomiclabs/hardhat-etherscan"; 
+3- Update hardhat.config.ts following: 
+    apiKey: { 
+     opencampus: "XXX", // no key required 
+   }, 
+   customChains: [ 
+     { 
+       network: "opencampus", 
+       chainId: 656476, 
+       urls: { 
+         apiURL: "https://opencampus-codex.blockscout.com/api", 
+         browserURL: "https://opencampus-codex.blockscout.com/", 
+       }, 
+     }, 
+   ], 
+4- Verify the contract Once the config is updated, you can verofy the contract with 
+npx hardhat verify --network opencampus YOUR-CONTRACT-ADDRESS 
+YOUR-CONSTRUCTOR-ARGUMENTS 
+Edit this page 
+ 
+ 
+ 
+ 

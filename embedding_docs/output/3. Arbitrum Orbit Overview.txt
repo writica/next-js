@@ -1,0 +1,28 @@
+
+
+Arbitrum Orbit Overview 
+Arbitrum Orbit is an Optimistic rollup-based framework designed to empower web3 businesses 
+by enabling the creation of custom, use case-specific Layer 2 (L2) or Layer 3 (L3) chains in a 
+purely permissionless way. Orbit leverages the Arbitrum Nitro Tech stack, offering unparalleled 
+scalability, advanced compression, full EVM compatibility, and soon-to-be-released cross-chain 
+interoperability. Essentially, Arbitrum Orbit can be thought of as deployable and configurable 
+instances of the Nitro stack, forming an ecosystem of independent chains. 
+Key Features of Arbitrum Orbit  
+1. Customizable Throughput: Orbit chains provide dedicated throughput, ensuring high 
+performance and resource availability tailored to specific dApp requirements. 
+2. EVM+ Compatibility: Support for multiple programming languages (Rust, C++, C, and 
+Solidity) through Stylus, enabling flexible and cost-effective smart contract development. 
+3. Predictable Gas Costs: Isolated transaction environments ensure stable and predictable 
+gas fees, crucial for business cost forecasting. 
+4. Broad Data Availability Options: Flexibility to choose data availability models, including 
+Ethereum Layer 1 or Data Availability Committees (DACs) for off-chain storage. 
+5. Robust Security: Leveraging Ethereum's security and the Arbitrum Nitro tech stack 
+ensures a high level of security for Orbit chains. 
+ 
+By choosing Arbitrum Orbit, Open Campus leverages a powerful, flexible, and scalable 
+blockchain solution that meets our unique needs. This partnership enables us to build an 
+innovative educational platform that redefines the Learn-to-Earn model, offering unparalleled 
+benefits to our users. 
+ 
+ 
+ 

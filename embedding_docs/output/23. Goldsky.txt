@@ -1,0 +1,26 @@
+
+
+Goldsky 
+Install + log in  
+1. Create an account at app.goldsky.com. 
+2. Create an API key on the Settings page. 
+3. Install the Goldsky CLI: 
+4. curl https://goldsky.com | sh 
+5. Log in with the API key created earlier: 
+6. goldsky login 
+Build and deploy  
+Deploy your subgraph in one of four ways: 
+Build and deploy from source  
+cd <your-subgraph-directory> 
+graph build # Build your subgraph as normal. 
+goldsky subgraph deploy my-subgraph/1.0.0 
+Build & Deploy from ABI and address  
+goldsky subgraph deploy your-subgraph-name/your-version --from-abi <path-to-config-file> 
+Query Endpoint  
+Access data by querying the endpoints. Use the following command to list all your subgraphs, 
+and open the “GraphQL API” links that get printed in your browser to query your data in the 
+GraphQL playground. 
+goldsky subgraph list 
+ 
+ 
+ 

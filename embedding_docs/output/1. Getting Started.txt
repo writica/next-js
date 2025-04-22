@@ -1,0 +1,20 @@
+
+
+Getting Started 
+Details about open campus here 
+Network Details 
+Network Attribute Value 
+chainID 656476 
+Settlement Layer Arbitrum Sepolia 421614 
+RPC Url https://rpc.open-campus-codex.gelato.digital 
+Explorer https://opencampus-codex.blockscout.com/ 
+The public summary of the network can be found at 
+https://raas.gelato.network/rollups/details/public/open-campus-codex 
+Overview of Docs 
+• Open Campus Codex - Explains comprehensive insights into the architecture of 
+Open Campus Codex. 
+• Build - Find all the resources you need to start testing, deploying, and interacting 
+with smart contracts on Open Campus Codex. 
+• Services - Find all services deployed on Open Campus Codex and start levelling-
+up your applications. 
+ 

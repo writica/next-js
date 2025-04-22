@@ -1,0 +1,28 @@
+
+
+Account Abstraction 
+note:Please note that this section is under active development. 
+Overview  
+The Ethereum blockchain network has two central types of accounts: externally owned accounts 
+(EOAs) and contract accounts. EOAs are controlled by users; meanwhile, contract accounts are 
+managed by smart contract code. Both account types are essential for the Ethereum 
+ecosystem. However, EOAs are required to interact with the network, as they are the only way 
+for you to initiate transactions and execute smart contracts. 
+The problem with EOAs is their limitation to basic operations. And this restricts your options for 
+interacting with the Ethereum blockchain. For example 
+● Poor Security: EOAs are secured by private keys, which are vulnerable to theft and loss. 
+● Lack of customization: We must initiate transactions from EOAs, which means that we 
+can’t customize the transaction flow. For example, we can’t set up automatic payments 
+or multi-factor authentication or define custom rules. 
+● Gas Payment: Account must hold ETH to pay for gas fees. This is a significant barrier to 
+entry for new users. 
+What are the benefits of Account Abstraction?  
+● Increased Security: We manage conventional Ethereum accounts using seed phrases 
+and private keys. This can be problematic if a user loses their seed phrase or 
+accidentally leaks their private key. With account abstraction you’re given more 
+opportunities to implement additional options for both account recovery and 
+authentication. 
+● Improved User Experience: With account abstraction, we can create smart contract 
+wallets that can be used to implement a wide range of features. For example, we can 
+create wallets that automatically pay for gas fees, wallets that require multi-factor 
+authentication, and wallets that can be recovered using a social recovery mechanism. 

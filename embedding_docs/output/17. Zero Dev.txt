@@ -1,0 +1,27 @@
+
+
+Zero Dev 
+ZeroDev is a smart, white-labeled, and modular embedded wallet for building user-friendly 
+Web3 experiences, particularly for DeFi applications. 
+Smart: ZeroDev leverages account abstraction. White-labeled: ZeroDev doesn't have a UI -- it 
+provides the underlying wallet logic that you can build a totally customized experience on top of. 
+Modular: ZeroDev is built on top of Kernel, the most popular open-source smart account that 
+supports ERC-7579 plugins for customizing wallet logic. ZeroDev is one of the most trusted 
+solutions in AA, powering more than 50% of all AA wallets and a majority of DeFi volume that 
+leverages AA. 
+Before starting please go ahead into ZeroDev Dashboard and create a project on Open 
+Campus, so you will get a Project ID, 
+ 
+Please find a quickstart [here] 
+ 
+When instantiating the react component please include bundlerProvider="GELATO". 
+ <React.StrictMode> 
+      <ZeroDevProvider 
+           projectId={YOUR PROJECT ID} 
+           bundlerProvider="GELATO" 
+         > 
+       </ZeroDevProvider> 
+ 
+ </React.StrictMode> 
+ 
+ 

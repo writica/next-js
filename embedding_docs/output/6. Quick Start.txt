@@ -1,0 +1,47 @@
+
+
+Quick Start 
+Overview  
+Open Campus is a Layer-3 solution enhancing Ethereum, providing an EVM-compatible 
+environment for seamless integration. It utilizes advanced cryptographic techniques for 
+efficiency and inherits Ethereum's security. 
+Connecting to Codex  
+Reminder 
+Open Campus Codex and its related documentation are under active development. 
+All feedback is welcome and highly appreciated. Please report errors or inconsistencies to a 
+team member or as an issue on our Issues Tracker, thank you. 
+To manually add the Open Campus Codex network to your wallet, use the following details: 
+● Codex 
+RPC URL ChainID Block Explorer 
+URL 
+Currency 
+https://rpc.open-campus-codex.gelato.di
+gital 
+656476 Codex Block 
+Explorer 
+EDU 
+To add the network to MetaMask, you can either enter the data above manually or use the link 
+provided at the bottom of the Codex Block Explorer page. 
+Bridging Assets to Open Campus Codex Testnet  
+To start interacting with the Open Campus Codex Testnet, you'll need to bridge your assets. 
+Bridging assets involves transferring cryptocurrencies from one blockchain (Arbitrum Sepolia) to 
+another (Open Campus Codex). This process expands your asset's utility by enabling its use 
+within the Open Campus ecosystem. 
+To bridge your assets, follow the guide on asset bridging provided below. 
+Learn more about bridging assets
+ ↗ 
+Deploying Smart Contracts on Codex  
+Open Campus Codex provides a development environment that is designed to be familiar to 
+those who have worked with Ethereum. It allows developers to deploy smart contracts using 
+existing Ethereum tools and workflows, ensuring a smooth transition and a user experience 
+characterized by higher throughput and reduced transaction costs. 
+
+To learn more about how to deploy your smart contracts to the Codex, refer to our 
+comprehensive guide below. 
+Deploy Smart Contracts on Codex
+ ↗ 
+Support Channels  
+For support, developers can consult the community on platforms like StackExchange or join the 
+official Discord server. 
+ 
+ 

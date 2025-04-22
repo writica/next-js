@@ -1,0 +1,24 @@
+
+
+Web3Auth 
+Web3Auth is a pluggable wallet infrastructure for Web3 wallets and applications. It streamlines 
+the onboarding of both mainstream and crypto native users in under a minute by providing 
+experiences that they're most comfortable with. With support for all OAuth-based login systems, 
+web & mobile native platforms, Web3Auth provides a seamless onboarding experience for your 
+users 
+You can follow a quick start guide here 
+In order to use Web3Auth on Open Campus testnet we will need to adapt the network config file 
+to 
+ 
+const  chainConfig: { 
+   chainNamespace: "eip155", 
+   chainId: "0xA045C",// Cahin Id 656476 in hex 
+   rpcTarget: "https://rpc.open-campus-codex.gelato.digital", 
+   displayName: "Open Campus Codex", 
+   blockExplorer: "https://opencampus-codex.blockscout.com/", 
+   ticker: "EDU", 
+   tickerName: "EDU", 
+ }, 
+ 
+ 
+ 

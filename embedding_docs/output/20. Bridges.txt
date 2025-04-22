@@ -1,0 +1,12 @@
+
+
+Bridges 
+Note: Please note that this section is under active development. 
+What is a Bridge?  
+Bridges are a way to connect two different blockchains. They are a special type of smart 
+contract that allows you to lock up tokens on one blockchain and mint the same amount of 
+tokens on another blockchain. This is a very useful feature, as it allows you to transfer tokens 
+between different blockchains. For example, you can transfer tokens from the Ethereum 
+blockchain to the Binance Smart Chain (BSC) blockchain. 
+ 
+ 

@@ -1,0 +1,26 @@
+
+
+Asset Bridging 
+Overview  
+Bridging assets to Open Campus is an essential process for users who wish to interact with the 
+Open Campus network. This section provides a comprehensive guide on how to bridge your 
+assets effectively. 
+● Direct Arbitrum Sepolia to Open Campus Codex Bridge: This is the primary method to 
+transfer assets directly from Arbitrum Sepolia to Open Campus Codex, which is essential 
+for executing transactions on Open Campus Codex. 
+Step-by-Step Guide to Using the Official Bridge Portal  
+ 
+1. Visit the official Open Campus Bridge Portal and connect your wallet. 
+2. Choose Arbitrum Sepolia as your source and Open Campus as the destination. 
+3. Input the amount of assets you want to bridge. 
+4. Confirm and sign the transaction with your wallet. 
+
+Wait for the bridging process to complete. The assets will then be available in your wallet on the 
+re.al network. 
+After the transaction is confirmed, the bridged assets will reflect in your Open Campus wallet, 
+allowing you to interact with the network and its dApps. 
+note 
+The transaction times can vary based on network congestion and gas fees. Please ensure you 
+have enough ETH in your wallet to cover the transaction fees. 
+ 
+ 

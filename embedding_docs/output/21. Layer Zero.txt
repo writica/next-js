@@ -1,0 +1,54 @@
+
+
+Layer Zero 
+LayerZero is a messaging protocol, not a blockchain. Using smart contracts deployed on each 
+chain, in combination with Decentralized Verifier Networks (DVNs) and Executors, LayerZero 
+enables different blockchains to seamlessly interact with one another. 
+Getting Started  
+To start sending omnichain messages with LayerZero, you only need to implement two 
+functions: 
+ 
+● _lzSend: This function is used to send a message to a different chain. 
+ 
+_lzSend( 
+ _dstEid, // the destination endpoint id 
+ _payload, // encoded message payload being sent 
+ _options, // message execution options 
+ MessagingFee(msg.value, 0), // the fee in native gas and ZRO token 
+ payable(msg.sender) // refund address in case of failed source message 
+); 
+● _lzReceive: This function is used to receive a message from a different chain. 
+ 
+function _lzReceive( 
+ Origin calldata _origin, // struct containing srcEid, sender address, and the message nonce 
+ bytes32 _guid, // global message packet identifier 
+ bytes calldata payload, // encoded message being received 
+ address _executor, // the address of who executed the message 
+ bytes calldata _extraData // appended executor data for the call 
+) internal override { 
+ data = abi.decode(payload, (string)); // your receive logic here 
+} 
+ 
+LayerZero offers Contract Standards that simplify this implementation by providing out of the 
+box message handling, interfaces for custom protocol configurations, and other quality of life 
+improvements: 
+● OApp: the base contract standard for omnichain messaging and configuration. 
+● OFT: the base contract standard for omnichain messaging and configuration. 
+Prerequisites  
+1. You should first be familiar with writing and deploying contracts to your desired 
+blockchains. This involves understanding the specific smart contract language and the 
+deployment process for those chains. 
+
+2. A wallet set up and funded for the chains you'll be working with. 
+Deploying your Contracts  
+note 
+This example can be used with any EVM compatible chain. 
+To learn how to deploy your contracts, please refer to the Deploying Contracts section. 
+To checkout endpoint addresses please refer to the Endpoints section in the layerzero docs. 
+Connecting your Contracts  
+To connect your contracts, call setPeer and pass the address of your destination contract as a 
+bytes32 value, as well as the destination endpoint ID. If successful, you now should be setup to 
+start sending cross-chain messages! 
+To go more in depth, please refer to the Getting Started section in the layerzero docs. 
+ 
+ 

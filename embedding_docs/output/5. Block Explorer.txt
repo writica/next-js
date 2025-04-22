@@ -1,0 +1,20 @@
+
+
+Block Explorer 
+The Open Campus block explorer provides a comprehensive and user-friendly interface for 
+monitoring and analyzing network activities. It is designed to offer key insights and information 
+beneficial for both regular users and developers. Features of the Open Campus block explorer 
+include: 
+● Address Balances: Check the balance of any address on the network. 
+● Transaction History: View detailed transaction records. 
+● Verified Contracts: Access and review verified smart contract codes. 
+● Smart Contract Code and Execution: Examine the code and execution details of smart 
+contracts. 
+● Network Statistics: Get up-to-date information on network performance. 
+● Mining Information: Monitor mining activities and related statistics. 
+ 
+Visit the Open Campus Codex Block Explorer 
+ 
+ 
+ 
+ 

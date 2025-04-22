@@ -1,0 +1,58 @@
+
+
+# Explore Edu Chain Ecosystem   
+Browse and explore dapps from **DeFi**, **Infra** to **EDUFI**, and more, which are helping to 
+bring education on-chain to **EDUCHAIN**.   
+ 
+## DApps List   
+ 
+| Name         | URL                          | Description | Category      | 
+|--------------|------------------------------|-------------|---------------| 
+| **SailFish** | [sailfish.finance](https://sailfish.finance/) | SailFish is the first DEX on 
+Opencampus EDUCHAIN. Built to be fast and efficient, SailFish is a veDEX that distributes 
+100% of protocol fees to users. | **DeFi** | 
+| **MoveFlow** | [app.edu.moveflow.xyz](https://app.edu.moveflow.xyz/) | MoveFlow is the 
+PayFi stack on EduChain, offering innovative streaming payment, buy now pay never solution for 
+managing and optimizing on-chain payments for education. | **DeFi** | 
+| **Blend**    | [app.blend.fan](https://app.blend.fan/) | Blend is a decentralised, non-custodial 
+lending protocol on Educhain. | **DeFi** | 
+| **Camelot**  | [app.camelot.exchange](https://app.camelot.exchange/) | Camelot is a 
+decentralized and permissionless exchange that supports the Arbitrum ecosystem with highly 
+efficient liquidity infrastructure. | **DeFi** | 
+| **GainzSwap** | [gainzswap.xyz](https://gainzswap.xyz/) | GainzSwap is a community-driven 
+decentralised exchange (DEX) designed to enhance sustained liquidity in DeFi. It features 
+dynamic swapping fees, a deflationary Gainz token model, and governance through GToken. | 
+**DeFi** | 
+| **ThrustPad** | [thrustpad.finance](https://thrustpad.finance/) | ThrustPad is an innovative 
+Initial Liquidity Offering (ILO) platform seamlessly built on the Educhain blockchain. Designed to 
+empower projects and investors alike with a comprehensive suite of tools and services on their 
+fundraising journey. | **Infrastructure** | 
+| **EduScan**  | [eduscan.xyz](https://www.eduscan.xyz/) | EduScan is the best custom 
+blockchain explorer for Educhain. It supports both mainnet & testnet. You can explore wallets, 
+transactions, blocks, tokens & the latest state data. | **Infrastructure** | 
+| **Grasp Academy** | [grasp.academy](https://grasp.academy/) | Grasp is the premier 
+educational content platform where educators and creators can share their work and earn on 
+EDU Chain. Powered by Open Campus, the Grasp web3 platform integrates EduFi, enabling 
+users to learn, earn, and be rewarded for academic excellence. | **Infrastructure** | 
+| **EduHub**   | [eduhub.dev](https://eduhub.dev/) | Building community and developer tools 
+for EDU Chain, so that anyone can quickly learn and ship awesome educational or any type of 
+dApps on-chain. | **Infrastructure** | 
+
+| **EduGPT**   | [ai.eduhub.dev](https://ai.eduhub.dev/) | EduGPT aims to simplify blockchain 
+data (AI Explorer) and build complex Web3 projects (For Developers). It explains everything in a 
+simple, fun way, helping you learn and build awesome projects quickly and easily on EduChain. 
+| **Infrastructure** | 
+| **Daily Wiser** | [dailywiser.xyz](http://dailywiser.xyz/) | Daily Wiser is an innovative mobile-
+first learning platform that transforms personal growth into an engaging daily habit. | 
+**Education** | 
+| **TinyTap**  | [campus.tinytap.com](https://campus.tinytap.com/) | TinyTap is a library of 
+educational games for kids handmade by teachers, therapists, and education experts from all 
+over the world. TinyTap is designed to help you turn playtime into a learning opportunity! | 
+**Education** | 
+| **Pody Network** | [pody.network](https://pody.network/) | Pody Network is a decentralized 
+platform built for virtual classrooms, offering interactive environments for education. Users 
+engage in real-time learning while earning rewards for active participation. | **Education** | 
+| **Proof of Learn** | [pol.solide0x.tech](https://pol.solide0x.tech/) | Proof of Learn is an 
+innovative online platform that ensures interactive, transparent, and verifiable learning across 
+100+ blockchains, rewarding users with NFT POAPs for genuine engagement and 
+accomplishment. | **Education** | 

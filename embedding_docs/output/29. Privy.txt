@@ -1,0 +1,65 @@
+
+
+Privy 
+The Privy React SDK is the easiest way to onboard your users to web3 in your React App. 
+With just nine minutes of setup, you get out-of-the-box support for: 
+● A variety of login methods, including email, phone, wallets, and social 
+● Customizable UIs to progressively onboard your users 
+● Self-custodial embedded wallets and powerful connectors for external wallets 
+For a Quickstart please visit here 
+When using privy on Open Campus Testnet, please bear in mind that defaultChain and 
+supportedChainshave to be included in the chain config. 
+<PrivyProvider 
+ appId="your-privy-app-id" 
+ config={{ 
+   // Customize Privy's appearance in your app 
+   appearance: { 
+     theme: 'light', 
+     accentColor: '#676FFF', 
+     logo: 'https://your-logo-url', 
+   }, 
+   // Create embedded wallets for users who don't have a wallet 
+   embeddedWallets: { 
+     createOnLogin: 'users-without-wallets', 
+   }, 
+ 
+   // Custom congif here 
+       defaultChain: openCampusChain, 
+       supportedChains: [openCampusChain], 
+ 
+ }} 
+> 
+</PrivyProvider> 
+ 
+ 
+// OpenCampusChain definition here 
+import { defineChain } from "viem-15"; 
+const openCampusChain= defineChain ({ 
+       id: 656476, 
+       network: "Open Campus Codex", 
+       name: "Open Campus Codext", 
+       nativeCurrency: { 
+           name: "EDU", 
+           symbol: "EDU", 
+           decimals: 18, 
+
+       }, 
+       rpcUrls: { 
+           public: { 
+               http: ["https://rpc.open-campus-codex.gelato.digital"], 
+           }, 
+           default: { 
+               http: ["https://rpc.open-campus-codex.gelato.digital"], 
+           }, 
+       }, 
+       blockExplorers: { 
+           default: { 
+               name: "Block Scout", 
+               url: "https://opencampus-codex.blockscout.com/", 
+           }, 
+       }, 
+       contracts: { 
+       }, 
+       testnet: true, 
+   }), 
+ 

@@ -1,0 +1,25 @@
+
+
+Faucet 
+Obtaining Testnet Tokens  
+To acquire testnet tokens for network transactions, utilize the dRPC faucet that distributes 
+testnet ETH. Follow the verification process to receive your tokens. 
+Verification Process  
+To ensure fair and equitable access, you need to complete the following verification steps: 
+1. dRPC Authorization 
+○ Log in or create an account with dRPC. It's fast and free. 
+2. Proof-of-Work 
+○ This faucet requires mining for free testnet tokens to prevent abuse and spam. 
+Note that the process of "mining" doesn't create new coins; it's just a time-limited 
+method of protection. 
+Connecting Wallet to Testnet  
+Configure your wallet to connect to the Sepolia testnet where you can receive testnet ETH. 
+Using dRPC Faucet  
+Access the dRPC faucet to obtain EDU: 
+
+● dRPC Faucet 
+ 
+Once you have the EDU, you can proceed with testing and development on the Open Campus 
+network. 
+ 
+ 

@@ -1,0 +1,23 @@
+
+
+Automation & Off-chain Data 
+The Problem  
+In the realm of blockchain development, especially with decentralized applications (dApps), a 
+significant challenge emerges in the form of limited auto-execution capabilities. Traditionally, 
+smart contracts, despite their advanced functionalities, lack the inherent ability to initiate or call 
+methods automatically. This limitation poses a hurdle in the seamless operation and scalability 
+of blockchain applications. 
+The Solution  
+To address this gap, automation solutions have been developed. These systems are designed 
+to monitor both on-chain and off-chain data sources continuously. They are programmed to 
+recognize specific predefined conditions. Once these conditions are met, the automation system 
+springs into action, executing the necessary transactions without human intervention. 
+Use cases  
+1. Auto Harvesting in DeFi: In decentralized finance applications, automation can manage 
+yield farming strategies, harvesting rewards automatically when they reach a certain 
+threshold, thereby optimizing the return on investment for users. 
+2. Limit Orders in Trading: Automated systems can execute trades when certain price 
+points are hit, mirroring the functionality of limit orders in traditional trading but within a 
+decentralized environment. 
+ 
+ 

@@ -1,0 +1,38 @@
+
+
+Open Campus ID Connect SDK 
+Where can i get it?  
+Download it via npm here: https://www.npmjs.com/package/@opencampus/ocid-connect-js 
+Github documentation is here: https://github.com/opencampus-xyz/ocid-connect-js 
+Connect OCID Button design (Figma) is here 
+Why do i need this?  
+To integrate your product with the OpenCampus ecosystem, you need to retrieve and associate 
+the OCIDs of your users within your system. The "Connect with OCID" functionality works 
+similarly to "Login with Twitter" or "Login with Google." Our product suite provides a JavaScript 
+SDK that you can integrate into your site, enabling users to log into OCID with a simple button 
+click. 
+How long does it work?  
+This SDK provides an OAuth/OIDC interface to facilitate integration for our partners. 
+Javascript-based SDK  
+● The SDK includes a JavaScript wrapper for our authentication APIs. 
+● It also provides a set of React components for seamless integration into React 
+applications. 
+● Integration instructions are available in the package README on the public npm site. 
+Interoperability  
+● The Connect with OCID APIs fully implement the OIDC standard, allowing developers to 
+choose custom integration with our authentication APIs. 
+● We enforce the OIDC Code Flow with PKCE for enhanced security. 
+Development  
+● A Sandbox environment is available and can be easily activated in the SDK for 
+development purposes. 
+● The Sandbox environment does not require redirect_uri whitelisting, enabling developers 
+to test their integrations before going live. 
+
+Connecting to production  
+By default, you will only be able to integrate with the “Sandbox” environment. To be whitelisted 
+to interact with the production version, you will need to complete the following form! Make sure 
+to give us the correct site link, as this will whitelist your app’s site at the domain level. 
+The form is here: App Whitelisting Form. 
+ 
+ 
+ 

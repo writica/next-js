@@ -1,0 +1,25 @@
+
+
+Oracles 
+Overview  
+Blockchain oracles are third-party services or agents that provide smart contracts with external 
+information and serve as bridges between blockchains and the external world. Because 
+blockchains cannot access external data (outside of their network) due to their secure and 
+deterministic nature, oracles are used to fetch, verify, and relay real-world data to smart 
+contracts in a way that's trustworthy. 
+Use Cases  
+Decentalized Finance (DeFi)  
+Oracles provide price feeds, enabling DeFi platforms to calculate token values, manage 
+collateral, and execute liquidations. By sourcing data from various exchanges and financial 
+platforms, oracles contribute to the robustness of DeFi applications. 
+Gaming  
+Blockchain-based gaming and betting platforms use oracles to determine the outcomes of 
+events, such as sports matches or random number generation. By connecting to various data 
+sources and verifying results, oracles ensure fair and transparent gaming experiences. 
+Insurance  
+Oracles can be employed in the insurance industry to automate claims processing and 
+underwriting. They can fetch data related to weather conditions, flight delays, or health records, 
+enabling insurers to create parametric insurance products. This reduces fraud and ensures 
+quicker payouts based on predefined triggers. 
+and much more... 
+ 
