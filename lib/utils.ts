@@ -5,6 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Utility function to truncate Ethereum addresses
+export const truncateAddress = (address: string): string => {
+  if (!address) return '';
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
 export const formatNiceNumber = (num: number | string) => {
   if (typeof num === "string") {
     num = parseFloat(num);

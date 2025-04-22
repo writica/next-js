@@ -6,10 +6,36 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { motion } from 'framer-motion';
 
+// Helper function to find an appropriate connector
+const findAppropriateConnector = (connectors) => {
+  if (!connectors || connectors.length === 0) return null;
+  
+  // Try to find popular wallet connectors first
+  const popularWalletIds = ['metaMask', 'rainbow', 'coinbase', 'walletConnect', 'injected'];
+  
+  for (const id of popularWalletIds) {
+    const connector = connectors.find(c => {
+      // Enhanced check for connector matching
+      const connectorId = c.id?.toLowerCase() || '';
+      const connectorName = c.name?.toLowerCase() || '';
+      return connectorId.includes(id.toLowerCase()) || connectorName.includes(id.toLowerCase());
+    });
+    if (connector) return connector;
+  }
+  
+  // If no popular wallet found, but connectors exist, return the first available connector
+  if (connectors.length > 0) {
+    return connectors[0]; // Fallback to first connector
+  }
+  
+  return null;
+};
+
 export function ConnectingAnimation() {
   const { connectors, connectAsync } = useConnectors();
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStep, setConnectionStep] = useState(0);
+  const [error, setError] = useState(null);
   
   // Animation steps
   const steps = [
@@ -23,6 +49,7 @@ export function ConnectingAnimation() {
     // Listen for connection request events from the button
     const handleConnectRequest = () => {
       setIsConnecting(true);
+      setError(null);
       
       // Simulate connection steps
       const stepInterval = setInterval(() => {
@@ -34,22 +61,61 @@ export function ConnectingAnimation() {
           return prev + 1;
         });
       }, 800);
-      
-      // Try to connect with injected connector (if available)
-      const injectedConnector = connectors.find(c => c.id === 'injected');
-      
-      if (injectedConnector) {
-        connectAsync({ connector: injectedConnector })
-          .catch(error => {
-            console.error('Connection error:', error);
-          })
-          .finally(() => {
+
+      try {
+        // In RainbowKit v2, connector IDs have changed
+        // Try to find an appropriate connector - prioritize popular ones
+        console.log('Available connectors:', connectors);    
+        const connector = findAppropriateConnector(connectors);
+        
+        if (connector) {
+          console.log('Selected connector:', connector.name || connector.id);
+          connectAsync({ connector })
+            .catch(error => {
+              console.error('Connection error:', error);
+              setError(error.message || 'Failed to connect to wallet');
+            })
+            .finally(() => {
+              clearInterval(stepInterval);
+              setTimeout(() => {
+                setIsConnecting(false);
+                setConnectionStep(0);
+              }, 500);
+            });
+        } else {
+          // If no connector is found, try to use any available connector
+          if (connectors && connectors.length > 0) {
+            console.log('Using first available connector:', connectors[0].name || connectors[0].id);
+            connectAsync({ connector: connectors[0] })
+              .catch(error => {
+                console.error('Connection error:', error);
+                setError(error.message || 'Failed to connect to wallet');
+              })
+              .finally(() => {
+                clearInterval(stepInterval);
+                setTimeout(() => {
+                  setIsConnecting(false);
+                  setConnectionStep(0);
+                }, 500);
+              });
+          } else {
+            console.error('No wallet connectors found');
+            setError('No wallet connectors found. Please install a web3 wallet.');
             clearInterval(stepInterval);
             setTimeout(() => {
               setIsConnecting(false);
               setConnectionStep(0);
-            }, 500);
-          });
+            }, 2000);
+          }
+        }
+      } catch (err) {
+        console.error('Unexpected error during wallet connection:', err);
+        setError('An unexpected error occurred. Please try again.');
+        clearInterval(stepInterval);
+        setTimeout(() => {
+          setIsConnecting(false);
+          setConnectionStep(0);
+        }, 2000);
       }
     };
     
@@ -102,14 +168,18 @@ export function ConnectingAnimation() {
                 transition={{ duration: 0.3 }}
                 className="text-sm text-slate-500 dark:text-slate-400 h-5"
               >
-                {steps[connectionStep]}
+                {error ? (
+                  <span className="text-red-500">{error}</span>
+                ) : (
+                  steps[connectionStep]
+                )}
               </motion.div>
             </div>
             
             <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
               <motion.div 
-                className="bg-gradient-to-r from-violet-500 to-indigo-600 h-1.5 rounded-full" 
-                animate={{ width: `${((connectionStep + 1) / steps.length) * 100}%` }}
+                className={`${error ? 'bg-red-500' : 'bg-gradient-to-r from-violet-500 to-indigo-600'} h-1.5 rounded-full`}
+                animate={{ width: error ? '100%' : `${((connectionStep + 1) / steps.length) * 100}%` }}
                 transition={{ duration: 0.5 }}
               />
             </div>
