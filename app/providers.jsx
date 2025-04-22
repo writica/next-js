@@ -2,7 +2,7 @@
 
 import React, {useEffect} from "react";
 
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { getDefaultConfig, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { WagmiProvider, useSwitchChain, useAccount } from "wagmi";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import chainList from "@/lib/chains.js";
@@ -25,12 +25,12 @@ const AutoSwitchNetwork = () => {
 
   useEffect(() => {
     if (isConnected) {
-      // if chain id not in list allChainsIds then switch to arbitrum sepolia
+      // if chain id not in list allChainsIds then switch to pharos
       console.log(`chainlist`, chainList);
 
       if (!allChainsIds.includes(chainId)) {
         console.log(`switching to ${chainList[0].name}`);
-        switchChain(chainList[0].id); // arbitrum sepolia
+        switchChain(chainList[0].id); // pharos
       }
       
     }
@@ -56,6 +56,16 @@ export default function Providers({ children }) {
           <RainbowKitProvider
             initialChain={chainList[0]}
             showRecentTransactions={true}
+            theme={darkTheme({
+              accentColor: '#7b3fe4',
+              accentColorForeground: 'white',
+              borderRadius: 'small',
+              fontStack: 'system',
+              overlayBlur: 'small',
+              // fonts:{
+              //   body: 'DM Sans, sans-serif',
+              // }
+            })}
           >
             <AutoSwitchNetwork />
             {children}

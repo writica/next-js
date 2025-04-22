@@ -39,16 +39,6 @@ export default function RootLayout({ children }) {
         className="bg-background min-h-screen"
       >
         <Providers>
-          <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
-            <div className="container flex h-16 items-center justify-between">
-              <div className="mr-4 flex">
-                <Link href="/" className="font-semibold text-xl">JavaBridge</Link>
-              </div>
-              <div className="flex items-center justify-end space-x-2">
-                <CustomConnectButton />
-              </div>
-            </div>
-          </header>
           <main>{children}</main>
         </Providers>
       </body>

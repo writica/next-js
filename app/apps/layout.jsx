@@ -12,10 +12,7 @@ const AppsLayout = ({ children }) => {
                   logo="/your-logo.svg"
                   logoAlt="Your Company"
                   menuItems={[
-                    { label: "Home", href: "/" },
-                    { label: "Features", href: "/features" },
-                    { label: "Pricing", href: "/pricing" },
-                    { label: "About", href: "/about" }
+
                   ]}
                   rightItems={[
                     <CustomConnectButton key="connect" />,
