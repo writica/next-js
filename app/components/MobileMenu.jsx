@@ -83,7 +83,7 @@ export default function MobileMenu() {
               <MobileLink href="/" text="Home" onClick={closeMobileMenu} />
               <MobileLink href="/chat" text="Chat" onClick={closeMobileMenu} />
               <MobileLink href="/network" text="Network" onClick={closeMobileMenu} />
-              <MobileLink href="#" text="Docs" onClick={closeMobileMenu} />
+              <MobileLink href="/apps" text="Apps" onClick={closeMobileMenu} />
             </div>
           </div>
           

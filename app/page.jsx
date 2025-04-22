@@ -1,23 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import Header from "@components/Header/index.jsx";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
 
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      const viewport = messagesEndRef.current.closest(
-        "[data-radix-scroll-area-viewport]"
-      );
-      if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight;
-      } else {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
 
   return (
     <>
@@ -31,8 +19,9 @@ export default function Home() {
             { label: "About", href: "/about" }
           ]}
           rightItems={[
-            <Button key="login">Sign In</Button>,
-            <Button key="signup" variant="primary">Sign Up</Button>
+            <Link key="apps" href="/apps">
+              <Button>Apps</Button>
+            </Link>,
           ]}
           glassMorphism={true}
          />
