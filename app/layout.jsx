@@ -9,7 +9,6 @@ import Providers from "./providers";
 import Link from "next/link";
 import meta from "@/lib/meta";
 import { cn } from "@/lib/utils";
-import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
 import AccountModal from "@/components/wallet/AccountModal";
 
 const TopLink = ({ href, text, target = "_self" }) => {

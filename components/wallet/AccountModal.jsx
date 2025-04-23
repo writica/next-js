@@ -15,6 +15,8 @@ import { Copy, ExternalLink, LogOut, Check, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useModal } from '@/hooks/use-modal';
 import { fetchBalance } from '@/lib/web3-call';
+import { useNetwork } from 'wagmi';
+import { getChainById } from '@/lib/chains';
 
 // Using our custom modal hook instead of props
 export default function AccountModal() {
@@ -70,8 +72,7 @@ export default function AccountModal() {
   }, [isAccountModalOpen, closeAccountModal]);
 
   // Get chain info from the connector
-  const chain = connector?.chains?.[0];
-  const chains = connector?.chains || [];
+  const chain = getChainById(chainId)
 
   const copyToClipboard = () => {
     if (!address) return;
@@ -110,7 +111,7 @@ export default function AccountModal() {
         transition={{ duration: 0.2 }}
         className="w-full max-w-md px-4"
       >
-        <Card className="border-none bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-xl">
+        <Card className="border-none dark:bg-[#060606] backdrop-blur-lg shadow-xl">
           <CardHeader className="flex flex-col items-center pb-2">
             <div className="w-full flex justify-end mb-2">
               <Button 
@@ -124,10 +125,6 @@ export default function AccountModal() {
             </div>
             
             <div className="mb-4 flex flex-col items-center">
-              <div className="h-20 w-20 rounded-full flex items-center justify-center bg-gradient-to-br from-violet-500 to-indigo-600 mb-3">
-                <Wallet className="h-10 w-10 text-white" />
-              </div>
-              
               <CardTitle className="text-xl mb-0.5">
                 {displayName}
               </CardTitle>
@@ -155,7 +152,7 @@ export default function AccountModal() {
 
           <CardContent className="pb-3">
             <div className="rounded-lg bg-muted/40 p-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Network</span>
                 <span className="text-sm font-medium flex items-center">
                   {chain?.hasIcon && (
@@ -182,46 +179,6 @@ export default function AccountModal() {
                   {chain?.name}
                 </span>
               </div>
-              
-              {chains.length > 0 && (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  {chains.map((c) => (
-                    <Button
-                      key={c.id}
-                      variant={c.id === chain?.id ? "secondary" : "outline"}
-                      size="sm"
-                      className="h-8 text-xs"
-                      onClick={() => {
-                        if (connector?.switchChain) {
-                          connector.switchChain({ chainId: c.id });
-                        }
-                      }}
-                    >
-                      {c.hasIcon && (
-                        <div
-                          className="mr-1.5"
-                          style={{
-                            background: c.iconBackground,
-                            width: 12,
-                            height: 12,
-                            borderRadius: '50%',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {c.iconUrl && (
-                            <img
-                              alt={c.name ?? 'Chain icon'}
-                              src={c.iconUrl}
-                              style={{ width: 12, height: 12 }}
-                            />
-                          )}
-                        </div>
-                      )}
-                      {c.name}
-                    </Button>
-                  ))}
-                </div>
-              )}
             </div>
           </CardContent>
 
