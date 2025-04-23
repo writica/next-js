@@ -37,14 +37,14 @@ const FormFieldInput = ({
       render={({ field }) => (
         <FormItem>
           <FormLabel className="flex items-center gap-2">
-            {icon && <span className="text-cyan-400">{icon}</span>}
-            {title} {required && <span className="text-red-500">*</span>}
+            {icon && <span className="text-cyan-400/80">{icon}</span>}
+            {title} {required && <span className="text-cyan-700">*</span>}
           </FormLabel>
           <FormControl>
             {type === "textarea" ? (
               <Textarea
                 placeholder={placeholder || `Enter ${title.toLowerCase()}`}
-                className="bg-gray-950 border-gray-800"
+                className="bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500"
                 rows={rows}
                 {...field}
               />
@@ -52,7 +52,7 @@ const FormFieldInput = ({
               <Input
                 type={type}
                 placeholder={placeholder || `Enter ${title.toLowerCase()}`}
-                className="bg-gray-950 border-gray-800"
+                className="bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500"
                 {...field}
                 value={
                   type === "date" && field.value instanceof Date 
@@ -73,8 +73,8 @@ const FormFieldInput = ({
               />
             )}
           </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
+          {description && <FormDescription className="text-gray-500">{description}</FormDescription>}
+          <FormMessage className="text-cyan-700" />
         </FormItem>
       )}
     />

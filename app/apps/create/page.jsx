@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
+import { motion } from "framer-motion"
 import FormInputText from "./components/FormInputText"
 import FormFieldInput from "./components/FormFieldInput"
 import FormImageUpload from "./components/FormImageUpload"
@@ -95,42 +95,54 @@ export default function CreateCampaignPage() {
   }
 
   return (
-    <div className="relative">
-      <div className="absolute inset-0 -z-10 dot-pattern"></div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black via-black/95 to-black"></div>
+    <div className="relative min-h-screen">
+      {/* Background with grid pattern and gradient overlay */}
+      <div className="absolute inset-0 -z-10 bg-black">
+        <div className="absolute inset-0 bg-[radial-gradient(#222_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/80 to-black"></div>
+      </div>
 
-      <div className="container px-4 sm:px-6 py-12">
-        <div className="max-w-3xl mx-auto">
+      <div className="container px-4 sm:px-6 py-12 relative z-10">
+        <motion.div 
+          className="max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-2 gradient-heading">Create a New Campaign</h1>
-            <p className="text-gray-400">Set up your campaign and invite writers to contribute</p>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              Create a New Campaign
+            </h1>
+            <p className="text-gray-400">
+              Set up your campaign and invite writers to contribute
+            </p>
           </div>
 
-          <Card className="bg-gray-900/80 backdrop-blur-sm border-gray-800">
+          <Card className="bg-black/40 backdrop-blur-lg border-gray-800/40 overflow-hidden rounded-3xl transition-all duration-300 hover:border-gray-700/60 shadow-lg">
             <CardHeader>
-              <CardTitle>Campaign Information</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-2xl font-bold text-white">Campaign Information</CardTitle>
+              <CardDescription className="text-gray-400">
                 Fill in the details below to create your campaign. Be descriptive to attract writers.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsList className="grid w-full grid-cols-3 mb-8 bg-[#060606]/80 p-1 rounded-full">
                   <TabsTrigger
                     value="details"
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-cyan-400"
+                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
                   >
                     Basic Details
                   </TabsTrigger>
                   <TabsTrigger
                     value="requirements"
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-cyan-400"
+                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
                   >
                     Requirements
                   </TabsTrigger>
                   <TabsTrigger
                     value="media"
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-cyan-400"
+                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
                   >
                     Media
                   </TabsTrigger>
@@ -138,13 +150,13 @@ export default function CreateCampaignPage() {
 
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <TabsContent value="details" className="space-y-6">
-
+                    <TabsContent value="details" className="space-y-6 animate-fade-in">
                       <FormFieldInput
                         formControl={form.control}
                         fieldName="title"
                         title="Campaign Title"
                         required={true}
+                        placeholder="Enter your campaign title"
                       />
 
                       <FormFieldInput
@@ -168,7 +180,7 @@ export default function CreateCampaignPage() {
                       />
                     </TabsContent>
 
-                    <TabsContent value="requirements" className="space-y-6">
+                    <TabsContent value="requirements" className="space-y-6 animate-fade-in">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormFieldInput
                           formControl={form.control}
@@ -207,6 +219,7 @@ export default function CreateCampaignPage() {
                         description="The desired outcome for readers"
                         placeholder="What action should readers take?"
                       />
+                      
                       <FormFieldInput
                         formControl={form.control}
                         fieldName="aiDescription"
@@ -216,10 +229,9 @@ export default function CreateCampaignPage() {
                         description="This description will be used for AI analysis"
                         placeholder="Describe your campaign in a way that can be used for AI analysis"
                       />
-
                     </TabsContent>
 
-                    <TabsContent value="media" className="space-y-6">
+                    <TabsContent value="media" className="space-y-6 animate-fade-in">
                       <FormField
                         control={form.control}
                         name="coverImage"
@@ -234,8 +246,20 @@ export default function CreateCampaignPage() {
                     </TabsContent>
 
                     <div className="flex justify-end space-x-4 pt-4">
-                      <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Submitting..." : "Create Campaign"}
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting} 
+                        variant="outline"
+                        className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <span className="mr-2">Creating...</span>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+                          </>
+                        ) : (
+                          "Create Campaign"
+                        )}
                       </Button>
                     </div>
                   </form>
@@ -243,7 +267,7 @@ export default function CreateCampaignPage() {
               </Tabs>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

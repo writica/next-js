@@ -64,62 +64,72 @@ export default function FormImageUpload({
     <FormItem className="space-y-2">
       <FormLabel className="flex items-center gap-2">
         {title}
-        {required && <span className="text-red-500">*</span>}
+        {required && <span className="text-cyan-700">*</span>}
       </FormLabel>
       <FormControl>
         <div 
-          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
-          ${preview ? "border-cyan-400 bg-cyan-400/5" : "border-gray-700 hover:border-cyan-400"}`}
+          className={`border-2 border-dashed rounded-xl backdrop-blur-sm transition-all duration-300
+          ${preview 
+            ? "border-cyan-700/50 bg-black/40" 
+            : "border-gray-800/40 hover:border-gray-700/60 bg-black/30"}`}
           onClick={handleUploadClick}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          {preview ? (
-            <div className="w-full flex flex-col items-center">
-              <div className="w-full max-h-48 overflow-hidden rounded-md mb-4">
-                <img 
-                  src={preview} 
-                  alt="Preview" 
-                  className="w-full h-auto object-cover"
-                />
+          <div className="p-8 flex flex-col items-center justify-center cursor-pointer">
+            {preview ? (
+              <div className="w-full flex flex-col items-center">
+                <div className="w-full max-h-48 overflow-hidden rounded-lg mb-4 transition-transform duration-500 hover:scale-105">
+                  <img 
+                    src={preview} 
+                    alt="Preview" 
+                    className="w-full h-auto object-cover shadow-md"
+                  />
+                </div>
+                <p className="text-sm text-cyan-400/80 mb-3">Image selected</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  type="button"
+                  className="rounded-full px-4 bg-black/40 hover:bg-black/60 border-gray-700/40 transition-all duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setPreview(null)
+                    field.onChange(null)
+                    if (fileInputRef.current) fileInputRef.current.value = ""
+                  }}
+                >
+                  Change image
+                </Button>
               </div>
-              <p className="text-sm text-cyan-400 mb-2">Image selected</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setPreview(null)
-                  field.onChange(null)
-                  if (fileInputRef.current) fileInputRef.current.value = ""
-                }}
-              >
-                Change image
-              </Button>
-            </div>
-          ) : (
-            <>
-              <ImageIcon className="h-10 w-10 text-gray-500 mb-2" />
-              <p className="text-sm text-gray-400 mb-1">Drag and drop an image here, or click to select</p>
-              <p className="text-xs text-gray-500 mb-4">Recommended size: 1200 x 630 pixels</p>
-              <Button variant="outline" size="sm" type="button">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Image
-              </Button>
-            </>
-          )}
-          <input 
-            ref={fileInputRef}
-            type="file" 
-            accept={accept}
-            className="hidden" 
-            onChange={handleFileChange}
-          />
+            ) : (
+              <>
+                <ImageIcon className="h-12 w-12 text-gray-600 mb-4 opacity-50" />
+                <p className="text-sm text-gray-400 mb-2 text-center">Drag and drop an image here, or click to select</p>
+                <p className="text-xs text-gray-500 mb-4 text-center">Recommended size: 1200 x 630 pixels</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  type="button"
+                  className="rounded-full px-4 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-900/30 transition-all duration-300"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Image
+                </Button>
+              </>
+            )}
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              accept={accept}
+              className="hidden" 
+              onChange={handleFileChange}
+            />
+          </div>
         </div>
       </FormControl>
-      {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage />
+      {description && <FormDescription className="text-gray-500">{description}</FormDescription>}
+      <FormMessage className="text-cyan-700" />
     </FormItem>
   )
 }
