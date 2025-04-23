@@ -37,6 +37,7 @@ model Campaign {
   keywords    String?
   targetAudience String?
   CtaGoal    String?
+  coverImage  String?  // Added field for storing the cover image URL
   status      String   @default("ACTIVE") // ACTIVE, INACTIVE, COMPLETED
   ownerId     String   // Foreign key field referencing User
   owner       User     @relation(fields: [ownerId], references: [id]) // Relation to User model

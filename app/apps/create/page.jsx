@@ -16,6 +16,7 @@ import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
 import FormInputText from "./components/FormInputText"
 import FormFieldInput from "./components/FormFieldInput"
+import FormImageUpload from "./components/FormImageUpload"
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -24,13 +25,15 @@ const formSchema = z.object({
   endDate: z.date({ required_error: "End date is required" }),
   campaignAddress: z.string().optional(),
   aiDescription: z.string().optional(),
-  keywords: z.string().optional(),
+  keywords: z.string().min(3, "Keywords are required"),
   targetAudience: z.string().optional(),
   ctaGoal: z.string().optional(),
+  coverImage: z.any().optional()
 })
 
 export default function CreateCampaignPage() {
   const [activeTab, setActiveTab] = useState("details")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -43,15 +46,52 @@ export default function CreateCampaignPage() {
       keywords: "",
       targetAudience: "",
       ctaGoal: "",
+      coverImage: undefined,
     },
+    mode: "onSubmit",
   })
 
-  function onSubmit(values) {
-    console.log(values)
-    toast({
-      title: "Campaign created!",
-      description: "Your campaign has been created successfully.",
-    })
+  async function onSubmit(values) {
+    setIsSubmitting(true)
+    try {
+      const formData = new FormData()
+      Object.entries(values).forEach(([key, value]) => {
+        if (key === 'coverImage') {
+          if (value) {
+            formData.append('coverImage', value)
+          }
+        } else if (value instanceof Date) {
+          formData.append(key, JSON.stringify(value))
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
+        }
+      })
+
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: "Campaign created!",
+          description: "Your campaign has been created successfully.",
+        })
+      } else {
+        throw new Error(data.message || 'Failed to create campaign')
+      }
+    } catch (error) {
+      console.error('Error creating campaign:', error)
+      toast({
+        variant: "destructive",
+        title: "Error creating campaign",
+        description: error.message || "Something went wrong. Please try again.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -97,12 +137,7 @@ export default function CreateCampaignPage() {
                 </TabsList>
 
                 <Form {...form}>
-                  <form onSubmit={(ev)=>{
-                    ev.preventDefault()
-                    console.log(form);
-                    console.log(onSubmit);
-                    form.handleSubmit(onSubmit);
-                  }} className="space-y-8">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <TabsContent value="details" className="space-y-6">
 
                       <FormFieldInput
@@ -185,40 +220,23 @@ export default function CreateCampaignPage() {
                     </TabsContent>
 
                     <TabsContent value="media" className="space-y-6">
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-2">Campaign Cover Image</Label>
-                        <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400 transition-colors">
-                          <ImageIcon className="h-10 w-10 text-gray-500 mb-2" />
-                          <p className="text-sm text-gray-400 mb-1">Drag and drop an image here, or click to select</p>
-                          <p className="text-xs text-gray-500">Recommended size: 1200 x 630 pixels</p>
-                          <Button variant="outline" size="sm" className="mt-4">
-                            <Upload className="h-4 w-4 mr-2" />
-                            Upload Image
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-2">Campaign Banner (Optional)</Label>
-                        <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400 transition-colors">
-                          <ImageIcon className="h-10 w-10 text-gray-500 mb-2" />
-                          <p className="text-sm text-gray-400 mb-1">
-                            Drag and drop a banner image here, or click to select
-                          </p>
-                          <p className="text-xs text-gray-500">Recommended size: 1920 x 480 pixels</p>
-                          <Button variant="outline" size="sm" className="mt-4">
-                            <Upload className="h-4 w-4 mr-2" />
-                            Upload Banner
-                          </Button>
-                        </div>
-                      </div>
+                      <FormField
+                        control={form.control}
+                        name="coverImage"
+                        render={({ field }) => (
+                          <FormImageUpload
+                            title="Campaign Cover Image"
+                            description="Upload a cover image for your campaign (recommended size: 1200 × 630 pixels)"
+                            field={field}
+                          />
+                        )}
+                      />
                     </TabsContent>
 
                     <div className="flex justify-end space-x-4 pt-4">
-                      {/* <Button variant="outline" type="button">
-                        Save as Draft
-                      </Button> */}
-                      <Button type="submit">Create Campaign</Button>
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Submitting..." : "Create Campaign"}
+                      </Button>
                     </div>
                   </form>
                 </Form>
