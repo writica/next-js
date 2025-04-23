@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model to store user information
+model User {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  name          String?
+  email         String?   @unique
+  walletAddress String    @unique 
+  bio           String?
+  image         String?
+  ownedCampaign Campaign[]  // Relation field for campaigns owned by this user
+  participatedCampaigns CampaignParticipant[] // Campaigns user is participating in
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  campaginAddress String?
+  aiDescription String?
+  keywords    String?
+  targetAudience String?
+  CtaGoal    String?
+  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, COMPLETED
+  ownerId     String   // Foreign key field referencing User
+  owner       User     @relation(fields: [ownerId], references: [id]) // Relation to User model
+  participants CampaignParticipant[] // Users participating in this campaign
+}
+
+// Join table for the many-to-many relationship between Users and Campaigns
+model CampaignParticipant {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String
+  campaignId String
+  user       User     @relation(fields: [userId], references: [id])
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([userId, campaignId]) // Ensure a user can't join the same campaign twice
+}
+

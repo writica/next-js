@@ -16,31 +16,15 @@ import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
-  title: z
-    .string()
-    .min(5, {
-      message: "Title must be at least 5 characters.",
-    })
-    .max(100, {
-      message: "Title must not exceed 100 characters.",
-    }),
-  description: z
-    .string()
-    .min(20, {
-      message: "Description must be at least 20 characters.",
-    })
-    .max(500, {
-      message: "Description must not exceed 500 characters.",
-    }),
-  category: z.string({
-    required_error: "Please select a category.",
-  }),
-  deadline: z.string({
-    required_error: "Please select a deadline.",
-  }),
-  maxParticipants: z.string().min(1, {
-    message: "Please enter maximum participants.",
-  }),
+  title: z.string().min(3, "Title must be at least 3 characters long"),
+  description: z.string().min(10, "Description must be at least 10 characters long"),
+  startDate: z.date({ required_error: "Start date is required" }),
+  endDate: z.date({ required_error: "End date is required" }),
+  campaignAddress: z.string().optional(),
+  aiDescription: z.string().optional(),
+  keywords: z.string().optional(),
+  targetAudience: z.string().optional(),
+  ctaGoal: z.string().optional(),
 })
 
 export default function CreateCampaignPage() {

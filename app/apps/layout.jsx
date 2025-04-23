@@ -18,7 +18,7 @@ const AppsLayout = ({ children }) => {
                   ]}
                   glassMorphism={true}
                  />
-                <div className="pt-14 min-h-[100vh]">
+                <div className="lg:pt-20 min-h-[100vh]">
                     {children}
                 </div>
             </main>
