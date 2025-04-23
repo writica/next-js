@@ -16,7 +16,7 @@ const AppsLayout = ({ children }) => {
                   ]}
                   glassMorphism={true}
                  />
-                <div className="min-h-[100vh]">
+                <div className="min-h-[100vh] bg-[#060606]">
                   <div className="py-8">
                     {children}
                   </div>

@@ -78,7 +78,7 @@ export const Header = ({
       } ${
         isScrolled 
           ? 'bg-black/80 shadow-lg' 
-          : glassMorphism ? 'bg-black/50' : 'bg-black'
+          : glassMorphism ? 'bg-black/10' : 'bg-black'
       } ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

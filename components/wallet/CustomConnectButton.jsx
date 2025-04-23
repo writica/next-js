@@ -37,7 +37,7 @@ export function CustomConnectButton() {
     return (
       <Button 
         onClick={openConnectModal}
-        variant="outline" 
+        variant="secondary" 
         className="flex items-center space-x-2 rounded-full"
       >
         Connect Wallet

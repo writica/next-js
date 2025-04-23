@@ -115,11 +115,12 @@ export default function CampaignsPage() {
             </Button>
           </div>
         ) : filteredCampaigns.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 backdrop-blur-sm bg-black/30 rounded-3xl border border-gray-800/20 hover:border-gray-700 transition-all duration-300">
+          <div className="flex flex-col items-center justify-center py-32 backdrop-blur-sm rounded-3xl border border-gray-800/20 hover:border-gray-700 transition-all duration-300">
             <p className="text-gray-400 mb-6 text-xl">No campaigns found</p>
             <Button 
+              variant={"secondary"}
               asChild
-              className="rounded-full hover:shadow-[0_0_15px_rgba(34,197,94,0.5)] transition-all duration-300"
+              className="rounded-full transition-all duration-300"
             >
               <Link href="/apps/create">
                 <PlusCircle className="mr-2 h-5 w-5" />
