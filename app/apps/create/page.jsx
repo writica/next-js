@@ -2,9 +2,6 @@
 import { useState } from "react"
 import { ImageIcon, Upload, Calendar, Users, Info, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,9 +11,38 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
-import FormInputText from "./components/FormInputText"
 import FormFieldInput from "./components/FormFieldInput"
 import FormImageUpload from "./components/FormImageUpload"
+
+const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
+  if(state === "media") {
+    return (<Button 
+      type="submit" 
+      disabled={isSubmitting} 
+      variant="outline"
+      className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+    >
+      {isSubmitting ? (
+        <>
+          <span className="mr-2">Creating...</span>
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+        </>
+      ) : (
+        "Create Campaign"
+      )}
+    </Button>);
+  }
+  let nextTab = state === "details" ? "requirements" : "media"
+
+  return (<Button 
+    type="button" 
+    onClick={() => setState(nextTab)} 
+    disabled={isSubmitting} 
+    variant="outline"
+    className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+  >Next</Button>);
+
+};
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -49,7 +75,8 @@ export default function CreateCampaignPage() {
       coverImage: undefined,
     },
     mode: "onSubmit",
-  })
+  });
+
 
   async function onSubmit(values) {
     setIsSubmitting(true)
@@ -246,21 +273,7 @@ export default function CreateCampaignPage() {
                     </TabsContent>
 
                     <div className="flex justify-end space-x-4 pt-4">
-                      <Button 
-                        type="submit" 
-                        disabled={isSubmitting} 
-                        variant="outline"
-                        className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <span className="mr-2">Creating...</span>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
-                          </>
-                        ) : (
-                          "Create Campaign"
-                        )}
-                      </Button>
+                      <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting} />
                     </div>
                   </form>
                 </Form>
