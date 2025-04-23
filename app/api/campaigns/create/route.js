@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
 import { join } from 'path';
 import fs from 'fs/promises';
-import { writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import sharp from 'sharp';
-import formidable from 'formidable';
 
 // This is needed for formidable to handle file uploads in Next.js App Router
 export const config = {

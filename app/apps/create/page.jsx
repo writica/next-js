@@ -67,7 +67,7 @@ export default function CreateCampaignPage() {
         }
       })
 
-      const response = await fetch('/api/campaigns', {
+      const response = await fetch('/api/campaigns/create', {
         method: 'POST',
         body: formData,
       })
