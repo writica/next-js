@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link"
 import Image from "next/image"
 import { PlusCircle, Search, Filter } from "lucide-react"
@@ -97,7 +98,7 @@ export default function CampaignsPage() {
           </div>
 
           <Button className="mt-4 md:mt-0" asChild>
-            <Link href="/campaigns/create">
+            <Link href="/apps/create">
               <PlusCircle className="mr-2 h-5 w-5" />
               Create Campaign
             </Link>
