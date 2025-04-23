@@ -1,7 +1,5 @@
 'use client';
 import Header from "@/components/Header";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
 
 const AppsLayout = ({ children }) => {
@@ -18,8 +16,10 @@ const AppsLayout = ({ children }) => {
                   ]}
                   glassMorphism={true}
                  />
-                <div className="lg:pt-20 min-h-[100vh]">
+                <div className="min-h-[100vh]">
+                  <div className="py-8">
                     {children}
+                  </div>
                 </div>
             </main>
     )

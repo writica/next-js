@@ -24,7 +24,8 @@ export function CustomConnectButton() {
     return (
       <Button 
         disabled
-        className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-full px-5 py-2 hover:opacity-90 transition-opacity"
+        variant="outline" 
+        className="flex items-center space-x-2 rounded-full"
       >
         Connecting...
       </Button>
@@ -36,7 +37,8 @@ export function CustomConnectButton() {
     return (
       <Button 
         onClick={openConnectModal}
-        className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-full px-5 py-2 hover:opacity-90 transition-opacity"
+        variant="outline" 
+        className="flex items-center space-x-2 rounded-full"
       >
         Connect Wallet
       </Button>
@@ -56,6 +58,7 @@ export function CustomConnectButton() {
       </Button>
     );
   }
+
   return (
     <div className="flex items-center gap-2">
       <Button 
