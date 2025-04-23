@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
+import FormInputText from "./components/FormInputText"
+import FormFieldInput from "./components/FormFieldInput"
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -35,9 +37,12 @@ export default function CreateCampaignPage() {
     defaultValues: {
       title: "",
       description: "",
-      category: "",
-      deadline: "",
-      maxParticipants: "10",
+      startDate: undefined,
+      endDate: undefined,
+      aiDescription: "",
+      keywords: "",
+      targetAudience: "",
+      ctaGoal: "",
     },
   })
 
@@ -92,150 +97,91 @@ export default function CreateCampaignPage() {
                 </TabsList>
 
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  <form onSubmit={(ev)=>{
+                    ev.preventDefault()
+                    console.log(form);
+                    console.log(onSubmit);
+                    form.handleSubmit(onSubmit);
+                  }} className="space-y-8">
                     <TabsContent value="details" className="space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              Campaign Title
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Info className="h-4 w-4 text-gray-500" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Choose a compelling title that attracts writers</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter a compelling title"
-                                className="bg-gray-950 border-gray-800"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="title"
+                        title="Campaign Title"
+                        required={true}
                       />
 
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Campaign Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                placeholder="Describe what your campaign is about and what kind of articles you're looking for"
-                                className="bg-gray-950 border-gray-800 min-h-[120px]"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="description"
+                        title="Campaign Description"
+                        type="textarea"
+                        rows={4}
+                        placeholder="Describe what your campaign is about and what kind of articles you're looking for"
+                        required={true}
                       />
 
-                      <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Tag className="h-4 w-4 text-cyan-400" />
-                              Category
-                            </FormLabel>
-                            {/* <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-gray-950 border-gray-800">
-                                  <SelectValue placeholder="Select a category" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="Environment">Environment</SelectItem>
-                                <SelectItem value="Technology">Technology</SelectItem>
-                                <SelectItem value="Health">Health</SelectItem>
-                                <SelectItem value="Business">Business</SelectItem>
-                                <SelectItem value="Education">Education</SelectItem>
-                                <SelectItem value="Lifestyle">Lifestyle</SelectItem>
-                                <SelectItem value="Politics">Politics</SelectItem>
-                                <SelectItem value="Culture">Culture</SelectItem>
-                              </SelectContent>
-                            </Select> */}
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="keywords"
+                        title="Keywords"
+                        placeholder="Enter keywords separated by commas"
+                        icon={<Tag className="h-4 w-4" />}
+                        description="Keywords help categorize your campaign"
+                        required={true}
                       />
                     </TabsContent>
 
                     <TabsContent value="requirements" className="space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="deadline"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-cyan-400" />
-                              Submission Deadline
-                            </FormLabel>
-                            <FormControl>
-                              <Input type="date" className="bg-gray-950 border-gray-800" {...field} />
-                            </FormControl>
-                            <FormDescription>The final date for article submissions</FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="startDate"
+                          title="Start Date"
+                          type="date"
+                          icon={<Calendar className="h-4 w-4" />}
+                          description="When the campaign starts"
+                          required={true}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="maxParticipants"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Users className="h-4 w-4 text-cyan-400" />
-                              Maximum Participants
-                            </FormLabel>
-                            <FormControl>
-                              <Input type="number" min="1" className="bg-gray-950 border-gray-800" {...field} />
-                            </FormControl>
-                            <FormDescription>Limit the number of writers who can join</FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-2">Article Requirements</Label>
-                        <Card className="bg-gray-950 border-gray-800">
-                          <CardContent className="p-4 space-y-4">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">Minimum word count</span>
-                              <Input type="number" defaultValue="500" className="w-24 bg-gray-900 border-gray-700" />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">Maximum word count</span>
-                              <Input type="number" defaultValue="2000" className="w-24 bg-gray-900 border-gray-700" />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">Require featured image</span>
-                              <div className="flex h-5 items-center">
-                                <input
-                                  id="require-image"
-                                  type="checkbox"
-                                  className="h-4 w-4 rounded border-gray-700 bg-gray-900 text-cyan-400"
-                                />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="endDate"
+                          title="End Date"
+                          type="date"
+                          icon={<Calendar className="h-4 w-4" />}
+                          description="When the campaign ends"
+                          required={true}
+                        />
                       </div>
+
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="targetAudience"
+                        title="Target Audience"
+                        icon={<Users className="h-4 w-4" />}
+                        description="Who this campaign is aimed at"
+                        placeholder="Describe your target audience"
+                      />
+
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="ctaGoal"
+                        title="Call-to-Action Goal"
+                        description="The desired outcome for readers"
+                        placeholder="What action should readers take?"
+                      />
+                      <FormFieldInput
+                        formControl={form.control}
+                        fieldName="aiDescription"
+                        title="AI-Friendly Description"
+                        type="textarea"
+                        rows={3}
+                        description="This description will be used for AI analysis"
+                        placeholder="Describe your campaign in a way that can be used for AI analysis"
+                      />
+
                     </TabsContent>
 
                     <TabsContent value="media" className="space-y-6">
@@ -269,9 +215,9 @@ export default function CreateCampaignPage() {
                     </TabsContent>
 
                     <div className="flex justify-end space-x-4 pt-4">
-                      <Button variant="outline" type="button">
+                      {/* <Button variant="outline" type="button">
                         Save as Draft
-                      </Button>
+                      </Button> */}
                       <Button type="submit">Create Campaign</Button>
                     </div>
                   </form>
