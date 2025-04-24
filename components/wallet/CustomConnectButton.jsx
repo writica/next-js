@@ -7,14 +7,14 @@ import { Avatar } from '@/components/ui/avatar';
 import { truncateAddress } from '@/lib/utils';
 import { useAccount } from 'wagmi';
 import { getChainById } from '@/lib/chains';
-import { useModal } from '@/hooks/use-modal';
+import { useDrawer } from '@/hooks/use-drawer';
 
 export function CustomConnectButton() {
   // Using RainbowKit hooks for modal management
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
-  // Use our custom hook for account modal
-  const { openAccountModal } = useModal();
+  // Use our custom hook for drawer
+  const { openDrawer } = useDrawer();
   
   // Get account information with wagmi
   const { address, chainId, connector, isConnected, isConnecting } = useAccount();
@@ -89,7 +89,7 @@ export function CustomConnectButton() {
       </Button>
       
       <Button 
-        onClick={openAccountModal} 
+        onClick={openDrawer}
         variant="outline" 
         className="flex items-center space-x-2 rounded-full"
       >

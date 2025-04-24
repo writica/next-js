@@ -8,6 +8,8 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import chainList from "@/lib/chains.js";
 import { Toaster } from "@/components/ui/toaster";
 import { ModalProvider } from "@/hooks/use-modal";
+import { DrawerProvider } from "@/hooks/use-drawer";
+import AccountDrawer from "@/components/wallet/AccountDrawer";
 
 const config = getDefaultConfig({
   autoConnect: true,
@@ -61,11 +63,14 @@ export default function Providers({ children }) {
               overlayBlur: 'small',
             })}
           >
-            <ModalProvider>
-              <AutoSwitchNetwork />
-              {children}
-              <Toaster />
-            </ModalProvider>
+            <DrawerProvider>
+              <ModalProvider>
+                <AutoSwitchNetwork />
+                {children}
+                <AccountDrawer />
+                <Toaster />
+              </ModalProvider>
+            </DrawerProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
