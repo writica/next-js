@@ -18,6 +18,46 @@ export function UserProvider({ children }) {
   const router = useRouter();
   const [isCheckingUser, setIsCheckingUser] = useState(false);
   const [userExists, setUserExists] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  /**
+   * Fetch user data from API based on wallet address
+   * @param {string} walletAddress - User's wallet address
+   * @returns {Promise<{exists: boolean, userData?: object}>} - User existence status and data
+   */
+  const fetchUserData = async (walletAddress) => {
+    if (!walletAddress) {
+      return { exists: false };
+    }
+    
+    setIsCheckingUser(true);
+    
+    try {
+      const response = await fetch(`/api/users?walletAddress=${walletAddress}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        // Update user data if available in API response
+        if (data.userData) {
+          setUserData(data.userData);
+        }
+        
+        return { exists: data.exists, userData: data.userData };
+      } else {
+        throw new Error(data.message || 'Failed to check user status');
+      }
+    } catch (error) {
+      console.error('Error checking user status:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Couldn't verify your account status. Please try again.",
+      });
+      return { exists: null };
+    } finally {
+      setIsCheckingUser(false);
+    }
+  };
 
   // Check if user exists when wallet address changes
   useEffect(() => {
@@ -25,50 +65,50 @@ export function UserProvider({ children }) {
       if (!address || !isConnected) {
         // Reset state when disconnected
         setUserExists(null);
+        setUserData(null);
         return;
       }
       
-      try {
-        setIsCheckingUser(true);
-        const response = await fetch(`/api/users?walletAddress=${address}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setUserExists(data.exists);
-          
-          // If user doesn't exist, redirect to registration
-          if (!data.exists) {
-            toast({
-              title: "Registration Required",
-              description: "Please complete your profile to continue.",
-              duration: 5000,
-            });
-            router.push('/apps/account/register');
-          }
-        } else {
-          throw new Error(data.message || 'Failed to check user status');
-        }
-      } catch (error) {
-        console.error('Error checking user status:', error);
+      const { exists } = await fetchUserData(address);
+      setUserExists(exists);
+      
+      // If user doesn't exist, redirect to registration
+      if (exists === false) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Couldn't verify your account status. Please try again.",
+          title: "Registration Required",
+          description: "Please complete your profile to continue.",
+          duration: 5000,
         });
-      } finally {
-        setIsCheckingUser(false);
+        router.push('/apps/account/register');
       }
     }
 
     checkUserExists();
   }, [address, isConnected, router]);
 
+  /**
+   * Update user existence status with fresh data from API
+   * @param {boolean} exists - New user existence status
+   */
+  const updateUserExists = async (exists) => {
+    // If manually setting to true, verify with fresh data from API
+    if (exists === true && address) {
+      const result = await fetchUserData(address);
+      setUserExists(result.exists);
+    } else {
+      // Direct update when setting to false or null
+      setUserExists(exists);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         isCheckingUser,
         userExists,
-        setUserExists, // Exposing the setter function for use in other components
+        userData,
+        setUserExists: updateUserExists, // Replace with the new function that fetches data
+        refreshUserData: () => address && fetchUserData(address), // Expose function to manually refresh user data
       }}
     >
       {children}

@@ -12,18 +12,25 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerClose, DrawerContent, DrawerOverlay, DrawerTrigger, DrawerPortal } from '@/components/ui/drawer';
 import { truncateAddress } from '@/lib/utils';
 import { useDisconnect, useAccount, useBalance } from 'wagmi';
-import { Copy, ExternalLink, LogOut, Check, Wallet, Home, Newspaper, MessageCircle, Globe, Info } from 'lucide-react';
+import { Copy, ExternalLink, LogOut, Check, Wallet, UserCog, FileText, Users } from 'lucide-react';
 import { fetchBalance } from '@/lib/web3-call';
 import { useDrawer } from '@/hooks/use-drawer';
 import { getChainById } from '@/lib/chains';
 import Link from 'next/link';
 
 export default function AccountDrawer() {
-  const { isDrawerOpen, closeDrawer } = useDrawer();
+  const { isDrawerOpen, closeDrawer, navigationLinks } = useDrawer();
   const [copied, setCopied] = useState(false);
   const [balance, setBalance] = useState(null);
   const { disconnect } = useDisconnect();
   const { address, connector, chainId, isConnected } = useAccount();
+
+  // Navigation links with icons for the drawer
+  const navLinksWithIcons = [
+    { name: 'Edit Profile', href: '/apps/account/profile', icon: <UserCog className="h-5 w-5" /> },
+    { name: 'My Campaigns', href: '/apps/account/my-campaigns', icon: <FileText className="h-5 w-5" /> },
+    { name: 'Joined Campaigns', href: '/apps/account/joined-campaigns', icon: <Users className="h-5 w-5" /> },
+  ];
 
   // Fetch the balance when address or chainId changes
   useEffect(() => {
@@ -70,15 +77,6 @@ export default function AccountDrawer() {
   // Get ENS info or displayName from account info
   const displayName = address ? truncateAddress(address) : '';
   
-  // Navigation links for the drawer
-  const navigationLinks = [
-    { name: 'Home', href: '/', icon: <Home className="h-5 w-5" /> },
-    { name: 'Campaigns', href: '/apps', icon: <Newspaper className="h-5 w-5" /> },
-    { name: 'Chat', href: '/chat', icon: <MessageCircle className="h-5 w-5" /> },
-    { name: 'Network', href: '/network', icon: <Globe className="h-5 w-5" /> },
-    { name: 'About', href: '/about', icon: <Info className="h-5 w-5" /> },
-  ];
-
   // Early returns after all hooks have been called
   if (!isConnected) return null; // If not connected, don't show the drawer
   const rightDrawerStyles = {
@@ -203,7 +201,8 @@ export default function AccountDrawer() {
             {/* Navigation links section */}
             <div className="space-y-1">
               <h4 className="text-sm font-medium text-gray-400 mb-2 px-2">Navigation</h4>
-              {navigationLinks.map((link) => (
+              {/* Use either navigationLinks from context or the local navLinksWithIcons */}
+              {(navigationLinks || navLinksWithIcons).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
