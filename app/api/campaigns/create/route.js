@@ -1,159 +1,151 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
+import { writeFile } from 'fs/promises';
 import { join } from 'path';
-import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
-import sharp from 'sharp';
-
-// This is needed for formidable to handle file uploads in Next.js App Router
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { verifyMessage } from 'viem';
 
 /**
- * Process and save an uploaded image
- * @param {Buffer} buffer - The image data buffer
- * @returns {Promise<string|null>} - The public URL of the saved image or null
- */
-async function processImage(buffer) {
-  try {
-    if (!buffer) return null;
-
-    // Create uploads directory if it doesn't exist
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
-
-    // Generate unique filename
-    const fileName = `${uuidv4()}.webp`;
-    const outputPath = join(uploadDir, fileName);
-
-    // Process image with sharp
-    await sharp(buffer)
-      .resize(1200, 630, { fit: 'cover' })
-      .webp({ quality: 80 })
-      .toFile(outputPath);
-
-    // Return the public URL
-    return `/uploads/${fileName}`;
-  } catch (error) {
-    console.error('Error processing image:', error);
-    return null;
-  }
-}
-
-/**
- * Handle POST request for campaign creation
- * @param {Request} request - The incoming request object 
+ * Handle POST request for creating a new campaign
+ * @param {Request} request - The incoming request object
  */
 export async function POST(request) {
   try {
-    // Clone the request to avoid consuming it
-    const clonedRequest = request.clone();
-    
-    // Get the content type to determine how to parse the body
-    const contentType = request.headers.get('content-type') || '';
-    
-    // Initialize variables
-    let formData;
-    let coverImagePath = null;
-    let fieldValues = {};
-    
-    // Handle multipart form data (for file uploads)
-    if (contentType.includes('multipart/form-data')) {
-      formData = await clonedRequest.formData();
-      
-      // Extract file and convert it to buffer if it exists
-      const coverImageFile = formData.get('coverImage');
-      if (coverImageFile && coverImageFile instanceof File) {
-        const buffer = Buffer.from(await coverImageFile.arrayBuffer());
-        coverImagePath = await processImage(buffer);
+    // Parse the form data from the request
+    const formData = await request.formData();
+
+    // Extract campaign data and validation fields
+    const title = formData.get('title');
+    const description = formData.get('description');
+    const aiDescription = formData.get('aiDescription');
+    const keywords = formData.get('keywords');
+    const targetAudience = formData.get('targetAudience');
+    const CtaGoal = formData.get('CtaGoal');
+    const startDateStr = formData.get('startDate');
+    const endDateStr = formData.get('endDate');
+    const walletAddress = formData.get('walletAddress');
+    const signature = formData.get('signature');
+    const signedMessage = formData.get('signedMessage');
+    const coverImage = formData.get('coverImage');
+
+    // Validate required fields
+    if (!title || !description || !startDateStr || !endDateStr || !walletAddress) {
+      return NextResponse.json({
+        success: false,
+        message: 'Missing required fields'
+      }, { status: 400 });
+    }
+
+    // Verify the message signature
+    try {
+      if (!signature || !signedMessage) {
+        return NextResponse.json({
+          success: false,
+          message: 'Signature verification failed: Missing signature data'
+        }, { status: 400 });
       }
-      
-      // Extract other form fields
-      formData.forEach((value, key) => {
-        if (key !== 'coverImage') {
-          try {
-            // Try to parse JSON values (for dates and objects)
-            fieldValues[key] = JSON.parse(value);
-          } catch {
-            // If not valid JSON, use as-is
-            fieldValues[key] = value;
-          }
-        }
+
+      const isValid = await verifyMessage({
+        address: walletAddress,
+        message: signedMessage,
+        signature,
       });
-    } else {
-      // Handle regular JSON if not multipart
-      const jsonData = await request.json();
-      fieldValues = jsonData;
+
+      if (!isValid) {
+        return NextResponse.json({
+          success: false,
+          message: 'Signature verification failed: Invalid signature'
+        }, { status: 400 });
+      }
+    } catch (error) {
+      return NextResponse.json({
+        success: false,
+        message: `Signature verification error: ${error.message}`
+      }, { status: 400 });
     }
-    
-    // Log the received data
-    console.log("Campaign data received:", fieldValues);
-    
-    // Get or create a user (for demonstration purposes - in production you'd use auth)
-    let user = await prisma.user.findFirst();
-    
-    // If no user exists, create a demo user
+
+    // Find the user by wallet address
+    const user = await prisma.user.findUnique({
+      where: { walletAddress }
+    });
+
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: "Demo User",
-          email: "demo@example.com",
-          walletAddress: "0x1234567890123456789012345678901234567890",
-        },
-      });
-      console.log("Created demo user:", user.id);
+      return NextResponse.json({
+        success: false,
+        message: 'User not found'
+      }, { status: 404 });
     }
-    
-    // Prepare the data structure for database insertion
-    const dbCampaignData = {
-      title: fieldValues.title,
-      description: fieldValues.description,
-      startDate: new Date(fieldValues.startDate),
-      endDate: new Date(fieldValues.endDate),
-      keywords: fieldValues.keywords,
-      targetAudience: fieldValues.targetAudience || null,
-      aiDescription: fieldValues.aiDescription || null,
-      CtaGoal: fieldValues.ctaGoal || null,
-      ownerId: user.id, // Use the existing or newly created user ID
-      campaginAddress: fieldValues.campaignAddress || null,
-      coverImage: coverImagePath, // Add the image path
-    };
-    
-    // Save to database with Prisma
-    const savedCampaign = await prisma.campaign.create({
-      data: dbCampaignData,
-      include: {
+
+    // Parse dates
+    let startDate, endDate;
+    try {
+      // Handle ISO string dates sent from frontend
+      startDate = new Date(startDateStr);
+      endDate = new Date(endDateStr);
+
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error('Invalid date format');
+      }
+    } catch (error) {
+      console.error('Date parsing error:', startDateStr, endDateStr, error);
+      return NextResponse.json({
+        success: false,
+        message: `Invalid date format: ${error.message}`
+      }, { status: 400 });
+    }
+
+    // Handle image upload
+    let imagePath = null;
+    if (coverImage && coverImage.size > 0) {
+      const fileExtension = coverImage.type.split('/')[1];
+      const fileName = `${uuidv4()}.${fileExtension}`;
+      const uploadDir = join(process.cwd(), 'public', 'uploads');
+      
+      // Save the file
+      const arrayBuffer = await coverImage.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      await writeFile(`${uploadDir}/${fileName}`, buffer);
+      
+      imagePath = `/uploads/${fileName}`;
+    }
+
+    // Create campaign in database
+    const campaign = await prisma.campaign.create({
+      data: {
+        title,
+        description,
+        startDate,
+        endDate,
+        aiDescription,
+        keywords,
+        targetAudience,
+        CtaGoal,
+        coverImage: imagePath,
+        ownerId: user.id
+      }
+    });
+
+    // Return the created campaign with owner information
+    return NextResponse.json({
+      success: true,
+      message: 'Campaign created successfully',
+      campaign: {
+        ...campaign,
         owner: {
-          select: {
-            id: true,
-            name: true,
-            walletAddress: true,
-          },
-        },
-      },
+          id: user.id,
+          username: user.username,
+          walletAddress: user.walletAddress
+        }
+      }
     });
     
-    // Return a successful response
-    return NextResponse.json({ 
-      success: true, 
-      message: "Campaign created successfully",
-      campaign: savedCampaign
-    }, { status: 201 });
   } catch (error) {
     console.error("Error creating campaign:", error);
     
-    // Return an error response
-    return NextResponse.json({ 
-      success: false, 
-      message: "Failed to create campaign", 
-      error: error.message 
+    return NextResponse.json({
+      success: false,
+      message: 'Failed to create campaign',
+      error: error.message
     }, { status: 500 });
   }
 }

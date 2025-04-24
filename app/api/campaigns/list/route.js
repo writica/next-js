@@ -36,7 +36,7 @@ export async function GET(request) {
         owner: {
           select: {
             id: true,
-            name: true,
+            username: true,
             walletAddress: true,
           },
         },

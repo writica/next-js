@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { UserIcon, Mail, FileText, AlertCircle } from "lucide-react"
+import { UserIcon, FileText, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormField } from "@/components/ui/form"
@@ -17,8 +17,7 @@ import { useRouter } from "next/navigation"
 import { useUser } from "@/hooks/use-user"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long"),
-  email: z.string().email("Please enter a valid email address"),
+  username: z.string().min(2, "Username must be at least 2 characters long"),
   bio: z.string().optional(),
   image: z.any().optional()
 })
@@ -36,8 +35,7 @@ export default function ProfilePage() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      username: "",
       bio: "",
       image: undefined,
     },
@@ -56,8 +54,7 @@ export default function ProfilePage() {
           if (data.success && data.exists) {
             // Populate form with existing user data
             form.reset({
-              name: data.user.name || "",
-              email: data.user.email || "",
+              username: data.user.username || "",
               bio: data.user.bio || "",
               // Don't set image here as it's a file input
             })
@@ -126,7 +123,7 @@ export default function ProfilePage() {
     setIsSubmitting(true)
     try {
       // Sign message to confirm identity
-      const messageToSign = `Update profile with email: ${values.email} and wallet: ${address}`
+      const messageToSign = `Update profile with username: ${values.username} and wallet: ${address}`
       const signature = await new Promise((resolve, reject) => {
         signMessage({ message: messageToSign }, { 
           onSuccess: (data) => resolve(data),
@@ -264,21 +261,11 @@ export default function ProfilePage() {
                       <div className="space-y-6 animate-fade-in">
                         <FormFieldInput
                           formControl={form.control}
-                          fieldName="name"
-                          title="Full Name"
+                          fieldName="username"
+                          title="Username"
                           required={true}
-                          placeholder="Enter your name"
+                          placeholder="Enter your username"
                           icon={<UserIcon className="h-4 w-4" />}
-                        />
-
-                        <FormFieldInput
-                          formControl={form.control}
-                          fieldName="email"
-                          title="Email Address"
-                          type="email"
-                          placeholder="Enter your email address"
-                          icon={<Mail className="h-4 w-4" />}
-                          required={true}
                         />
 
                         <FormFieldInput

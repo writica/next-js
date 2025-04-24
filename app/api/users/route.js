@@ -44,8 +44,7 @@ export async function POST(request) {
     const formData = await request.formData();
     
     // Extract form data
-    const name = formData.get('name');
-    const email = formData.get('email');
+    const username = formData.get('username');
     const bio = formData.get('bio');
     const walletAddress = formData.get('walletAddress');
     const signature = formData.get('signature');
@@ -101,20 +100,6 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Check if email is already taken
-    if (email) {
-      const existingUserByEmail = await prisma.user.findFirst({
-        where: { email }
-      });
-
-      if (existingUserByEmail) {
-        return NextResponse.json({ 
-          success: false, 
-          message: 'Email address is already in use'
-        }, { status: 400 });
-      }
-    }
-
     let imagePath = null;
     
     // Process image upload if provided
@@ -134,8 +119,7 @@ export async function POST(request) {
     // Create the user
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        username,
         bio,
         walletAddress,
         image: imagePath
@@ -151,12 +135,7 @@ export async function POST(request) {
     console.error('Error creating user:', error);
     
     // Provide more detailed error messages
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return NextResponse.json({
-        success: false,
-        message: 'This email is already registered'
-      }, { status: 400 });
-    } else if (error.code === 'P2002' && error.meta?.target?.includes('walletAddress')) {
+    if (error.code === 'P2002' && error.meta?.target?.includes('walletAddress')) {
       return NextResponse.json({
         success: false,
         message: 'This wallet address is already registered'
@@ -176,8 +155,7 @@ export async function PUT(request) {
     const formData = await request.formData();
     
     // Extract form data
-    const name = formData.get('name');
-    const email = formData.get('email');
+    const username = formData.get('username');
     const bio = formData.get('bio');
     const walletAddress = formData.get('walletAddress');
     const signature = formData.get('signature');
@@ -233,25 +211,6 @@ export async function PUT(request) {
       }, { status: 404 });
     }
 
-    // Check if email is already taken by another user
-    if (email && email !== existingUser.email) {
-      const existingUserByEmail = await prisma.user.findFirst({
-        where: { 
-          email,
-          NOT: {
-            id: existingUser.id
-          }
-        }
-      });
-
-      if (existingUserByEmail) {
-        return NextResponse.json({ 
-          success: false, 
-          message: 'Email address is already in use by another account'
-        }, { status: 400 });
-      }
-    }
-
     let imagePath = existingUser.image;
     
     // Process image upload if provided
@@ -272,8 +231,7 @@ export async function PUT(request) {
     const updatedUser = await prisma.user.update({
       where: { id: existingUser.id },
       data: {
-        name: name || existingUser.name,
-        email: email || existingUser.email,
+        username: username || existingUser.username,
         bio: bio !== undefined ? bio : existingUser.bio,
         image: imagePath
       }
@@ -286,14 +244,6 @@ export async function PUT(request) {
     });
   } catch (error) {
     console.error('Error updating user:', error);
-    
-    // Provide more detailed error messages
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return NextResponse.json({
-        success: false,
-        message: 'This email is already registered'
-      }, { status: 400 });
-    }
     
     return NextResponse.json({ 
       success: false, 

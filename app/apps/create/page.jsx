@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import FormFieldInput from "@/components/FormFieldInput"
 import FormImageUpload from "@/components/FormImageUpload"
-import { useAccount } from "wagmi"
+import { useAccount, useSignMessage } from "wagmi"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
@@ -67,6 +67,7 @@ export default function CreateCampaignPage() {
   const { address, isConnected } = useAccount()
   const { userExists, isCheckingUser } = useUser()
   const router = useRouter()
+  const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage()
 
   // Redirect unregistered users to the registration page
   useEffect(() => {
@@ -109,21 +110,35 @@ export default function CreateCampaignPage() {
     
     setIsSubmitting(true)
     try {
+      // Step 1: Sign the campaign creation message
+      const messageToSign = `Create campaign: ${values.title} by wallet: ${address}`
+      const signature = await new Promise((resolve, reject) => {
+        signMessage({ message: messageToSign }, { 
+          onSuccess: (data) => resolve(data),
+          onError: (error) => reject(error)
+        })
+      })
+
       const formData = new FormData()
       Object.entries(values).forEach(([key, value]) => {
         if (key === 'coverImage') {
           if (value) {
             formData.append('coverImage', value)
           }
-        } else if (value instanceof Date) {
-          formData.append(key, JSON.stringify(value))
+        } else if (key === 'startDate' || key === 'endDate') {
+          // Format dates as ISO strings for consistent parsing
+          if (value instanceof Date) {
+            formData.append(key, value.toISOString())
+          }
         } else if (value !== undefined && value !== null) {
           formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
         }
       })
 
-      // Add wallet address to form data
+      // Add wallet address and signature to form data
       formData.append('walletAddress', address)
+      formData.append('signature', signature)
+      formData.append('signedMessage', messageToSign)
 
       const response = await fetch('/api/campaigns/create', {
         method: 'POST',
@@ -137,6 +152,8 @@ export default function CreateCampaignPage() {
           title: "Campaign created!",
           description: "Your campaign has been created successfully.",
         })
+        // Navigate to the campaigns list after successful creation
+        router.push('/apps')
       } else {
         throw new Error(data.message || 'Failed to create campaign')
       }
@@ -258,6 +275,14 @@ export default function CreateCampaignPage() {
                           description="Keywords help categorize your campaign"
                           required={true}
                         />
+                        
+                        {signError && (
+                          <div className="rounded-lg bg-red-900/20 p-3 border border-red-800/30">
+                            <p className="text-sm text-red-400">
+                              Error signing message: {signError.message}
+                            </p>
+                          </div>
+                        )}
                       </TabsContent>
 
                       <TabsContent value="requirements" className="space-y-6 animate-fade-in">
@@ -323,10 +348,21 @@ export default function CreateCampaignPage() {
                             />
                           )}
                         />
+                        
+                        <div className="pt-2">
+                          <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 p-3 border border-blue-800/30">
+                            <div className="flex-shrink-0">
+                              <Users className="h-5 w-5 text-blue-400" />
+                            </div>
+                            <div className="text-sm text-blue-300">
+                              <strong>Connected Wallet:</strong> {address}
+                            </div>
+                          </div>
+                        </div>
                       </TabsContent>
 
                       <div className="flex justify-end space-x-4 pt-4">
-                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting} />
+                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
                       </div>
                     </form>
                   </Form>
