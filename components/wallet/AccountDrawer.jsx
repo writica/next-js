@@ -15,11 +15,13 @@ import { useDisconnect, useAccount, useBalance } from 'wagmi';
 import { Copy, ExternalLink, LogOut, Check, Wallet, UserCog, FileText, Users } from 'lucide-react';
 import { fetchBalance } from '@/lib/web3-call';
 import { useDrawer } from '@/hooks/use-drawer';
+import { useUser } from '@/hooks/use-user';
 import { getChainById } from '@/lib/chains';
 import Link from 'next/link';
 
 export default function AccountDrawer() {
   const { isDrawerOpen, closeDrawer, navigationLinks } = useDrawer();
+  const { userData } = useUser();
   const [copied, setCopied] = useState(false);
   const [balance, setBalance] = useState(null);
   const { disconnect } = useDisconnect();
@@ -75,7 +77,7 @@ export default function AccountDrawer() {
   };
 
   // Get ENS info or displayName from account info
-  const displayName = address ? truncateAddress(address) : '';
+  const displayName = userData?.username || userData?.name || (address ? truncateAddress(address) : '');
   
   // Early returns after all hooks have been called
   if (!isConnected) return null; // If not connected, don't show the drawer
@@ -100,7 +102,7 @@ export default function AccountDrawer() {
             right: '0px',
             transition: 'right 0.3s ease-in-out',
           }}
-          title="Account Management"
+          title=""
         >
           <div className="px-4 py-5 overflow-y-auto h-full">
             <div className="flex justify-between items-center mb-6">
@@ -115,8 +117,16 @@ export default function AccountDrawer() {
             {/* Account section */}
             <Card className="bg-[#060606]/60 border-gray-800/40 backdrop-blur-lg shadow-lg mb-6">
               <CardHeader className="flex flex-col items-center pb-2">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mb-3">
-                  <Wallet className="h-8 w-8" />
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mb-3 overflow-hidden">
+                  {userData?.image ? (
+                    <img 
+                      src={userData.image} 
+                      alt={userData?.username || userData?.name || "User"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Wallet className="h-8 w-8" />
+                  )}
                 </div>
                 
                 <CardTitle className="text-xl mb-0.5 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
