@@ -297,9 +297,10 @@ export default function ProfilePage() {
                           render={({ field }) => (
                             <FormImageUpload
                               title="Profile Picture"
-                              description="Upload a new profile picture (recommended: square, min 500×500 pixels)"
+                              description="Upload a new profile picture"
                               field={field}
                               currentImage={userData?.image ? userData.image : undefined}
+                              isSquare={true}
                             />
                           )}
                         />

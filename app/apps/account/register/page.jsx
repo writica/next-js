@@ -238,6 +238,7 @@ export default function RegisterPage() {
                               title="Profile Picture"
                               description="Upload a profile picture (recommended: square, min 500×500 pixels)"
                               field={field}
+                              isSquare={true}
                             />
                           )}
                         />

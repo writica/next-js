@@ -10,7 +10,8 @@ export default function FormImageUpload({
   field, 
   required = false,
   accept = "image/*",
-  currentImage = null
+  currentImage = null,
+  isSquare = false
 }) {
   const [preview, setPreview] = useState(null)
   const fileInputRef = useRef(null)
@@ -87,11 +88,11 @@ export default function FormImageUpload({
           <div className="p-8 flex flex-col items-center justify-center cursor-pointer">
             {preview ? (
               <div className="w-full flex flex-col items-center">
-                <div className="w-full max-h-48 overflow-hidden rounded-lg mb-4 transition-transform duration-500 hover:scale-105">
+                <div className={`overflow-hidden rounded-lg mb-4 transition-transform duration-500 hover:scale-105 ${isSquare ? 'aspect-square w-40 h-40' : 'w-full max-h-48'}`}>
                   <img 
                     src={typeof preview === 'string' && preview.startsWith('/') ? preview : preview}
                     alt="Preview" 
-                    className="w-full h-auto object-cover shadow-md"
+                    className={`shadow-md ${isSquare ? 'w-full h-full object-cover' : 'w-full h-auto object-cover'}`}
                   />
                 </div>
                 <p className="text-sm text-cyan-400/80 mb-3">
@@ -114,9 +115,15 @@ export default function FormImageUpload({
               </div>
             ) : (
               <>
-                <ImageIcon className="h-12 w-12 text-gray-600 mb-4 opacity-50" />
+                <div className={`mb-4 flex items-center justify-center ${isSquare ? 'w-32 h-32 border-2 border-dashed border-gray-700 rounded-lg' : ''}`}>
+                  <ImageIcon className="h-12 w-12 text-gray-600 opacity-50" />
+                </div>
                 <p className="text-sm text-gray-400 mb-2 text-center">Drag and drop an image here, or click to select</p>
-                <p className="text-xs text-gray-500 mb-4 text-center">Recommended size: 1200 x 630 pixels</p>
+                <p className="text-xs text-gray-500 mb-4 text-center">
+                  {isSquare 
+                    ? "Recommended: square image, min 500×500 pixels" 
+                    : "Recommended size: 1200 x 630 pixels"}
+                </p>
                 <Button 
                   variant="outline" 
                   size="sm" 
