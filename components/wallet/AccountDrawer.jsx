@@ -100,6 +100,7 @@ export default function AccountDrawer() {
             right: '0px',
             transition: 'right 0.3s ease-in-out',
           }}
+          title="Account Management"
         >
           <div className="px-4 py-5 overflow-y-auto h-full">
             <div className="flex justify-between items-center mb-6">
