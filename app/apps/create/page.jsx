@@ -11,8 +11,8 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
-import FormFieldInput from "./components/FormFieldInput"
-import FormImageUpload from "./components/FormImageUpload"
+import FormFieldInput from "@/components/FormFieldInput"
+import FormImageUpload from "@/components/FormImageUpload"
 
 const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
   if(state === "media") {

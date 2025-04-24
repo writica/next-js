@@ -55,7 +55,7 @@
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.jsx"
-  ],
+, "components/FormFieldInput.jsx", "components/FormImageUpload.jsx", "components/FormInputText.jsx"  ],
   "exclude": [
     "node_modules"
   ]
