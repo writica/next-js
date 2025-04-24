@@ -36,7 +36,9 @@ const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
       )}
     </Button>);
   }
-  let nextTab = state === "details" ? "requirements" : "media"
+  
+  // Determine the next tab based on current state
+  const nextTab = state === "details" ? "requirements" : state === "requirements" ? "media" : "media";
 
   return (<Button 
     type="button" 
