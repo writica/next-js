@@ -13,6 +13,8 @@ import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import FormFieldInput from "@/components/FormFieldInput"
 import FormImageUpload from "@/components/FormImageUpload"
+import { useAccount } from "wagmi"
+import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 
 const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
   if(state === "media") {
@@ -60,6 +62,7 @@ const formSchema = z.object({
 export default function CreateCampaignPage() {
   const [activeTab, setActiveTab] = useState("details")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { address, isConnected } = useAccount()
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -79,6 +82,15 @@ export default function CreateCampaignPage() {
 
 
   async function onSubmit(values) {
+    if (!isConnected || !address) {
+      toast({
+        variant: "destructive",
+        title: "Wallet not connected",
+        description: "Please connect your wallet to create a campaign.",
+      })
+      return
+    }
+    
     setIsSubmitting(true)
     try {
       const formData = new FormData()
@@ -93,6 +105,9 @@ export default function CreateCampaignPage() {
           formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
         }
       })
+
+      // Add wallet address to form data
+      formData.append('walletAddress', address)
 
       const response = await fetch('/api/campaigns/create', {
         method: 'POST',
@@ -153,131 +168,138 @@ export default function CreateCampaignPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8 bg-[#060606]/80 p-1 rounded-full">
-                  <TabsTrigger
-                    value="details"
-                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
-                  >
-                    Basic Details
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="requirements"
-                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
-                  >
-                    Requirements
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="media"
-                    className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
-                  >
-                    Media
-                  </TabsTrigger>
-                </TabsList>
+              {!isConnected ? (
+                <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                  <p className="text-gray-400 mb-2">Please connect your wallet to create a campaign</p>
+                  <CustomConnectButton />
+                </div>
+              ) : (
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 mb-8 bg-[#060606]/80 p-1 rounded-full">
+                    <TabsTrigger
+                      value="details"
+                      className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
+                    >
+                      Basic Details
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="requirements"
+                      className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
+                    >
+                      Requirements
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="media"
+                      className="rounded-full data-[state=active]:bg-[#121212] data-[state=active]:text-cyan-400 transition-all duration-300"
+                    >
+                      Media
+                    </TabsTrigger>
+                  </TabsList>
 
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <TabsContent value="details" className="space-y-6 animate-fade-in">
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="title"
-                        title="Campaign Title"
-                        required={true}
-                        placeholder="Enter your campaign title"
-                      />
-
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="description"
-                        title="Campaign Description"
-                        type="textarea"
-                        rows={4}
-                        placeholder="Describe what your campaign is about and what kind of articles you're looking for"
-                        required={true}
-                      />
-
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="keywords"
-                        title="Keywords"
-                        placeholder="Enter keywords separated by commas"
-                        icon={<Tag className="h-4 w-4" />}
-                        description="Keywords help categorize your campaign"
-                        required={true}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="requirements" className="space-y-6 animate-fade-in">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                      <TabsContent value="details" className="space-y-6 animate-fade-in">
                         <FormFieldInput
                           formControl={form.control}
-                          fieldName="startDate"
-                          title="Start Date"
-                          type="date"
-                          icon={<Calendar className="h-4 w-4" />}
-                          description="When the campaign starts"
+                          fieldName="title"
+                          title="Campaign Title"
+                          required={true}
+                          placeholder="Enter your campaign title"
+                        />
+
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="description"
+                          title="Campaign Description"
+                          type="textarea"
+                          rows={4}
+                          placeholder="Describe what your campaign is about and what kind of articles you're looking for"
                           required={true}
                         />
 
                         <FormFieldInput
                           formControl={form.control}
-                          fieldName="endDate"
-                          title="End Date"
-                          type="date"
-                          icon={<Calendar className="h-4 w-4" />}
-                          description="When the campaign ends"
+                          fieldName="keywords"
+                          title="Keywords"
+                          placeholder="Enter keywords separated by commas"
+                          icon={<Tag className="h-4 w-4" />}
+                          description="Keywords help categorize your campaign"
                           required={true}
                         />
-                      </div>
+                      </TabsContent>
 
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="targetAudience"
-                        title="Target Audience"
-                        icon={<Users className="h-4 w-4" />}
-                        description="Who this campaign is aimed at"
-                        placeholder="Describe your target audience"
-                      />
-
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="ctaGoal"
-                        title="Call-to-Action Goal"
-                        description="The desired outcome for readers"
-                        placeholder="What action should readers take?"
-                      />
-                      
-                      <FormFieldInput
-                        formControl={form.control}
-                        fieldName="aiDescription"
-                        title="AI-Friendly Description"
-                        type="textarea"
-                        rows={3}
-                        description="This description will be used for AI analysis"
-                        placeholder="Describe your campaign in a way that can be used for AI analysis"
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="media" className="space-y-6 animate-fade-in">
-                      <FormField
-                        control={form.control}
-                        name="coverImage"
-                        render={({ field }) => (
-                          <FormImageUpload
-                            title="Campaign Cover Image"
-                            description="Upload a cover image for your campaign (recommended size: 1200 × 630 pixels)"
-                            field={field}
+                      <TabsContent value="requirements" className="space-y-6 animate-fade-in">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormFieldInput
+                            formControl={form.control}
+                            fieldName="startDate"
+                            title="Start Date"
+                            type="date"
+                            icon={<Calendar className="h-4 w-4" />}
+                            description="When the campaign starts"
+                            required={true}
                           />
-                        )}
-                      />
-                    </TabsContent>
 
-                    <div className="flex justify-end space-x-4 pt-4">
-                      <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting} />
-                    </div>
-                  </form>
-                </Form>
-              </Tabs>
+                          <FormFieldInput
+                            formControl={form.control}
+                            fieldName="endDate"
+                            title="End Date"
+                            type="date"
+                            icon={<Calendar className="h-4 w-4" />}
+                            description="When the campaign ends"
+                            required={true}
+                          />
+                        </div>
+
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="targetAudience"
+                          title="Target Audience"
+                          icon={<Users className="h-4 w-4" />}
+                          description="Who this campaign is aimed at"
+                          placeholder="Describe your target audience"
+                        />
+
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="ctaGoal"
+                          title="Call-to-Action Goal"
+                          description="The desired outcome for readers"
+                          placeholder="What action should readers take?"
+                        />
+                        
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="aiDescription"
+                          title="AI-Friendly Description"
+                          type="textarea"
+                          rows={3}
+                          description="This description will be used for AI analysis"
+                          placeholder="Describe your campaign in a way that can be used for AI analysis"
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="media" className="space-y-6 animate-fade-in">
+                        <FormField
+                          control={form.control}
+                          name="coverImage"
+                          render={({ field }) => (
+                            <FormImageUpload
+                              title="Campaign Cover Image"
+                              description="Upload a cover image for your campaign (recommended size: 1200 × 630 pixels)"
+                              field={field}
+                            />
+                          )}
+                        />
+                      </TabsContent>
+
+                      <div className="flex justify-end space-x-4 pt-4">
+                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting} />
+                      </div>
+                    </form>
+                  </Form>
+                </Tabs>
+              )}
             </CardContent>
           </Card>
         </motion.div>

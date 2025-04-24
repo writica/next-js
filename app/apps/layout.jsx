@@ -8,8 +8,9 @@ const AppsLayout = ({ children }) => {
                 <Header
                   logo="/your-logo.svg"
                   logoAlt="Your Company"
+                  logoHref="/apps"
                   menuItems={[
-                    { label: "Campaign", href: "/" },
+
                   ]}
                   rightItems={[
                     <CustomConnectButton key="connect" />,
