@@ -38,11 +38,11 @@ export function UserProvider({ children }) {
       
       if (data.success) {
         // Update user data if available in API response
-        if (data.userData) {
-          setUserData(data.userData);
+        if (data.user) {
+          setUserData(data.user);
         }
         
-        return { exists: data.exists, userData: data.userData };
+        return { exists: data.exists, userData: data.user };
       } else {
         throw new Error(data.message || 'Failed to check user status');
       }
@@ -107,8 +107,9 @@ export function UserProvider({ children }) {
         isCheckingUser,
         userExists,
         userData,
-        setUserExists: updateUserExists, // Replace with the new function that fetches data
-        refreshUserData: () => address && fetchUserData(address), // Expose function to manually refresh user data
+        setUserData, // Expose setUserData function
+        setUserExists: updateUserExists,
+        refreshUserData: () => address && fetchUserData(address),
       }}
     >
       {children}

@@ -169,3 +169,135 @@ export async function POST(request) {
     }, { status: 500 });
   }
 }
+
+// PUT request to update an existing user
+export async function PUT(request) {
+  try {
+    const formData = await request.formData();
+    
+    // Extract form data
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const bio = formData.get('bio');
+    const walletAddress = formData.get('walletAddress');
+    const signature = formData.get('signature');
+    const signedMessage = formData.get('signedMessage');
+    const image = formData.get('image');
+    
+    // Validate required fields
+    if (!walletAddress) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Wallet address is required'
+      }, { status: 400 });
+    }
+
+    if (!signature || !signedMessage) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Signature verification failed: Missing signature data'
+      }, { status: 400 });
+    }
+    
+    // Verify the signature using viem
+    try {
+      const isValid = await verifyMessage({
+        address: walletAddress,
+        message: signedMessage,
+        signature: signature,
+      });
+      
+      if (!isValid) {
+        return NextResponse.json({ 
+          success: false, 
+          message: 'Signature verification failed: Invalid signature'
+        }, { status: 400 });
+      }
+    } catch (error) {
+      console.error('Signature verification error:', error);
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Signature verification failed: ' + error.message
+      }, { status: 400 });
+    }
+
+    // Find the existing user
+    const existingUser = await prisma.user.findUnique({
+      where: { walletAddress }
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'User not found'
+      }, { status: 404 });
+    }
+
+    // Check if email is already taken by another user
+    if (email && email !== existingUser.email) {
+      const existingUserByEmail = await prisma.user.findFirst({
+        where: { 
+          email,
+          NOT: {
+            id: existingUser.id
+          }
+        }
+      });
+
+      if (existingUserByEmail) {
+        return NextResponse.json({ 
+          success: false, 
+          message: 'Email address is already in use by another account'
+        }, { status: 400 });
+      }
+    }
+
+    let imagePath = existingUser.image;
+    
+    // Process image upload if provided
+    if (image && typeof image !== 'string' && image.size > 0) {
+      const fileExtension = image.type.split('/')[1];
+      const fileName = `${uuidv4()}.${fileExtension}`;
+      const uploadDir = join(process.cwd(), 'public', 'uploads');
+      
+      // Save the file
+      const arrayBuffer = await image.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      await writeFile(`${uploadDir}/${fileName}`, buffer);
+      
+      imagePath = `/uploads/${fileName}`;
+    }
+
+    // Update the user
+    const updatedUser = await prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        name: name || existingUser.name,
+        email: email || existingUser.email,
+        bio: bio !== undefined ? bio : existingUser.bio,
+        image: imagePath
+      }
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'User profile updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    
+    // Provide more detailed error messages
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+      return NextResponse.json({
+        success: false,
+        message: 'This email is already registered'
+      }, { status: 400 });
+    }
+    
+    return NextResponse.json({ 
+      success: false, 
+      message: 'An error occurred while updating the user: ' + error.message
+    }, { status: 500 });
+  }
+}

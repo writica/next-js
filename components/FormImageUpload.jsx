@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { ImageIcon, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -9,10 +9,18 @@ export default function FormImageUpload({
   description, 
   field, 
   required = false,
-  accept = "image/*"
+  accept = "image/*",
+  currentImage = null
 }) {
   const [preview, setPreview] = useState(null)
   const fileInputRef = useRef(null)
+
+  // Set initial preview if an image already exists
+  useEffect(() => {
+    if (currentImage) {
+      setPreview(currentImage)
+    }
+  }, [currentImage])
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -81,12 +89,14 @@ export default function FormImageUpload({
               <div className="w-full flex flex-col items-center">
                 <div className="w-full max-h-48 overflow-hidden rounded-lg mb-4 transition-transform duration-500 hover:scale-105">
                   <img 
-                    src={preview} 
+                    src={typeof preview === 'string' && preview.startsWith('/') ? preview : preview}
                     alt="Preview" 
                     className="w-full h-auto object-cover shadow-md"
                   />
                 </div>
-                <p className="text-sm text-cyan-400/80 mb-3">Image selected</p>
+                <p className="text-sm text-cyan-400/80 mb-3">
+                  {typeof field.value === 'object' ? 'New image selected' : 'Current image'}
+                </p>
                 <Button 
                   variant="outline" 
                   size="sm" 
