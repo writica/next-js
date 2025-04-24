@@ -9,63 +9,22 @@ import { useAccount } from 'wagmi';
 import { getChainById } from '@/lib/chains';
 import { useDrawer } from '@/hooks/use-drawer';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { toast } from '@/hooks/use-toast';
+import { useUser } from '@/hooks/use-user';
 
 export function CustomConnectButton() {
   // Using RainbowKit hooks for modal management
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
-  // Use our custom hook for drawer
+  // Use our custom drawer hook
   const { openDrawer } = useDrawer();
+  // Get user context from our new hook
+  const { isCheckingUser, userExists } = useUser();
   
   // Get account information with wagmi
   const { address, chainId, connector, isConnected, isConnecting } = useAccount();
   const router = useRouter();
-  const [isCheckingUser, setIsCheckingUser] = useState(false);
-  const [userExists, setUserExists] = useState(null);
 
-  // Check if user exists when wallet address changes
-  useEffect(() => {
-    async function checkUserExists() {
-      if (!address || !isConnected) return;
-      
-      try {
-        setIsCheckingUser(true);
-        const response = await fetch(`/api/users?walletAddress=${address}`);
-        const data = await response.json();
-        
-        if (data.success) {
-          setUserExists(data.exists);
-          
-          // If user doesn't exist, redirect to registration
-          if (!data.exists) {
-            toast({
-              title: "Registration Required",
-              description: "Please complete your profile to continue.",
-              duration: 5000,
-            });
-            router.push('/apps/account/register');
-          }
-        } else {
-          throw new Error(data.message || 'Failed to check user status');
-        }
-      } catch (error) {
-        console.error('Error checking user status:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Couldn't verify your account status. Please try again.",
-        });
-      } finally {
-        setIsCheckingUser(false);
-      }
-    }
-
-    checkUserExists();
-  }, [address, isConnected, router]);
-
-  // If still connecting or not mounted, show a disabled connect button
+  // If still connecting or checking user, show a disabled connect button
   if (isConnecting || isCheckingUser) {
     return (
       <Button 

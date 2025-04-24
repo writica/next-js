@@ -14,6 +14,7 @@ import FormImageUpload from "@/components/FormImageUpload"
 import { useAccount, useSignMessage } from "wagmi"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/use-user"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -29,6 +30,8 @@ export default function RegisterPage() {
   const { address, isConnected } = useAccount()
   const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage()
   const router = useRouter()
+  // Import the user context to update user state after registration
+  const { setUserExists } = useUser()
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -108,6 +111,8 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (data.success) {
+        // Update the user state to indicate the user exists after successful registration
+        setUserExists(true);
         setRegistrationSuccess(true);
         toast({
           title: "Registration successful!",

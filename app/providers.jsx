@@ -9,6 +9,7 @@ import chainList from "@/lib/chains.js";
 import { Toaster } from "@/components/ui/toaster";
 import { ModalProvider } from "@/hooks/use-modal";
 import { DrawerProvider } from "@/hooks/use-drawer";
+import { UserProvider } from "@/hooks/use-user";
 import AccountDrawer from "@/components/wallet/AccountDrawer";
 
 const config = getDefaultConfig({
@@ -65,10 +66,12 @@ export default function Providers({ children }) {
           >
             <DrawerProvider>
               <ModalProvider>
-                <AutoSwitchNetwork />
-                {children}
-                <AccountDrawer />
-                <Toaster />
+                <UserProvider>
+                  <AutoSwitchNetwork />
+                  {children}
+                  <AccountDrawer />
+                  <Toaster />
+                </UserProvider>
               </ModalProvider>
             </DrawerProvider>
           </RainbowKitProvider>

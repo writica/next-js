@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ImageIcon, Upload, Calendar, Users, Info, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +15,8 @@ import FormFieldInput from "@/components/FormFieldInput"
 import FormImageUpload from "@/components/FormImageUpload"
 import { useAccount } from "wagmi"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
+import { useUser } from "@/hooks/use-user"
+import { useRouter } from "next/navigation"
 
 const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
   if(state === "media") {
@@ -63,6 +65,20 @@ export default function CreateCampaignPage() {
   const [activeTab, setActiveTab] = useState("details")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { address, isConnected } = useAccount()
+  const { userExists, isCheckingUser } = useUser()
+  const router = useRouter()
+
+  // Redirect unregistered users to the registration page
+  useEffect(() => {
+    if (isConnected && !isCheckingUser && userExists === false) {
+      toast({
+        title: "Registration Required",
+        description: "You need to register before creating campaigns.",
+        duration: 5000,
+      })
+      router.push('/apps/account/register')
+    }
+  }, [isConnected, isCheckingUser, userExists, router])
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -172,6 +188,22 @@ export default function CreateCampaignPage() {
                 <div className="flex flex-col items-center justify-center py-8 space-y-4">
                   <p className="text-gray-400 mb-2">Please connect your wallet to create a campaign</p>
                   <CustomConnectButton />
+                </div>
+              ) : isCheckingUser ? (
+                <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+                  <p className="text-gray-400">Checking your account status...</p>
+                </div>
+              ) : userExists === false ? (
+                <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                  <p className="text-gray-400 mb-2">You need to register before creating campaigns</p>
+                  <Button 
+                    onClick={() => router.push('/apps/account/register')}
+                    variant="outline" 
+                    className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+                  >
+                    Register Now
+                  </Button>
                 </div>
               ) : (
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
