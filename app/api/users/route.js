@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma/client';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { verifyMessage } from 'viem';
 
 // GET request to check if a user exists with the given wallet address
 export async function GET(request) {
@@ -47,6 +48,8 @@ export async function POST(request) {
     const email = formData.get('email');
     const bio = formData.get('bio');
     const walletAddress = formData.get('walletAddress');
+    const signature = formData.get('signature');
+    const signedMessage = formData.get('signedMessage');
     const image = formData.get('image');
     
     // Validate required fields
@@ -57,16 +60,59 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
+    if (!signature || !signedMessage) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Signature verification failed: Missing signature data'
+      }, { status: 400 });
+    }
+    
+    // Verify the signature using viem
+    try {
+      const isValid = await verifyMessage({
+        address: walletAddress,
+        message: signedMessage,
+        signature: signature,
+      });
+      
+      if (!isValid) {
+        return NextResponse.json({ 
+          success: false, 
+          message: 'Signature verification failed: Invalid signature'
+        }, { status: 400 });
+      }
+    } catch (error) {
+      console.error('Signature verification error:', error);
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Signature verification failed: ' + error.message
+      }, { status: 400 });
+    }
+
+    // Check if user already exists with this wallet
+    const existingUserByWallet = await prisma.user.findUnique({
       where: { walletAddress }
     });
 
-    if (existingUser) {
+    if (existingUserByWallet) {
       return NextResponse.json({ 
         success: false, 
         message: 'User with this wallet address already exists'
       }, { status: 400 });
+    }
+
+    // Check if email is already taken
+    if (email) {
+      const existingUserByEmail = await prisma.user.findFirst({
+        where: { email }
+      });
+
+      if (existingUserByEmail) {
+        return NextResponse.json({ 
+          success: false, 
+          message: 'Email address is already in use'
+        }, { status: 400 });
+      }
     }
 
     let imagePath = null;
@@ -103,9 +149,23 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('Error creating user:', error);
+    
+    // Provide more detailed error messages
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+      return NextResponse.json({
+        success: false,
+        message: 'This email is already registered'
+      }, { status: 400 });
+    } else if (error.code === 'P2002' && error.meta?.target?.includes('walletAddress')) {
+      return NextResponse.json({
+        success: false,
+        message: 'This wallet address is already registered'
+      }, { status: 400 });
+    }
+    
     return NextResponse.json({ 
       success: false, 
-      message: 'An error occurred while registering the user'
+      message: 'An error occurred while registering the user: ' + error.message
     }, { status: 500 });
   }
 }
