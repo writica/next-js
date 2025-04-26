@@ -36,11 +36,12 @@ model Campaign {
   keywords    String?
   targetAudience String?
   CtaGoal    String?
-  coverImage  String?  // Added field for storing the cover image URL
-  status      String   @default("ACTIVE") // ACTIVE, INACTIVE, COMPLETED
-  ownerId     String   // Foreign key field referencing User
-  owner       User     @relation(fields: [ownerId], references: [id]) // Relation to User model
-  participants CampaignParticipant[] // Users participating in this campaign
+  coverImage  String?
+  rewardPool  Float    @default(0) // Total reward pool for the campaign
+  status      String   @default("ACTIVE")
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  participants CampaignParticipant[]
 }
 
 // Join table for the many-to-many relationship between Users and Campaigns
@@ -50,9 +51,12 @@ model CampaignParticipant {
   updatedAt  DateTime @updatedAt
   userId     String
   campaignId String
+  total_score Float    @default(0)
+  status     String   @default("PENDING") // ACCEPTED, REJECTED, PENDING
+  blog_url   String?
+  data       String?  // Store JSON data as string
   user       User     @relation(fields: [userId], references: [id])
   campaign   Campaign @relation(fields: [campaignId], references: [id])
-
   @@unique([userId, campaignId]) // Ensure a user can't join the same campaign twice
 }
 
