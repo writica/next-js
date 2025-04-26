@@ -1,0 +1,83 @@
+'use client'
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowLeft, Edit, Coins, Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import DepositDialog from './dialogs/deposit-dialog'
+import SubmissionDialog from './dialogs/submission-dialog'
+
+export default function CampaignHeader({ campaign, isOwner }) {
+  return (
+    <>
+      <div className="container mx-auto px-4 py-6">
+        <Link 
+          href="/apps"
+          className="inline-flex items-center text-gray-400 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Campaigns
+        </Link>
+      </div>
+
+      <div className="h-80 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10"></div>
+        <Image
+          src={campaign.coverImage || "/placeholder.svg"}
+          alt={campaign.title}
+          fill
+          className="object-cover"
+        />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-20 -mt-20">
+        <Card className="bg-[#060606]/90 border-gray-800/40 backdrop-blur-lg">
+          <CardContent className="p-8">
+            <div className="flex flex-col md:flex-row justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="secondary" className="rounded-full">
+                    {campaign.status}
+                  </Badge>
+                  <span className="text-xs text-gray-400">
+                    Ends: {new Date(campaign.endDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <h1 className="text-3xl font-light mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  {campaign.title}
+                </h1>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center text-cyan-400">
+                    <Users size={16} className="mr-2" />
+                    <span>{campaign.participants?.length || 0} writers</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-start md:items-end gap-3">
+                <div className="text-xl font-medium text-emerald-400">{campaign.rewardPool} $BLOG</div>
+                {!isOwner && <SubmissionDialog />}
+                {isOwner && (
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-gray-800/40 hover:bg-gray-800/20"
+                      asChild
+                    >
+                      <Link href={`/apps/campaigns/${campaign.id}/edit`}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Campaign
+                      </Link>
+                    </Button>
+                    <DepositDialog campaign={campaign} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  )
+}
