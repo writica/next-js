@@ -9,6 +9,68 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 
+const Campaign = ({campaign})=> {
+  return (
+    <div className="relative">
+    <Link href={`/apps/campaigns/${campaign.id}`}>
+    <Card
+      className="group bg-[#060606] border-gray-800/20 overflow-hidden rounded-3xl transition-all duration-500 hover:border-gray-700"
+    >
+      <div className="relative h-56 overflow-hidden">
+        <Image
+          src={campaign.image || "/placeholder.svg"}
+          alt={campaign.title}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+      </div>
+      
+      <CardHeader className="pb-2 relative">
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center text-sm text-cyan-400">
+            <Users size={14} className="mr-1.5" />
+            <span>{campaign.participants?.length || 0} writers</span>
+          </div>
+          <div className="flex items-center text-sm text-emerald-400">
+            <Calendar size={14} className="mr-1.5" />
+            <span>{new Date(campaign.endDate).toLocaleDateString()}</span>
+          </div>
+        </div>
+        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          {campaign.title}
+        </CardTitle>
+        <CardDescription className="line-clamp-2 text-gray-400 mt-2">
+          {campaign.description}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="pb-2">
+        <div className="border-t border-gray-800 my-2 opacity-30"></div>
+        <div className="grid grid-cols-2 gap-4 mt-3">
+          <div>
+            <div className="text-xs text-gray-500 mb-1">Reward Pool</div>
+            <div className="text-emerald-400 font-medium">{campaign.rewardPool} $BLOG</div>
+          </div>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="pt-4">
+        <Button 
+          className="w-full rounded-full transition-all duration-500 flex items-center justify-center" 
+          variant={"outline"}
+          size="lg"
+        >
+            <span className="mr-2">Join Campaign</span>
+            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+        </Button>
+      </CardFooter>
+    </Card>
+    </Link>
+    </div>
+  );
+};
+
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState([])
   const [loading, setLoading] = useState(true)
@@ -129,71 +191,13 @@ export default function CampaignsPage() {
             </Button>
           </div>
         ) : (
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCampaigns.map((campaign) => (
-              <Card
-                key={campaign.id}
-                className="group bg-[#060606] border-gray-800/20 overflow-hidden rounded-3xl transition-all duration-500 hover:border-gray-700"
-              >
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={campaign.image || "/placeholder.svg"}
-                    alt={campaign.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                </div>
-                
-                <CardHeader className="pb-2 relative">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center text-sm text-cyan-400">
-                      <Users size={14} className="mr-1.5" />
-                      <span>{campaign.participants} writers</span>
-                    </div>
-                    <div className="flex items-center text-sm text-emerald-400">
-                      <Calendar size={14} className="mr-1.5" />
-                      <span>{campaign.deadline}</span>
-                    </div>
-                  </div>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    {campaign.title}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2 text-gray-400 mt-2">
-                    {campaign.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="pb-2">
-                  <div className="border-t border-gray-800 my-2 opacity-30"></div>
-                  <div className="grid grid-cols-2 gap-4 mt-3">
-                    <div>
-                      <div className="text-xs text-gray-500 mb-1">Reward Pool</div>
-                      <div className="text-emerald-400 font-medium">{campaign.rewardPool || "$500 USDC"}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 mb-1">Difficulty</div>
-                      <div className="text-cyan-400 font-medium">{campaign.difficulty || "Intermediate"}</div>
-                    </div>
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="pt-4">
-                  <Button 
-                    className="w-full rounded-full transition-all duration-500 flex items-center justify-center" 
-                    variant={"outline"}
-                    size="lg"
-                    asChild
-                  >
-                    <Link href={`/campaigns/${campaign.id}`}>
-                      <span className="mr-2">Join Campaign</span>
-                      <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
+              <Campaign key={campaign.id} campaign={campaign} />
             ))}
           </div>
+        
         )}
       </div>
     </div>

@@ -57,12 +57,13 @@ export async function GET(request) {
         day: 'numeric', 
         year: 'numeric' 
       }),
-      image: campaign.coverImage || "/placeholder.svg?height=200&width=400&text=" + encodeURIComponent(campaign.title),
+      image: campaign.coverImage || null,
       featured: campaign.featured || false,
       // Additional fields that might be useful
       startDate: campaign.startDate,
       keywords: campaign.keywords,
       owner: campaign.owner,
+      rewardPool: campaign.rewardPool,
     }));
     
     // Return successful response with pagination metadata
