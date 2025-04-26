@@ -31,7 +31,7 @@ export default function AccountDrawer() {
   const navLinksWithIcons = [
     { name: 'Edit Profile', href: '/apps/account/profile', icon: <UserCog className="h-5 w-5" /> },
     { name: 'My Campaigns', href: '/apps/account/my-campaigns', icon: <FileText className="h-5 w-5" /> },
-    { name: 'Joined Campaigns', href: '/apps/account/joined-campaigns', icon: <Users className="h-5 w-5" /> },
+    { name: 'Submission', href: '/apps/account/submission', icon: <Users className="h-5 w-5" /> },
   ];
 
   // Fetch the balance when address or chainId changes
