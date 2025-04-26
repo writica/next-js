@@ -1,7 +1,10 @@
 'use client'
 import { useState, useEffect, use } from "react"
 import Image from "next/image"
-import { Users, Calendar, ArrowLeft, Link as LinkIcon, Edit } from "lucide-react"
+import { Users, Calendar, ArrowLeft, Link as LinkIcon, Edit, Coins } from "lucide-react"
+import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { parseEther } from 'viem'
+import { campaignABI } from '@/lib/abi/Campaign.json'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +24,10 @@ export default function CampaignDetailPage({ params }) {
   const [activeTab, setActiveTab] = useState("overview")
   const [submissionText, setSubmissionText] = useState("")
   const [submissionFile, setSubmissionFile] = useState(null)
+  const [depositAmount, setDepositAmount] = useState("")
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+  const [txHash, setTxHash] = useState()
+
   const { address } = useAccount()
   const { userData } = useUser()
 
@@ -61,6 +68,28 @@ export default function CampaignDetailPage({ params }) {
     console.log('Submission File:', submissionFile)
     setSubmissionText("")
     setSubmissionFile(null)
+  }
+
+  const { data: hash, isPending, writeContract } = useWriteContract()
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  })
+
+  const handleDeposit = async () => {
+    try {
+      const result = await writeContract({
+        address: campaign?.contractAddress,
+        abi: campaignABI,
+        functionName: 'depositPrizePool',
+        args: [parseEther(depositAmount)],
+      })
+      setTxHash(result)
+      setIsDepositModalOpen(false)
+      setDepositAmount("")
+    } catch (error) {
+      console.error('Failed to deposit:', error)
+    }
   }
 
   if (loading) {
@@ -192,16 +221,60 @@ export default function CampaignDetailPage({ params }) {
                   </Dialog>
                 )}
                 {isOwner && (
-                  <Button
-                    variant="outline"
-                    className="rounded-full border-gray-800/40 hover:bg-gray-800/20"
-                    asChild
-                  >
-                    <Link href={`/apps/campaigns/${campaign.id}/edit`}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Campaign
-                    </Link>
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-gray-800/40 hover:bg-gray-800/20"
+                      asChild
+                    >
+                      <Link href={`/apps/campaigns/${campaign.id}/edit`}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Campaign
+                      </Link>
+                    </Button>
+                    <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="rounded-full border-emerald-600/40 hover:bg-emerald-600/20 text-emerald-400"
+                        >
+                          <Coins className="h-4 w-4 mr-2" />
+                          Deposit Prize Pool
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-[#060606]/95 border-gray-800/40">
+                        <DialogHeader>
+                          <DialogTitle>Deposit Prize Pool</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4">
+                          <div className="mb-4">
+                            <label className="text-sm font-medium mb-2 block">Amount ($BLOG)</label>
+                            <input
+                              type="number"
+                              value={depositAmount}
+                              onChange={(e) => setDepositAmount(e.target.value)}
+                              placeholder="Enter amount"
+                              className="w-full px-4 py-2 bg-[#0a0a0a] border border-gray-800/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                            />
+                          </div>
+                          <Button 
+                            onClick={handleDeposit}
+                            disabled={isPending || isConfirming}
+                            className="w-full rounded-full"
+                          >
+                            {isPending ? "Confirming..." : 
+                             isConfirming ? "Depositing..." : 
+                             "Deposit"}
+                          </Button>
+                          {isConfirmed && (
+                            <p className="text-sm text-emerald-400 mt-2">
+                              Deposit successful!
+                            </p>
+                          )}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 )}
               </div>
             </div>
