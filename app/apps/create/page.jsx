@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useReducer } from "react"
 import { ImageIcon, Upload, Calendar, Users, Info, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,7 +18,22 @@ import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
 import contracts from '@/lib/contracts'
-import { parseGwei } from 'viem'
+
+// Define transaction state reducer
+const transactionReducer = (state, action) => {
+  switch (action.type) {
+    case 'TRANSACTION_START':
+      return { ...state, isProcessing: true, error: null };
+    case 'TRANSACTION_SUCCESS':
+      return { ...state, isProcessing: false, isSuccess: true, hash: action.payload };
+    case 'TRANSACTION_ERROR':
+      return { ...state, isProcessing: false, error: action.payload, isError: true };
+    case 'RESET':
+      return { isProcessing: false, isSuccess: false, isError: false, hash: null, error: null };
+    default:
+      return state;
+  }
+};
 
 const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
   if(state === "media") {
@@ -71,8 +86,20 @@ export default function CreateCampaignPage() {
   const { address, isConnected, chainId } = useAccount()
   const { userExists, isCheckingUser } = useUser()
   const router = useRouter()
-  const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage()
-  const { data: hash, isPending, isError, error: writeError, writeContract } = useWriteContract()
+  const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage();
+  const resWriteContract = useWriteContract();
+  const { data: hash, isPending, isError, error: writeError, writeContract } = resWriteContract;
+  
+  // Initialize transaction state with useReducer
+  const initialTransactionState = {
+    isProcessing: false,
+    isSuccess: false,
+    isError: false,
+    hash: null,
+    error: null
+  };
+  
+  const [txState, dispatchTx] = useReducer(transactionReducer, initialTransactionState);
 
   // Redirect unregistered users to the registration page
   useEffect(() => {
@@ -84,7 +111,21 @@ export default function CreateCampaignPage() {
       })
       router.push('/apps/account/register')
     }
-  }, [isConnected, isCheckingUser, userExists, router, hash, isPending])
+  }, [isConnected, isCheckingUser, userExists, router])
+
+  // Monitor contract interaction states
+  useEffect(() => {
+    if (isPending) {
+      dispatchTx({ type: 'TRANSACTION_START' });
+    } else if (hash) {
+      dispatchTx({ type: 'TRANSACTION_SUCCESS', payload: hash });
+      console.log("Transaction hash:", hash);
+      console.log(resWriteContract);
+    } else if (isError) {
+      dispatchTx({ type: 'TRANSACTION_ERROR', payload: writeError });
+      console.error("Transaction error:", writeError);
+    }
+  }, [isPending, hash, isError, writeError]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -113,89 +154,82 @@ export default function CreateCampaignPage() {
       return
     }
     
-    setIsSubmitting(true)
     try {
-      const contractAddress = contracts[chainId].campaignManager.address
-      const contractABI = contracts[chainId].campaignManager.abi
+      // Reset any previous transaction state
+      dispatchTx({ type: 'RESET' });
+      setIsSubmitting(true);
+      
+      const contractAddress = contracts[chainId].campaignManager.address;
+      const contractABI = contracts[chainId].campaignManager.abi;
 
-      console.log(contractAddress, contractABI);
-
-      // Add the wallet address as a campaign owner using the addCampaignOwner function
-      console.log(address)
-      const result = writeContract({
+      console.log(contractAddress);
+      console.log(contractABI);
+      // Execute contract transaction
+      const rererere = await writeContract({
         address: contractAddress,
         abi: contractABI,
-        functionName: 'addCampaignOwner',
-        args: [address],
+        functionName: 'createCampaign',
+        args: [
+          "asal wae",
+          1745846611,
+          1746846611,
+          10 * 10 ** 18
+        ],
       });
+
       
-      // Update submit status based on transaction state
-      if (isPending) {
-        toast({
-          title: "Transaction in progress",
-          description: "Adding you as a campaign owner...",
+      // Transaction handling is now done in the useEffect that monitors 
+      // the transaction state (isPending, hash, isError)
+
+      // After transaction is confirmed, prepare form data
+      if (txState.isSuccess && txState.hash) {
+        // Prepare form data for API submission
+        const formData = new FormData()
+        Object.entries(values).forEach(([key, value]) => {
+          if (key === 'coverImage') {
+            if (value) {
+              formData.append('coverImage', value)
+            }
+          } else if (key === 'startDate' || key === 'endDate') {
+            // Format dates as ISO strings for consistent parsing
+            if (value instanceof Date) {
+              formData.append(key, value.toISOString())
+            }
+          } else if (value !== undefined && value !== null) {
+            formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
+          }
         })
-      }
-      
-      if (writeError) {
-        throw new Error(writeError.message || "Failed to add campaign owner")
-      }
-      
-      if (hash) {
-        console.log('result', result);
-        console.log("Transaction hash:", hash);
-        toast({
-          title: "Transaction submitted successfully",
-          description: `You have been added as a campaign owner. Transaction hash: ${hash.slice(0, 6)}...${hash.slice(-4)}`,
+
+        // Add wallet address and transaction hash to form data
+        formData.append('walletAddress', address)
+        formData.append('transactionHash', txState.hash)
+
+        const response = await fetch('/api/campaigns/create', {
+          method: 'POST',
+          body: formData,
         })
+
+        const data = await response.json()
+
+        if (data.success) {
+          toast({
+            title: "Campaign created!",
+            description: "Your campaign has been created successfully.",
+          })
+          // Navigate to the campaigns list after successful creation
+          router.push('/apps')
+        } else {
+          throw new Error(data.message || 'Failed to create campaign')
+        }
       }
-
-      // const formData = new FormData()
-      // Object.entries(values).forEach(([key, value]) => {
-      //   if (key === 'coverImage') {
-      //     if (value) {
-      //       formData.append('coverImage', value)
-      //     }
-      //   } else if (key === 'startDate' || key === 'endDate') {
-      //     // Format dates as ISO strings for consistent parsing
-      //     if (value instanceof Date) {
-      //       formData.append(key, value.toISOString())
-      //     }
-      //   } else if (value !== undefined && value !== null) {
-      //     formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
-      //   }
-      // })
-
-      // // Add wallet address and signature to form data
-      // formData.append('walletAddress', address)
-      // formData.append('signature', signature)
-      // formData.append('signedMessage', messageToSign)
-
-      // const response = await fetch('/api/campaigns/create', {
-      //   method: 'POST',
-      //   body: formData,
-      // })
-
-      // const data = await response.json()
-
-      // if (data.success) {
-      //   toast({
-      //     title: "Campaign created!",
-      //     description: "Your campaign has been created successfully.",
-      //   })
-      //   // Navigate to the campaigns list after successful creation
-      //   router.push('/apps')
-      // } else {
-      //   throw new Error(data.message || 'Failed to create campaign')
-      // }
     } catch (error) {
       console.error('Error creating campaign:', error)
+      // Handle any errors not captured by the transaction monitoring
       toast({
         variant: "destructive",
         title: "Error creating campaign",
         description: error.message || "Something went wrong. Please try again.",
       })
-    } finally {
       setIsSubmitting(false)
     }
   }
