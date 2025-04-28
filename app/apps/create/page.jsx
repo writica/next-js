@@ -121,17 +121,12 @@ export default function CreateCampaignPage() {
       console.log(contractAddress, contractABI);
 
       // Add the wallet address as a campaign owner using the addCampaignOwner function
+      console.log(address)
       const result = writeContract({
         address: contractAddress,
         abi: contractABI,
         functionName: 'addCampaignOwner',
         args: [address],
-        // Override transaction parameters to fix "replacement transaction underpriced" error
-        gas: undefined, // Let wagmi estimate gas automatically
-        gasPrice: parseGwei('5'), // Set a higher gas price (5 gwei) to prioritize this transaction
-        // Alternatively, use type-2 EIP-1559 transaction parameters
-        // maxFeePerGas: parseGwei('5'),
-        // maxPriorityFeePerGas: parseGwei('2'),
       });
       
       // Update submit status based on transaction state
