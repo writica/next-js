@@ -141,7 +141,8 @@ export default function CreateCampaignPage() {
   useEffect(() => {
     if(txReceipt){
       console.log("Transaction receipt:", txReceipt);
-      const contractAddress = txReceipt.logs[1].address;  // new contaract address
+      const contractAddress = txReceipt.logs[0].address;  // new contaract address
+      
       console.log("Contract address:", contractAddress);
       dispatchTx({ type: 'SET_CONTRACT_ADDRESS', payload: contractAddress });
     }
@@ -214,6 +215,8 @@ export default function CreateCampaignPage() {
   // Effect to handle API submission after transaction confirmation and contract address is available
   useEffect(() => {
     const submitToAPI = async () => {
+      console.log(`submitting to API...`);
+      console.log(`txState:`, txState);
       if (txState.isSuccess && txState.hash && txState.contractAddress) {
         try {
           const values = form.getValues();
@@ -271,7 +274,7 @@ export default function CreateCampaignPage() {
     };
 
     submitToAPI();
-  }, [txState.isSuccess, txState.hash, txState.contractAddress, form, address, router]);
+  }, [txState, form, address, router]);
 
   return (
     <div className="relative min-h-screen">
