@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import FormFieldInput from "@/components/FormFieldInput"
 import FormImageUpload from "@/components/FormImageUpload"
-import { useAccount, useSignMessage, useWriteContract } from "wagmi"
+import { useAccount, useSignMessage, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
@@ -26,10 +26,12 @@ const transactionReducer = (state, action) => {
       return { ...state, isProcessing: true, error: null };
     case 'TRANSACTION_SUCCESS':
       return { ...state, isProcessing: false, isSuccess: true, hash: action.payload };
+    case 'CONTRACT_ADDRESS_RECEIVED':
+      return { ...state, contractAddress: action.payload };
     case 'TRANSACTION_ERROR':
       return { ...state, isProcessing: false, error: action.payload, isError: true };
     case 'RESET':
-      return { isProcessing: false, isSuccess: false, isError: false, hash: null, error: null };
+      return { isProcessing: false, isSuccess: false, isError: false, hash: null, error: null, contractAddress: null };
     default:
       return state;
   }
@@ -90,13 +92,22 @@ export default function CreateCampaignPage() {
   const resWriteContract = useWriteContract();
   const { data: hash, isPending, isError, error: writeError, writeContract } = resWriteContract;
   
+  // Add public client to get transaction receipt
+  const publicClient = usePublicClient();
+  // Add hook to wait for transaction receipt
+  const { data: txReceipt, isLoading: isWaitingForReceipt } = useWaitForTransactionReceipt({
+    hash,
+    enabled: Boolean(hash),
+  });
+  
   // Initialize transaction state with useReducer
   const initialTransactionState = {
     isProcessing: false,
     isSuccess: false,
     isError: false,
     hash: null,
-    error: null
+    error: null,
+    contractAddress: null
   };
   
   const [txState, dispatchTx] = useReducer(transactionReducer, initialTransactionState);
@@ -120,12 +131,21 @@ export default function CreateCampaignPage() {
     } else if (hash) {
       dispatchTx({ type: 'TRANSACTION_SUCCESS', payload: hash });
       console.log("Transaction hash:", hash);
-      console.log(resWriteContract);
     } else if (isError) {
       dispatchTx({ type: 'TRANSACTION_ERROR', payload: writeError });
       console.error("Transaction error:", writeError);
     }
   }, [isPending, hash, isError, writeError]);
+
+  // Effect to extract contract address from transaction receipt
+  useEffect(() => {
+    if(txReceipt){
+      console.log("Transaction receipt:", txReceipt);
+      const contractAddress = txReceipt.logs[1].address;  // new contaract address
+      console.log("Contract address:", contractAddress);
+      dispatchTx({ type: 'SET_CONTRACT_ADDRESS', payload: contractAddress });
+    }
+  }, [txReceipt, chainId]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -162,69 +182,26 @@ export default function CreateCampaignPage() {
       const contractAddress = contracts[chainId].campaignManager.address;
       const contractABI = contracts[chainId].campaignManager.abi;
 
-      console.log(contractAddress);
-      console.log(contractABI);
+      console.log("Using contract:", contractAddress);
+      
       // Execute contract transaction
-      const rererere = await writeContract({
+      await writeContract({
         address: contractAddress,
         abi: contractABI,
         functionName: 'createCampaign',
         args: [
-          "asal wae",
-          1745846611,
-          1746846611,
-          10 * 10 ** 18
+          values.title || "Campaign",
+          Math.floor(values.startDate.getTime() / 1000),
+          Math.floor(values.endDate.getTime() / 1000),
+          10 * 10 ** 18 // Example reward amount
         ],
       });
-
       
-      // Transaction handling is now done in the useEffect that monitors 
-      // the transaction state (isPending, hash, isError)
-
-      // After transaction is confirmed, prepare form data
-      if (txState.isSuccess && txState.hash) {
-        // Prepare form data for API submission
-        const formData = new FormData()
-        Object.entries(values).forEach(([key, value]) => {
-          if (key === 'coverImage') {
-            if (value) {
-              formData.append('coverImage', value)
-            }
-          } else if (key === 'startDate' || key === 'endDate') {
-            // Format dates as ISO strings for consistent parsing
-            if (value instanceof Date) {
-              formData.append(key, value.toISOString())
-            }
-          } else if (value !== undefined && value !== null) {
-            formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
-          }
-        })
-
-        // Add wallet address and transaction hash to form data
-        formData.append('walletAddress', address)
-        formData.append('transactionHash', txState.hash)
-
-        const response = await fetch('/api/campaigns/create', {
-          method: 'POST',
-          body: formData,
-        })
-
-        const data = await response.json()
-
-        if (data.success) {
-          toast({
-            title: "Campaign created!",
-            description: "Your campaign has been created successfully.",
-          })
-          // Navigate to the campaigns list after successful creation
-          router.push('/apps')
-        } else {
-          throw new Error(data.message || 'Failed to create campaign')
-        }
-      }
+      // The transaction state and receipt handling is now done in the useEffect hooks
+      // We'll wait for the transaction to be confirmed before proceeding
+      
     } catch (error) {
       console.error('Error creating campaign:', error)
-      // Handle any errors not captured by the transaction monitoring
       toast({
         variant: "destructive",
         title: "Error creating campaign",
@@ -234,27 +211,67 @@ export default function CreateCampaignPage() {
     }
   }
 
-  // Effect to monitor transaction status
+  // Effect to handle API submission after transaction confirmation and contract address is available
   useEffect(() => {
-    if (isPending) {
-      setIsSubmitting(true)
-    } else if (hash) {
-      // Transaction was successful
-      setIsSubmitting(false)
-      toast({
-        title: "Transaction confirmed",
-        description: `You are now a campaign owner. Transaction: ${hash.slice(0, 6)}...${hash.slice(-4)}`,
-      })
-    } else if (isError && writeError) {
-      // Transaction failed
-      setIsSubmitting(false)
-      toast({
-        variant: "destructive",
-        title: "Transaction failed",
-        description: writeError.message || "Failed to add campaign owner",
-      })
-    }
-  }, [hash, isPending, isError, writeError])
+    const submitToAPI = async () => {
+      if (txState.isSuccess && txState.hash && txState.contractAddress) {
+        try {
+          const values = form.getValues();
+          
+          // Prepare form data for API submission
+          const formData = new FormData()
+          Object.entries(values).forEach(([key, value]) => {
+            if (key === 'coverImage') {
+              if (value) {
+                formData.append('coverImage', value)
+              }
+            } else if (key === 'startDate' || key === 'endDate') {
+              // Format dates as ISO strings for consistent parsing
+              if (value instanceof Date) {
+                formData.append(key, value.toISOString())
+              }
+            } else if (value !== undefined && value !== null) {
+              formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
+            }
+          })
+
+          // Add wallet address, transaction hash and contract address to form data
+          formData.append('walletAddress', address)
+          formData.append('transactionHash', txState.hash)
+          formData.append('campaignAddress', txState.contractAddress)
+
+          const response = await fetch('/api/campaigns/create', {
+            method: 'POST',
+            body: formData,
+          })
+
+          const data = await response.json()
+
+          if (data.success) {
+            toast({
+              title: "Campaign created!",
+              description: "Your campaign has been created successfully.",
+            })
+            // Navigate to the campaigns list after successful creation
+            router.push('/apps')
+          } else {
+            throw new Error(data.message || 'Failed to create campaign')
+          }
+        } catch (apiError) {
+          console.error('Error submitting campaign to API:', apiError)
+          toast({
+            variant: "destructive",
+            title: "Error saving campaign details",
+            description: apiError.message || "Campaign was created on blockchain but we couldn't save all details.",
+          })
+        } finally {
+          setIsSubmitting(false)
+        }
+      }
+    };
+
+    submitToAPI();
+  }, [txState.isSuccess, txState.hash, txState.contractAddress, form, address, router]);
 
   return (
     <div className="relative min-h-screen">
