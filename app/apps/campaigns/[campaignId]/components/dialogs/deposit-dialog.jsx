@@ -19,7 +19,7 @@ export default function DepositDialog({ campaign }) {
   const handleDeposit = async () => {
     try {
       const result = await writeContract({
-        address: campaign?.contractAddress,
+        address: campaign?.campaignAddress,
         abi: campaignABI,
         functionName: 'depositPrizePool',
         args: [parseEther(depositAmount)],
