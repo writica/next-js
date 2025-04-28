@@ -19,6 +19,7 @@ export async function POST(request) {
     const description = formData.get('description');
     const aiDescription = formData.get('aiDescription');
     const keywords = formData.get('keywords');
+    const rewardPool = parseFloat(formData.get('rewardPool')) || 0;
     const targetAudience = formData.get('targetAudience');
     const CtaGoal = formData.get('CtaGoal');
     const startDateStr = formData.get('startDate');
@@ -121,6 +122,7 @@ export async function POST(request) {
         targetAudience,
         CtaGoal,
         coverImage: imagePath,
+        rewardPool,
         ownerId: user.id
       }
     });
