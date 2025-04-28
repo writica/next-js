@@ -362,12 +362,18 @@ export default function CreateCampaignPage() {
                           </div>
                         </div>
                       </TabsContent>
-
-                      <div className="flex justify-end space-x-4 pt-4">
-                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
-                      </div>
+                      {activeTab == "media" && (
+                        <div className="flex justify-end space-x-4 pt-4">
+                              <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
+                        </div>
+                        )}
                     </form>
                   </Form>
+                  {activeTab !== "media" && (
+                  <div className="flex justify-end space-x-4 pt-4">
+                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
+                  </div>
+                  )}
                 </Tabs>
               )}
             </CardContent>
