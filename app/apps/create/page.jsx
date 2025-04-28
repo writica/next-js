@@ -13,10 +13,12 @@ import { toast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import FormFieldInput from "@/components/FormFieldInput"
 import FormImageUpload from "@/components/FormImageUpload"
-import { useAccount, useSignMessage } from "wagmi"
+import { useAccount, useSignMessage, useWriteContract } from "wagmi"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
+import contracts from '@/lib/contracts'
+import { parseGwei } from 'viem'
 
 const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
   if(state === "media") {
@@ -66,10 +68,11 @@ const formSchema = z.object({
 export default function CreateCampaignPage() {
   const [activeTab, setActiveTab] = useState("details")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, chainId } = useAccount()
   const { userExists, isCheckingUser } = useUser()
   const router = useRouter()
   const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage()
+  const { data: hash, isPending, isError, error: writeError, writeContract } = useWriteContract()
 
   // Redirect unregistered users to the registration page
   useEffect(() => {
@@ -81,7 +84,7 @@ export default function CreateCampaignPage() {
       })
       router.push('/apps/account/register')
     }
-  }, [isConnected, isCheckingUser, userExists, router])
+  }, [isConnected, isCheckingUser, userExists, router, hash, isPending])
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -112,53 +115,81 @@ export default function CreateCampaignPage() {
     
     setIsSubmitting(true)
     try {
-      // Step 1: Sign the campaign creation message
-      const messageToSign = `Create campaign: ${values.title} by wallet: ${address}`
-      const signature = await new Promise((resolve, reject) => {
-        signMessage({ message: messageToSign }, { 
-          onSuccess: (data) => resolve(data),
-          onError: (error) => reject(error)
-        })
+      const contractAddress = contracts[chainId].campaignManager.address
+      const contractABI = contracts[chainId].campaignManager.abi
+
+      // Add the wallet address as a campaign owner using the addCampaignOwner function
+      writeContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: 'addCampaignOwner',
+        args: [address],
+        // Override transaction parameters to fix "replacement transaction underpriced" error
+        gas: undefined, // Let wagmi estimate gas automatically
+        gasPrice: parseGwei('5'), // Set a higher gas price (5 gwei) to prioritize this transaction
+        // Alternatively, use type-2 EIP-1559 transaction parameters
+        // maxFeePerGas: parseGwei('5'),
+        // maxPriorityFeePerGas: parseGwei('2'),
       })
-
-      const formData = new FormData()
-      Object.entries(values).forEach(([key, value]) => {
-        if (key === 'coverImage') {
-          if (value) {
-            formData.append('coverImage', value)
-          }
-        } else if (key === 'startDate' || key === 'endDate') {
-          // Format dates as ISO strings for consistent parsing
-          if (value instanceof Date) {
-            formData.append(key, value.toISOString())
-          }
-        } else if (value !== undefined && value !== null) {
-          formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
-        }
-      })
-
-      // Add wallet address and signature to form data
-      formData.append('walletAddress', address)
-      formData.append('signature', signature)
-      formData.append('signedMessage', messageToSign)
-
-      const response = await fetch('/api/campaigns/create', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
+      
+      // Update submit status based on transaction state
+      if (isPending) {
         toast({
-          title: "Campaign created!",
-          description: "Your campaign has been created successfully.",
+          title: "Transaction in progress",
+          description: "Adding you as a campaign owner...",
         })
-        // Navigate to the campaigns list after successful creation
-        router.push('/apps')
-      } else {
-        throw new Error(data.message || 'Failed to create campaign')
       }
+      
+      if (writeError) {
+        throw new Error(writeError.message || "Failed to add campaign owner")
+      }
+      
+      if (hash) {
+        console.log("Transaction hash:", hash);
+        toast({
+          title: "Transaction submitted successfully",
+          description: `You have been added as a campaign owner. Transaction hash: ${hash.slice(0, 6)}...${hash.slice(-4)}`,
+        })
+      }
+
+      // const formData = new FormData()
+      // Object.entries(values).forEach(([key, value]) => {
+      //   if (key === 'coverImage') {
+      //     if (value) {
+      //       formData.append('coverImage', value)
+      //     }
+      //   } else if (key === 'startDate' || key === 'endDate') {
+      //     // Format dates as ISO strings for consistent parsing
+      //     if (value instanceof Date) {
+      //       formData.append(key, value.toISOString())
+      //     }
+      //   } else if (value !== undefined && value !== null) {
+      //     formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
+      //   }
+      // })
+
+      // // Add wallet address and signature to form data
+      // formData.append('walletAddress', address)
+      // formData.append('signature', signature)
+      // formData.append('signedMessage', messageToSign)
+
+      // const response = await fetch('/api/campaigns/create', {
+      //   method: 'POST',
+      //   body: formData,
+      // })
+
+      // const data = await response.json()
+
+      // if (data.success) {
+      //   toast({
+      //     title: "Campaign created!",
+      //     description: "Your campaign has been created successfully.",
+      //   })
+      //   // Navigate to the campaigns list after successful creation
+      //   router.push('/apps')
+      // } else {
+      //   throw new Error(data.message || 'Failed to create campaign')
+      // }
     } catch (error) {
       console.error('Error creating campaign:', error)
       toast({
@@ -170,6 +201,28 @@ export default function CreateCampaignPage() {
       setIsSubmitting(false)
     }
   }
+
+  // Effect to monitor transaction status
+  useEffect(() => {
+    if (isPending) {
+      setIsSubmitting(true)
+    } else if (hash) {
+      // Transaction was successful
+      setIsSubmitting(false)
+      toast({
+        title: "Transaction confirmed",
+        description: `You are now a campaign owner. Transaction: ${hash.slice(0, 6)}...${hash.slice(-4)}`,
+      })
+    } else if (isError && writeError) {
+      // Transaction failed
+      setIsSubmitting(false)
+      toast({
+        variant: "destructive",
+        title: "Transaction failed",
+        description: writeError.message || "Failed to add campaign owner",
+      })
+    }
+  }, [hash, isPending, isError, writeError])
 
   return (
     <div className="relative min-h-screen">
