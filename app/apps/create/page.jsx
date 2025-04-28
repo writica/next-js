@@ -118,8 +118,10 @@ export default function CreateCampaignPage() {
       const contractAddress = contracts[chainId].campaignManager.address
       const contractABI = contracts[chainId].campaignManager.abi
 
+      console.log(contractAddress, contractABI);
+
       // Add the wallet address as a campaign owner using the addCampaignOwner function
-      writeContract({
+      const result = writeContract({
         address: contractAddress,
         abi: contractABI,
         functionName: 'addCampaignOwner',
@@ -130,7 +132,7 @@ export default function CreateCampaignPage() {
         // Alternatively, use type-2 EIP-1559 transaction parameters
         // maxFeePerGas: parseGwei('5'),
         // maxPriorityFeePerGas: parseGwei('2'),
-      })
+      });
       
       // Update submit status based on transaction state
       if (isPending) {
@@ -145,6 +147,7 @@ export default function CreateCampaignPage() {
       }
       
       if (hash) {
+        console.log('result', result);
         console.log("Transaction hash:", hash);
         toast({
           title: "Transaction submitted successfully",
