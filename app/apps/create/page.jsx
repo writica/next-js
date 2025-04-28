@@ -28,6 +28,8 @@ const transactionReducer = (state, action) => {
       return { ...state, isProcessing: false, isSuccess: true, hash: action.payload };
     case 'CONTRACT_ADDRESS_RECEIVED':
       return { ...state, contractAddress: action.payload };
+    case 'SET_CONTRACT_ADDRESS':  // Add matching case for SET_CONTRACT_ADDRESS
+      return { ...state, contractAddress: action.payload };
     case 'TRANSACTION_ERROR':
       return { ...state, isProcessing: false, error: action.payload, isError: true };
     case 'RESET':
