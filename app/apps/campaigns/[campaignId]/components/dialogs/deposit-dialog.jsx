@@ -17,7 +17,7 @@ export default function DepositDialog({ campaign }) {
   const [isApproving, setIsApproving] = useState(false)
   const [depositHash, setDepositHash] = useState(null)
   
-  const { address } = useAccount()
+  const { address, chainId } = useAccount()
   const { data: hash, isPending, writeContract } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
@@ -42,12 +42,6 @@ export default function DepositDialog({ campaign }) {
     }
   }, [isDepositConfirmed, depositHash, depositAmount])
 
-  // Get the current chainId from the user's active network
-  // Hardcoded for demo, but should be dynamically obtained in production
-  const chainId = 84532 // Base Sepolia
-  console.log(address);
-
-  // Get user's BLOG token balance
   const { data: balance } = useReadContract({
     address: contracts[chainId]?.blog?.address,
     abi: erc20Abi,
@@ -81,12 +75,14 @@ export default function DepositDialog({ campaign }) {
     try {
       setIsApproving(true)
       
-      // Step 1: Approve token transfer
+      // Step 1: Approve token transfer - Use exact amount instead of unlimited approval
+      console.log(`parseEther(depositAmount):`, parseEther(depositAmount))
       await writeContract({
         address: contracts[chainId].blog.address,
         abi: erc20Abi,
         functionName: 'approve',
-        args: [campaign.campaignAddress, parseEther(depositAmount)]
+        args: [campaign.campaignAddress, parseInt(depositAmount) * 10 ** 18],
+        // gas: 100000n, // Set reasonable gas limit to avoid high fees
       })
       
       // Wait for approval confirmation
@@ -102,6 +98,8 @@ export default function DepositDialog({ campaign }) {
         address: campaign.campaignAddress,
         abi: Campaign,
         functionName: 'depositReward',
+        args: [parseInt(depositAmount) * 10 ** 18],
+        // gas: 200000n, // Set reasonable gas limit to avoid high fees
       })
       
       // Store the deposit transaction hash for confirmation tracking
