@@ -7,8 +7,9 @@ import { erc20Abi } from 'viem'
 import Campaign from '@/lib/abi/Campaign.json'
 import contracts from '@/lib/contracts'
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast"
+import { useRewardStatus } from '../providers/reward-status-provider'
 
 export default function DepositDialog({ campaign }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,40 +17,15 @@ export default function DepositDialog({ campaign }) {
   const [tokenBalance, setTokenBalance] = useState("0")
   const [isApproving, setIsApproving] = useState(false)
   const [depositHash, setDepositHash] = useState(null)
-  const [isRewardsDeposited, setIsRewardsDeposited] = useState(false)
-  const [totalReward, setTotalReward] = useState("0")
+  
+  // Use the shared reward status from the provider
+  const { isRewardsDeposited, totalReward } = useRewardStatus()
   
   const { address, chainId } = useAccount()
   const { data: hash, isPending, writeContract } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
-
-  // Read rewardsDeposited state from contract
-  const { data: rewardsDepositedData } = useReadContract({
-    address: campaign.campaignAddress,
-    abi: Campaign,
-    functionName: 'rewardsDeposited',
-    watch: true,
-  })
-
-  // Read totalReward from contract
-  const { data: totalRewardData } = useReadContract({
-    address: campaign.campaignAddress,
-    abi: Campaign,
-    functionName: 'totalReward',
-    watch: true,
-  })
-
-  // Update rewardsDeposited and totalReward state when data changes
-  useEffect(() => {
-    if (rewardsDepositedData !== undefined) {
-      setIsRewardsDeposited(rewardsDepositedData)
-    }
-    if (totalRewardData) {
-      setTotalReward(formatEther(totalRewardData))
-    }
-  }, [rewardsDepositedData, totalRewardData])
 
   console.log("DepositDialog - rewardsDeposited:", isRewardsDeposited)
 
@@ -164,6 +140,9 @@ export default function DepositDialog({ campaign }) {
       <DialogContent className="bg-[#060606]/95 border-gray-800/40">
         <DialogHeader>
           <DialogTitle>Deposit Prize Pool</DialogTitle>
+          <DialogDescription>
+            Deposit BLOG tokens to fund the campaign rewards
+          </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           {isRewardsDeposited ? (

@@ -1,14 +1,17 @@
 'use client'
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Edit, Coins, Users } from "lucide-react"
+import { ArrowLeft, Edit, Coins, Users, CheckCircle, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useRewardStatus } from './providers/reward-status-provider'
 import DepositDialog from './dialogs/deposit-dialog'
 import SubmissionDialog from './dialogs/submission-dialog'
 
 export default function CampaignHeader({ campaign, isOwner }) {
+  const { isRewardsDeposited, totalReward } = useRewardStatus()
+  
   return (
     <>
       <div className="container mx-auto px-4 py-6">
@@ -43,6 +46,28 @@ export default function CampaignHeader({ campaign, isOwner }) {
                   <span className="text-xs text-gray-400">
                     Ends: {new Date(campaign.endDate).toLocaleDateString()}
                   </span>
+                  {campaign.campaignAddress && (
+                    <Badge 
+                      variant="outline"
+                      className={`rounded-full flex items-center gap-1 ${
+                        isRewardsDeposited 
+                          ? 'border-green-600/40 bg-green-600/10 text-green-400' 
+                          : 'border-amber-600/40 bg-amber-600/10 text-amber-400'
+                      }`}
+                    >
+                      {isRewardsDeposited ? (
+                        <>
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Rewards Funded</span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="h-3 w-3" />
+                          <span>Awaiting Funding</span>
+                        </>
+                      )}
+                    </Badge>
+                  )}
                 </div>
                 <h1 className="text-3xl font-light mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   {campaign.title}
@@ -56,7 +81,9 @@ export default function CampaignHeader({ campaign, isOwner }) {
               </div>
 
               <div className="flex flex-col items-start md:items-end gap-3">
-                <div className="text-xl font-medium text-emerald-400">{campaign.rewardPool} $BLOG</div>
+                <div className="text-xl font-medium text-emerald-400">
+                  {campaign.rewardPool} $BLOG
+                </div>
                 {!isOwner && <SubmissionDialog />}
                 {isOwner && (
                   <div className="flex flex-col sm:flex-row gap-3">

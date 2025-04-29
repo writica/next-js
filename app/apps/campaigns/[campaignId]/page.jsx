@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { useAccount } from 'wagmi'
 import { useUser } from '@/hooks/use-user'
+import { RewardStatusProvider } from './components/providers/reward-status-provider'
 import CampaignHeader from './components/campaign-header'
 import OverviewTab from './components/tabs/overview-tab'
 import RequirementsTab from './components/tabs/requirements-tab'
@@ -68,29 +69,60 @@ export default function CampaignDetailPage({ params }) {
 
   return (
     <div className="relative min-h-screen pt-14 bg-black">
-      <CampaignHeader campaign={campaign} isOwner={isOwner} />
+      {campaign.campaignAddress && (
+        <RewardStatusProvider campaignAddress={campaign.campaignAddress}>
+          <CampaignHeader campaign={campaign} isOwner={isOwner} />
 
-      <div className="container mx-auto px-4 py-12">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full max-w-3xl mx-auto mb-8 bg-[#0a0a0a] border-gray-800/40">
-            <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
-            <TabsTrigger value="requirements" className="flex-1">Requirements</TabsTrigger>
-            <TabsTrigger value="submissions" className="flex-1">Submissions</TabsTrigger>
-          </TabsList>
+          <div className="container mx-auto px-4 py-12">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="w-full max-w-3xl mx-auto mb-8 bg-[#0a0a0a] border-gray-800/40">
+                <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+                <TabsTrigger value="requirements" className="flex-1">Requirements</TabsTrigger>
+                <TabsTrigger value="submissions" className="flex-1">Submissions</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="overview" className="mt-0">
-            <OverviewTab campaign={campaign} />
-          </TabsContent>
+              <TabsContent value="overview" className="mt-0">
+                <OverviewTab campaign={campaign} />
+              </TabsContent>
 
-          <TabsContent value="requirements" className="mt-0">
-            <RequirementsTab campaign={campaign} />
-          </TabsContent>
+              <TabsContent value="requirements" className="mt-0">
+                <RequirementsTab campaign={campaign} />
+              </TabsContent>
 
-          <TabsContent value="submissions" className="mt-0">
-            <SubmissionsTab campaign={campaign} />
-          </TabsContent>
-        </Tabs>
-      </div>
+              <TabsContent value="submissions" className="mt-0">
+                <SubmissionsTab campaign={campaign} />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </RewardStatusProvider>
+      )}
+      {!campaign.campaignAddress && (
+        <>
+          <CampaignHeader campaign={campaign} isOwner={isOwner} />
+
+          <div className="container mx-auto px-4 py-12">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="w-full max-w-3xl mx-auto mb-8 bg-[#0a0a0a] border-gray-800/40">
+                <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+                <TabsTrigger value="requirements" className="flex-1">Requirements</TabsTrigger>
+                <TabsTrigger value="submissions" className="flex-1">Submissions</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="overview" className="mt-0">
+                <OverviewTab campaign={campaign} />
+              </TabsContent>
+
+              <TabsContent value="requirements" className="mt-0">
+                <RequirementsTab campaign={campaign} />
+              </TabsContent>
+
+              <TabsContent value="submissions" className="mt-0">
+                <SubmissionsTab campaign={campaign} />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </>
+      )}
     </div>
   )
 }
