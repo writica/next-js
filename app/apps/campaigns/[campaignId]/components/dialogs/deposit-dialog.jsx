@@ -45,6 +45,7 @@ export default function DepositDialog({ campaign }) {
   // Get the current chainId from the user's active network
   // Hardcoded for demo, but should be dynamically obtained in production
   const chainId = 84532 // Base Sepolia
+  console.log(address);
 
   // Get user's BLOG token balance
   const { data: balance } = useReadContract({
@@ -57,6 +58,7 @@ export default function DepositDialog({ campaign }) {
 
   // Update token balance when it changes
   useEffect(() => {
+    console.log("Token balance:", balance)
     if (balance) {
       setTokenBalance(formatEther(balance))
     }
