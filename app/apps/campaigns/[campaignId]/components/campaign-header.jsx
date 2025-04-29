@@ -26,11 +26,10 @@ export default function CampaignHeader({ campaign, isOwner }) {
 
       <div className="h-80 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10"></div>
-        <Image
+        <img
           src={campaign.coverImage || "/placeholder.svg"}
           alt={campaign.title}
-          fill
-          className="object-cover"
+          className="object-cover w-full h-full"
         />
       </div>
 

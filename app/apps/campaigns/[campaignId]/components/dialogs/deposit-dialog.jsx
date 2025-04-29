@@ -27,8 +27,6 @@ export default function DepositDialog({ campaign }) {
     hash,
   });
 
-  console.log("DepositDialog - rewardsDeposited:", isRewardsDeposited)
-
   // Transaction confirmation for the deposit transaction
   const { isSuccess: isDepositConfirmed } = useWaitForTransactionReceipt({
     hash: depositHash,
@@ -58,7 +56,6 @@ export default function DepositDialog({ campaign }) {
 
   // Update token balance when it changes
   useEffect(() => {
-    console.log("Token balance:", balance)
     if (balance) {
       setTokenBalance(formatEther(balance))
     }
@@ -82,7 +79,6 @@ export default function DepositDialog({ campaign }) {
       setIsApproving(true)
       
       // Step 1: Approve token transfer - Use exact amount instead of unlimited approval
-      console.log(`parseEther(depositAmount):`, parseEther(depositAmount))
       await writeContract({
         address: contracts[chainId].blog.address,
         abi: erc20Abi,
@@ -124,9 +120,14 @@ export default function DepositDialog({ campaign }) {
     }
   }
 
+  // Handle dialog open state
+  const handleOpenChange = (open) => {
+    setIsOpen(open)
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild onClick={() => setIsOpen(true)}>
         <Button
           variant="outline"
           className={`rounded-full ${isRewardsDeposited ? 

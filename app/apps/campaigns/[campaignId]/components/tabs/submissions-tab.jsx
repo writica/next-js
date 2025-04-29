@@ -1,5 +1,4 @@
 'use client'
-import Image from "next/image"
 import { Users } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,12 +10,10 @@ export default function SubmissionsTab({ campaign }) {
         <Card key={submission.id} className="bg-[#060606]/60 border-gray-800/40 overflow-hidden">
           {submission.preview && (
             <div className="aspect-w-16 aspect-h-9">
-              <Image 
+              <img 
                 src={submission.preview}
                 alt={`Submission by ${submission.userName}`}
-                width={400}
-                height={225}
-                className="object-cover"
+                className="object-cover w-full h-full"
               />
             </div>
           )}

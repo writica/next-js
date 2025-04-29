@@ -13,6 +13,9 @@ const config = {
     "from-[#F08A24]", "to-[#E67E22]", "hover:from-[#E67E22]", "hover:to-[#D35400]",
     "from-[#F08A24]/50", "to-[#E67E22]/50", "from-[#F08A24]", "to-[#E67E22]",
     "from-[#D9BEA7]", "to-[#CAAF9B]", "md:hidden",
+    // Add animation classes to safelist to ensure they're included in production
+    "animate-in", "animate-out", "fade-in-0", "fade-out-0", "zoom-in-95", "zoom-out-95",
+    "slide-in-from-left-1/2", "slide-in-from-top-[48%]", "slide-out-to-left-1/2", "slide-out-to-top-[48%]"
   ],
   prefix: "",
   theme: {
@@ -104,6 +107,39 @@ const config = {
         gradientShift: {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
+        },
+        // Add keyframes for dialog animations
+        "fade-in": {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        "fade-out": {
+          from: { opacity: 1 },
+          to: { opacity: 0 },
+        },
+        "zoom-in": {
+          from: { transform: "scale(0.95)" },
+          to: { transform: "scale(1)" },
+        },
+        "zoom-out": {
+          from: { transform: "scale(1)" },
+          to: { transform: "scale(0.95)" },
+        },
+        "slide-in-from-left": {
+          from: { transform: "translateX(-50%)" },
+          to: { transform: "translateX(0)" },
+        },
+        "slide-in-from-top": {
+          from: { transform: "translateY(-50%)" },
+          to: { transform: "translateY(0)" },
+        },
+        "slide-out-to-left": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "slide-out-to-top": {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(-50%)" },
         }
       },
       animation: {
@@ -114,6 +150,15 @@ const config = {
         "float": "float 15s ease-in-out infinite",
         "spin-slow": "spin 8s linear infinite",
         "gradient": "gradientShift 8s ease infinite",
+        // Add animations for dialog
+        "fade-in": "fade-in 150ms ease",
+        "fade-out": "fade-out 150ms ease",
+        "zoom-in": "zoom-in 150ms ease",
+        "zoom-out": "zoom-out 150ms ease",
+        "slide-in-from-left": "slide-in-from-left 150ms ease",
+        "slide-in-from-top": "slide-in-from-top 150ms ease",
+        "slide-out-to-left": "slide-out-to-left 150ms ease",
+        "slide-out-to-top": "slide-out-to-top 150ms ease",
       },
     },
   },

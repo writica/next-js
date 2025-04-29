@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { PlusCircle, Search, Filter, Calendar, Users, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +16,10 @@ const Campaign = ({campaign})=> {
       className="group bg-[#060606] border-gray-800/20 overflow-hidden rounded-3xl transition-all duration-500 hover:border-gray-700"
     >
       <div className="relative h-56 overflow-hidden">
-        <Image
+        <img
           src={campaign.image || "/placeholder.svg"}
           alt={campaign.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
       </div>
