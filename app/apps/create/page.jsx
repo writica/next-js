@@ -3,7 +3,6 @@ import { useState, useEffect, useReducer } from "react"
 import { ImageIcon, Upload, Calendar, Users, Info, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,6 +17,7 @@ import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
 import contracts from '@/lib/contracts'
+import TransactionErrorDisplay from "@/app/components/TransactionErrorDisplay"
 
 // Define transaction state reducer
 const transactionReducer = (state, action) => {
@@ -39,7 +39,28 @@ const transactionReducer = (state, action) => {
   }
 };
 
-const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
+const ButtonCreateCampaign = ({ state, setState, isSubmitting, form }) => {
+  // Handles validation before moving to next tab
+  const handleNextTab = async () => {
+    let fieldsToValidate = [];
+    
+    // Determine which fields to validate based on current tab
+    if (state === "details") {
+      fieldsToValidate = ["title", "description", "keywords", "rewardPool"];
+    } else if (state === "requirements") {
+      fieldsToValidate = ["startDate", "endDate", "targetAudience"];
+    }
+    
+    // Trigger validation for the specific fields
+    const result = await form.trigger(fieldsToValidate);
+    
+    if (result) {
+      // If validation passes, move to next tab
+      const nextTab = state === "details" ? "requirements" : state === "requirements" ? "media" : "media";
+      setState(nextTab);
+    }
+  };
+
   if(state === "media") {
     return (<Button 
       type="submit" 
@@ -58,12 +79,9 @@ const ButtonCreateCampaign = ({ state, setState, isSubmitting }) => {
     </Button>);
   }
   
-  // Determine the next tab based on current state
-  const nextTab = state === "details" ? "requirements" : state === "requirements" ? "media" : "media";
-
   return (<Button 
     type="button" 
-    onClick={() => setState(nextTab)} 
+    onClick={handleNextTab} 
     disabled={isSubmitting} 
     variant="outline"
     className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
@@ -83,7 +101,13 @@ const formSchema = z.object({
   ctaGoal: z.string().optional(),
   coverImage: z.any().optional(),
   rewardPool: z.number().min(0, "Reward pool must be a positive number"),
-})
+}).refine(
+  (data) => data.endDate > data.startDate,
+  {
+    message: "End date must be later than start date",
+    path: ["endDate"],
+  }
+)
 
 export default function CreateCampaignPage() {
   const [activeTab, setActiveTab] = useState("details")
@@ -131,14 +155,46 @@ export default function CreateCampaignPage() {
   useEffect(() => {
     if (isPending) {
       dispatchTx({ type: 'TRANSACTION_START' });
+      toast({
+        title: "Processing Transaction",
+        description: "Your transaction is being processed on the blockchain.",
+        duration: 5000,
+      });
     } else if (hash) {
       dispatchTx({ type: 'TRANSACTION_SUCCESS', payload: hash });
+      toast({
+        title: "Transaction Submitted",
+        description: "Your transaction has been submitted to the blockchain.",
+        duration: 5000,
+      });
       console.log("Transaction hash:", hash);
     } else if (isError) {
       dispatchTx({ type: 'TRANSACTION_ERROR', payload: writeError });
+      
+      // Extract meaningful error message
+      let errorMessage = "Unknown error occurred";
+      if (writeError) {
+        if (typeof writeError === 'object' && writeError.shortMessage) {
+          errorMessage = writeError.shortMessage;
+        } else if (typeof writeError === 'object' && writeError.message) {
+          errorMessage = writeError.message;
+        } else if (typeof writeError === 'string') {
+          errorMessage = writeError;
+        }
+      }
+      
+      // Show error toast with detailed message and retry option
+      toast({
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: `${errorMessage}. Please try again.`,
+        duration: 10000,
+      });
+      
       console.error("Transaction error:", writeError);
+      setIsSubmitting(false);
     }
-  }, [isPending, hash, isError, writeError]);
+  }, [isPending, hash, isError, writeError, toast]);
 
   // Effect to extract contract address from transaction receipt
   useEffect(() => {
@@ -470,6 +526,16 @@ export default function CreateCampaignPage() {
                           )}
                         />
                         
+                        {txState.isError && (
+                          <TransactionErrorDisplay 
+                            error={txState.error}
+                            onRetry={() => {
+                              dispatchTx({ type: 'RESET' });
+                              form.handleSubmit(onSubmit)();
+                            }}
+                          />
+                        )}
+                        
                         <div className="pt-2">
                           <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 p-3 border border-blue-800/30">
                             <div className="flex-shrink-0">
@@ -483,14 +549,14 @@ export default function CreateCampaignPage() {
                       </TabsContent>
                       {activeTab == "media" && (
                         <div className="flex justify-end space-x-4 pt-4">
-                              <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
+                              <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
                         </div>
                         )}
                     </form>
                   </Form>
                   {activeTab !== "media" && (
                   <div className="flex justify-end space-x-4 pt-4">
-                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} />
+                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
                   </div>
                   )}
                 </Tabs>

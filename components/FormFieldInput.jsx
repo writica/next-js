@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
  * @param {string} props.placeholder - Placeholder text for the input field
  * @param {React.ReactNode} props.icon - Optional icon to display next to the label
  * @param {string} props.description - Optional description text to display below the input
- * @param {string} props.type - Input type (text, email, password, number, date, textarea)
+ * @param {string} props.type - Input type (text, email, password, number, date, datetime-local, textarea)
  * @param {boolean} props.required - Whether the field is required
  * @param {object} props.validation - Additional validation options
  * @param {number} props.rows - Number of rows for textarea (only applies when type is textarea)
@@ -50,13 +50,13 @@ const FormFieldInput = ({
               />
             ) : (
               <Input
-                type={type}
+                type={type === "date" ? "datetime-local" : type}
                 placeholder={placeholder || `Enter ${title.toLowerCase()}`}
                 className="bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500"
                 {...field}
                 value={
                   type === "date" && field.value instanceof Date 
-                    ? field.value.toISOString().split('T')[0] 
+                    ? field.value.toISOString().slice(0, 16) // Format as YYYY-MM-DDTHH:MM
                     : field.value
                 }
                 onChange={(e) => {
