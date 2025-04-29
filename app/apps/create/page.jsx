@@ -242,7 +242,7 @@ export default function CreateCampaignPage() {
 
           // Add wallet address, transaction hash and contract address to form data
           formData.append('walletAddress', address)
-          formData.append('transactionHash', txState.hash)
+          formData.append('txHash', txState.hash)
           formData.append('campaignAddress', txState.contractAddress)
 
           const response = await fetch('/api/campaigns/create', {

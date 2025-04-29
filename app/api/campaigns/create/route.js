@@ -25,43 +25,14 @@ export async function POST(request) {
     const startDateStr = formData.get('startDate');
     const endDateStr = formData.get('endDate');
     const walletAddress = formData.get('walletAddress');
-    const signature = formData.get('signature');
-    const signedMessage = formData.get('signedMessage');
+    const txHash = formData.get('txHash');
     const coverImage = formData.get('coverImage');
 
     // Validate required fields
-    if (!title || !description || !startDateStr || !endDateStr || !walletAddress) {
+    if (!title || !description || !startDateStr || !endDateStr || !walletAddress || !txHash) {
       return NextResponse.json({
         success: false,
         message: 'Missing required fields'
-      }, { status: 400 });
-    }
-
-    // Verify the message signature
-    try {
-      if (!signature || !signedMessage) {
-        return NextResponse.json({
-          success: false,
-          message: 'Signature verification failed: Missing signature data'
-        }, { status: 400 });
-      }
-
-      const isValid = await verifyMessage({
-        address: walletAddress,
-        message: signedMessage,
-        signature,
-      });
-
-      if (!isValid) {
-        return NextResponse.json({
-          success: false,
-          message: 'Signature verification failed: Invalid signature'
-        }, { status: 400 });
-      }
-    } catch (error) {
-      return NextResponse.json({
-        success: false,
-        message: `Signature verification error: ${error.message}`
       }, { status: 400 });
     }
 

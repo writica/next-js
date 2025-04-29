@@ -32,6 +32,7 @@ model Campaign {
   startDate   DateTime
   endDate     DateTime
   campaginAddress String?
+  txHash      String?
   aiDescription String?
   keywords    String?
   targetAudience String?
