@@ -13,8 +13,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
   
   return (
     <>
-
-      <div className="h-80 relative overflow-hidden">
+      <div className="h-96 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10"></div>
         <img
           src={campaign.coverImage || "/placeholder.svg"}
@@ -23,21 +22,21 @@ export default function CampaignHeader({ campaign, isOwner }) {
         />
       </div>
 
-      <div className="container mx-auto px-4 relative">
-        <Card className="bg-[#060606]/90 border-gray-800/40 backdrop-blur-lg">
+      <div className="container mx-auto px-4 relative -mt-40 z-20">
+        <Card className="bg-[#060606]/90 border-gray-800/40 backdrop-blur-lg shadow-xl">
           <CardContent className="p-8">
-          <div className="pb-6 mt-[-1.5rem]">
-            <Link 
-              href="/apps"
-              className="inline-flex items-center text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Campaigns
-            </Link>
-          </div>
+            <div className="mb-6 -mt-6">
+              <Link 
+                href="/apps"
+                className="inline-flex items-center text-gray-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Campaigns
+              </Link>
+            </div>
             <div className="flex flex-col md:flex-row justify-between gap-6">
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   <Badge variant="secondary" className="rounded-full">
                     {campaign.status}
                   </Badge>
