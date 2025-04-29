@@ -5,7 +5,7 @@ import { ArrowLeft, Edit, Coins, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import DepositDialog from './dialogs/deposit-dialog'
+// import DepositDialog from './dialogs/deposit-dialog'
 import SubmissionDialog from './dialogs/submission-dialog'
 
 export default function CampaignHeader({ campaign, isOwner }) {
@@ -70,7 +70,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
                         Edit Campaign
                       </Link>
                     </Button>
-                    <DepositDialog campaign={campaign} />
+                    {/* <DepositDialog campaign={campaign} /> */}
                   </div>
                 )}
               </div>
