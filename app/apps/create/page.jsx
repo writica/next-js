@@ -81,7 +81,8 @@ const formSchema = z.object({
   keywords: z.string().min(3, "Keywords are required"),
   targetAudience: z.string().optional(),
   ctaGoal: z.string().optional(),
-  coverImage: z.any().optional()
+  coverImage: z.any().optional(),
+  rewardPool: z.number().min(0, "Reward pool must be a positive number"),
 })
 
 export default function CreateCampaignPage() {
@@ -162,6 +163,7 @@ export default function CreateCampaignPage() {
       targetAudience: "",
       ctaGoal: "",
       coverImage: undefined,
+      rewardPool: 0
     },
     mode: "onSubmit",
   });
@@ -196,7 +198,7 @@ export default function CreateCampaignPage() {
           values.title || "Campaign",
           Math.floor(values.startDate.getTime() / 1000),
           Math.floor(values.endDate.getTime() / 1000),
-          10 * 10 ** 18 // Example reward amount
+          parseInt(values.rewardPool) * 10 ** 18
         ],
       });
       
@@ -382,6 +384,16 @@ export default function CreateCampaignPage() {
                           placeholder="Enter keywords separated by commas"
                           icon={<Tag className="h-4 w-4" />}
                           description="Keywords help categorize your campaign"
+                          required={true}
+                        />
+                        
+                        <FormFieldInput
+                          formControl={form.control}
+                          fieldName="rewardPool"
+                          title="Reward Pool"
+                          type="number"
+                          placeholder="Enter reward amount"
+                          description="Payment will be made in $BLOG tokens"
                           required={true}
                         />
                         
