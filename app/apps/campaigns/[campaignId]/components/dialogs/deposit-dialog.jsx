@@ -16,12 +16,42 @@ export default function DepositDialog({ campaign }) {
   const [tokenBalance, setTokenBalance] = useState("0")
   const [isApproving, setIsApproving] = useState(false)
   const [depositHash, setDepositHash] = useState(null)
+  const [isRewardsDeposited, setIsRewardsDeposited] = useState(false)
+  const [totalReward, setTotalReward] = useState("0")
   
   const { address, chainId } = useAccount()
   const { data: hash, isPending, writeContract } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
+
+  // Read rewardsDeposited state from contract
+  const { data: rewardsDepositedData } = useReadContract({
+    address: campaign.campaignAddress,
+    abi: Campaign,
+    functionName: 'rewardsDeposited',
+    watch: true,
+  })
+
+  // Read totalReward from contract
+  const { data: totalRewardData } = useReadContract({
+    address: campaign.campaignAddress,
+    abi: Campaign,
+    functionName: 'totalReward',
+    watch: true,
+  })
+
+  // Update rewardsDeposited and totalReward state when data changes
+  useEffect(() => {
+    if (rewardsDepositedData !== undefined) {
+      setIsRewardsDeposited(rewardsDepositedData)
+    }
+    if (totalRewardData) {
+      setTotalReward(formatEther(totalRewardData))
+    }
+  }, [rewardsDepositedData, totalRewardData])
+
+  console.log("DepositDialog - rewardsDeposited:", isRewardsDeposited)
 
   // Transaction confirmation for the deposit transaction
   const { isSuccess: isDepositConfirmed } = useWaitForTransactionReceipt({
@@ -59,7 +89,7 @@ export default function DepositDialog({ campaign }) {
   }, [balance])
 
   const handleMaxAmount = () => {
-    setDepositAmount(tokenBalance)
+    setDepositAmount(totalReward)
   }
 
   const handleDeposit = async () => {
@@ -98,8 +128,6 @@ export default function DepositDialog({ campaign }) {
         address: campaign.campaignAddress,
         abi: Campaign,
         functionName: 'depositReward',
-        args: [parseInt(depositAmount) * 10 ** 18],
-        // gas: 200000n, // Set reasonable gas limit to avoid high fees
       })
       
       // Store the deposit transaction hash for confirmation tracking
@@ -125,10 +153,12 @@ export default function DepositDialog({ campaign }) {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full border-emerald-600/40 hover:bg-emerald-600/20 text-emerald-400"
+          className={`rounded-full ${isRewardsDeposited ? 
+            'border-green-600/40 hover:bg-green-600/20 text-green-400' : 
+            'border-emerald-600/40 hover:bg-emerald-600/20 text-emerald-400'}`}
         >
           <Coins className="h-4 w-4 mr-2" />
-          Deposit Prize Pool
+          {isRewardsDeposited ? 'Rewards Deposited' : 'Deposit Prize Pool'}
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-[#060606]/95 border-gray-800/40">
@@ -136,39 +166,59 @@ export default function DepositDialog({ campaign }) {
           <DialogTitle>Deposit Prize Pool</DialogTitle>
         </DialogHeader>
         <div className="py-4">
-          <div className="mb-4">
-            <label className="text-sm font-medium mb-2 block">Amount ($BLOG)</label>
-            <div className="relative">
-              <input
-                type="number"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                placeholder="Enter amount"
-                className="w-full px-4 py-2 bg-[#0a0a0a] border border-gray-800/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              <Button 
-                type="button"
-                onClick={handleMaxAmount}
-                variant="ghost" 
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 text-xs text-emerald-400 hover:bg-emerald-600/20"
-              >
-                MAX
-              </Button>
+          {isRewardsDeposited ? (
+            <div className="mb-4 p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
+              <p className="text-green-400 font-medium">Rewards already deposited!</p>
+              <p className="text-sm text-gray-300 mt-1">Total reward: {parseFloat(totalReward).toFixed(4)} $BLOG</p>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
-              Available: {parseFloat(tokenBalance).toFixed(4)} $BLOG
-            </p>
-          </div>
-          <Button 
-            onClick={handleDeposit}
-            disabled={isPending || isConfirming || isApproving || !depositAmount || parseFloat(depositAmount) <= 0 || parseFloat(depositAmount) > parseFloat(tokenBalance)}
-            className="w-full rounded-full"
-          >
-            {isApproving ? "Approving..." :
-             isPending ? "Confirming..." : 
-             depositHash && !isDepositConfirmed ? "Waiting for confirmation..." :
-             "Deposit"}
-          </Button>
+          ) : (
+            <>
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-sm font-medium">Amount ($BLOG)</label>
+                  <span className="text-xs text-gray-400">Required: {parseFloat(totalReward).toFixed(4)} $BLOG</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full px-4 py-2 bg-[#0a0a0a] border border-gray-800/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <Button 
+                    type="button"
+                    onClick={handleMaxAmount}
+                    variant="ghost" 
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 text-xs text-emerald-400 hover:bg-emerald-600/20"
+                  >
+                    MAX
+                  </Button>
+                </div>
+                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>Available: {parseFloat(tokenBalance).toFixed(4)} $BLOG</span>
+                  {parseFloat(depositAmount) > 0 && parseFloat(depositAmount) !== parseFloat(totalReward) && (
+                    <span className={parseFloat(depositAmount) === parseFloat(totalReward) ? 
+                      "text-green-400" : "text-amber-400"}>
+                      {parseFloat(depositAmount) < parseFloat(totalReward) ? 
+                        `Warning: Less than required amount` : 
+                        `Warning: More than required amount`}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Button 
+                onClick={handleDeposit}
+                disabled={isPending || isConfirming || isApproving || !depositAmount || parseFloat(depositAmount) <= 0 || parseFloat(depositAmount) > parseFloat(tokenBalance)}
+                className="w-full rounded-full"
+              >
+                {isApproving ? "Approving..." :
+                 isPending ? "Confirming..." : 
+                 depositHash && !isDepositConfirmed ? "Waiting for confirmation..." :
+                 "Deposit"}
+              </Button>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>
