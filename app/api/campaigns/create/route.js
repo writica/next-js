@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma/client';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { verifyMessage } from 'viem';
 
 /**
  * Handle POST request for creating a new campaign
@@ -27,9 +26,10 @@ export async function POST(request) {
     const walletAddress = formData.get('walletAddress');
     const txHash = formData.get('txHash');
     const coverImage = formData.get('coverImage');
+    const campaignAddress = formData.get('campaignAddress');
 
     // Validate required fields
-    if (!title || !description || !startDateStr || !endDateStr || !walletAddress || !txHash) {
+    if (!title || !description || !startDateStr || !endDateStr || !walletAddress || !txHash || !campaignAddress) {
       return NextResponse.json({
         success: false,
         message: 'Missing required fields'
@@ -94,6 +94,8 @@ export async function POST(request) {
         CtaGoal,
         coverImage: imagePath,
         rewardPool,
+        txHash,
+        campaignAddress,
         ownerId: user.id
       }
     });

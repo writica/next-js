@@ -31,7 +31,7 @@ model Campaign {
   description String
   startDate   DateTime
   endDate     DateTime
-  campaginAddress String?
+  campaignAddress String
   txHash      String?
   aiDescription String?
   keywords    String?
