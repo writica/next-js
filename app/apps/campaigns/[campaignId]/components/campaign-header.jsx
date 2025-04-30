@@ -81,7 +81,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
                 <div className="text-xl font-medium text-emerald-400">
                   {campaign.rewardPool} $BLOG
                 </div>
-                {!isOwner && <SubmissionDialog />}
+                {!isOwner && <SubmissionDialog campaign={campaign}/>}
                 {isOwner && (
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button

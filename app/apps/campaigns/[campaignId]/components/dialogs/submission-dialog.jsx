@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useAccount } from "wagmi";
@@ -9,7 +9,7 @@ import { z } from "zod";
 import FormFieldInput from "@/components/FormFieldInput";
 import { Form, FormField } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 
 const submissionSchema = z.object({
   link: z
@@ -57,11 +57,29 @@ const ConnectDialogContent = ({ isCheckingUser, isConnected, userExists }) => {
   return null;
 };
 
+const fetchApi = async (submissionId, link, address) => {
+  const response = await fetch("/api/campaigns/submission", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ submissionId, link, userWalletAddress: address }),
+  });
 
-export default function SubmissionDialog() {
+  if (!response.ok) {
+    throw new Error("Failed to submit entry");
+  }
+
+  return response.json();
+};
+
+
+export default function SubmissionDialog({campaign}) {
   const { address, isConnected, chainId } = useAccount();
   const { userExists, isCheckingUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(submissionSchema),
@@ -69,10 +87,25 @@ export default function SubmissionDialog() {
     mode: "onSubmit",
   });
 
-  const handleSubmit = (values) => {
-    console.log("Submission Link:", values.link);
-    setIsOpen(false);
+  const handleSubmit = async (values) => {
+    setIsLoading(true);
+    try{
+      const result = await fetchApi(campaign.id, values.link, address);
+      setResult(result);
+      console.log(result);
+
+    }catch (error) {
+      console.error("Error submitting entry:", error);
+      // Handle error (e.g., show a notification)
+    }finally{
+      setIsLoading(false);
+    }
+    // setIsOpen(false);
   };
+
+  useEffect(() => {
+    console.log("isLoading:", isLoading);
+  },[isLoading]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -111,8 +144,8 @@ export default function SubmissionDialog() {
                   },
                 }}
               />
-              <Button type="submit" className="w-full rounded-full">
-                Submit Entry
+              <Button type="submit" variant="secondary" className="flex items-center space-x-2 rounded-full">
+                Submit Entry {isLoading && <span className="loader"></span>}
               </Button>
             </form>
           </Form>
