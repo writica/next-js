@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma/client';
 
 import axios from "axios";
 
-export async function checkScore({ contentUrl, campaignDescription, campaign_keywords, target_audience, CTA_goal   }) {
+async function checkScore({ contentUrl, campaignDescription, campaign_keywords, target_audience, CTA_goal   }) {
   try {
     const params = {};
     if (contentUrl) params.contentUrl = contentUrl;
