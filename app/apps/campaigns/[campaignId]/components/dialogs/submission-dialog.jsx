@@ -2,11 +2,23 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { useAccount, useSignMessage, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { useUser } from "@/hooks/use-user"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
+import { z } from "zod";
+import FormFieldInput from "@/components/FormFieldInput";
+import { Form, FormField } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
+const submissionSchema = z.object({
+  link: z
+    .string()
+    .url("Please enter a valid URL")
+    .refine((url) => url.includes("x.com") || url.includes("medium.com"), {
+      message: "Link must be from X or Medium",
+    }),
+});
 
 const ConnectDialogContent = ({ isCheckingUser, isConnected, userExists }) => {
   if (!isConnected) {
@@ -49,17 +61,18 @@ const ConnectDialogContent = ({ isCheckingUser, isConnected, userExists }) => {
 export default function SubmissionDialog() {
   const { address, isConnected, chainId } = useAccount();
   const { userExists, isCheckingUser } = useUser();
-  const [isOpen, setIsOpen] = useState(false)
-  const [submissionText, setSubmissionText] = useState("")
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = () => {
-    // TODO: Implement submission logic
-    console.log('Submission Text:', submissionText)
-    console.log('Submission File:', submissionFile)
-    setSubmissionText("")
-    setSubmissionFile(null)
-    setIsOpen(false)
-  }
+  const form = useForm({
+    resolver: zodResolver(submissionSchema),
+    defaultValues: { link: "" },
+    mode: "onSubmit",
+  });
+
+  const handleSubmit = (values) => {
+    console.log("Submission Link:", values.link);
+    setIsOpen(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -73,27 +86,38 @@ export default function SubmissionDialog() {
           <DialogTitle>Submit Your Entry</DialogTitle>
         </DialogHeader>
 
-        {(isCheckingUser || !userExists || !isConnected)
-        ? (<ConnectDialogContent isCheckingUser={isCheckingUser} userExists={userExists} isConnected={isConnected} />)
-        : (        <div className="py-4">
-          <div className="mb-4">
-            <label className="text-sm font-medium mb-2 block">Description</label>
-            <Textarea 
-              placeholder="Describe your submission..." 
-              className="bg-[#0a0a0a] border-gray-800/40 min-h-[120px]"
-              value={submissionText}
-              onChange={(e) => setSubmissionText(e.target.value)}
-            />
-          </div>
-          <Button 
-            onClick={handleSubmit} 
-            className="w-full rounded-full"
-          >
-            Submit Entry
-          </Button>
-        </div>)
-        }
+        {(isCheckingUser || !userExists || !isConnected) ? (
+          <ConnectDialogContent
+            isCheckingUser={isCheckingUser}
+            userExists={userExists}
+            isConnected={isConnected}
+          />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="py-4 space-y-4">
+              <FormFieldInput
+                formControl={form.control}
+                fieldName="link"
+                title="Link"
+                placeholder="Enter a Twitter or Medium link"
+                type="url"
+                required
+                validation={{
+                  validate: (value) => {
+                    if (!value.includes("twitter.com") && !value.includes("medium.com")) {
+                      return "Link must be from Twitter or Medium";
+                    }
+                    return true;
+                  },
+                }}
+              />
+              <Button type="submit" className="w-full rounded-full">
+                Submit Entry
+              </Button>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
