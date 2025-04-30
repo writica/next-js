@@ -11,14 +11,25 @@ import { Form, FormField } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import { WordRotate } from '@/components/magicui/word-rotate';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-const LoadingWord = ({link="medium"}) => {
+
+const LoadingWord = () => {
   return (<>
   <div className='flex items-center justify-center'>
     <WordRotate
     className="text-sm font-bold text-muted-foreground"
-    words={[`Fetch Content on ${link}`, "Analyzing Content", "Checking Score", "Fetching Data"]}
-    duration={1500}
+    words={[`Connecting to sources...`, "Retrieving latest content...", "AI initiating analysis protocols...", "Analyzing text structure & sentiment...",
+      "Scanning for AI generation markers...", 'Verifying content authenticity...', 'Matching content with campaign objectives...', 'Validating topic relevance...',
+      'Calculating performance score...', 'Compiling insights & final score...'
+    ]}
+    duration={1250}
     motionProps={{
       initial: { opacity: 0, y: -50 },
       animate: { opacity: 1, y: 0 },
@@ -98,7 +109,7 @@ export default function SubmissionDialog({campaign}) {
   const { userExists, isCheckingUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(submissionSchema),
@@ -109,9 +120,9 @@ export default function SubmissionDialog({campaign}) {
   const handleSubmit = async (values) => {
     setIsLoading(true);
     try{
-      const result = await fetchApi(campaign.id, values.link, address);
-      setResult(result);
-      console.log(result);
+      const res = await fetchApi(campaign.id, values.link, address);
+      setResult(res);
+      console.log(res);
 
     }catch (error) {
       console.error("Error submitting entry:", error);
@@ -124,7 +135,8 @@ export default function SubmissionDialog({campaign}) {
 
   useEffect(() => {
     console.log("isLoading:", isLoading);
-  },[isLoading]);
+    console.log("result:", result);
+  },[isLoading, result]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -145,7 +157,7 @@ export default function SubmissionDialog({campaign}) {
             isConnected={isConnected}
           />
         ) : (
-          <Form {...form}>
+          <Form {...form} className="block w-full relative">
             <form onSubmit={form.handleSubmit(handleSubmit)} className="py-4 space-y-4">
               <FormFieldInput
                 formControl={form.control}
@@ -163,6 +175,38 @@ export default function SubmissionDialog({campaign}) {
                   },
                 }}
               />
+              {/* {(result && (result !== false && result !== null && result !== undefined)) && ( */}
+                <Collapsible open={true} className="relative overflow-x-hidden">
+                  <CollapsibleTrigger className="text-sm font-bold text-muted-foreground">Result</CollapsibleTrigger>
+                  <CollapsibleContent className="text-sm font-bold text-muted-foreground">
+                    <div className="w-full !block h-96 overflow-auto">
+                    <SyntaxHighlighter language="json" style={atomOneDark}
+                    wrapLines={true}
+                    >
+                      {JSON.stringify({
+  "submissionId": "cma3ngp1x0005t4ko9ezxjsdo",
+  "link": "https://x.com/YustineMelinda/status/1917365551330124257",
+  "result": {
+    "AIContent": {
+      "score": 40,
+      "explanation": "Lacks detailed content; mostly brief, repetitive phrases."
+    },
+    "score": {
+      "virality_score": 40,
+      "virality_reason": "The tweet has some emotional appeal due to humor and a relatable fear but lacks trending crypto keywords and a strong hook.",
+      "quality_score": 30,
+      "quality_reason": "The content is informal, lacks depth and clarity, and does not provide educational or actionable crypto insights.",
+      "campaign_fit_score": 10,
+      "campaign_fit_reason": "The tweet does not align with the vague campaign description or keywords and does not target the specified audience meaningfully."
+    },
+    "contentUrl": "https://x.com/YustineMelinda/status/1917365551330124257"
+  }
+}, null, 2)}
+                    </SyntaxHighlighter>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              {/* )} */}
                 <Button type="submit" variant="outline"
                   className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
                   disabled={isLoading || !form.formState.isValid}
