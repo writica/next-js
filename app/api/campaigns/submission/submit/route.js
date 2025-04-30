@@ -55,12 +55,12 @@ export async function POST(request) {
       data: updatedParticipant
     }, { status: 200 });
     
-  } catch (error) {
-    console.error('Error processing submission:', error);
+  } catch (_error) {
+    console.error('Error processing submission:', _error);
     return NextResponse.json({ 
       success: false, 
       message: 'Failed to process submission',
-      error: error.message 
+      error: _error.message 
     }, { status: 500 });
   }
 }
