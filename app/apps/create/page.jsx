@@ -493,6 +493,8 @@ export default function CreateCampaignPage() {
                             icon={<Calendar className="h-4 w-4" />}
                             description="When the campaign starts"
                             required={true}
+                            parentClassName="!flex flex-col"
+                            className="!w-full flex-col-reverse"
                           />
 
                           <FormFieldInput
