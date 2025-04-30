@@ -73,13 +73,17 @@ export default function DepositDialog({ campaign }) {
       setIsApproving(false);
       setDepositState("deposit");
       setButtonText("Deposit");
+      toast({
+        title: "Approval successful!",
+        description: "You have successfully approved the deposit.",
+      });
     };
     if(isConfirmed && hash && depositState === "deposit") {
       setDepositHash(hash);
       setDepositState("finish");
       toast({
         title: "Deposit successful!",
-        description: `You have successfully deposited ${depositAmount} $BLOG to the campaign, Transaction: ${hash}`,
+        description: `You have successfully deposited ${depositAmount} $BLOG to the campaign.`,
         variant: "success"
       })
       updateRewardStatus();
