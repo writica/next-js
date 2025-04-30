@@ -9,37 +9,42 @@ import contracts from '@/lib/contracts'
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast"
-import { useRewardStatus } from '../providers/reward-status-provider';
-
-const InsufficientBalance = () => {
-  return (
-    <div className="mb-4 p-3 bg-red-900/20 border border-red-600/30 rounded-lg">
-      <p className="text-red-400 font-medium">Insufficient $BLOG Balance</p>
-      <p className="text-sm text-gray-300 mt-1">
-        You don't have enough $BLOG tokens to deposit the required reward amount. 
-        Please acquire more tokens before proceeding.
-      </p>
-    </div>
-  );
-};
+import { useRewardStatus } from '../providers/reward-status-provider'
 
 export default function DepositDialog({ campaign }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [depositAmount, setDepositAmount] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("0");
-  const [depositState, setDepositState] = useState("approval");
-  const [isApproving, setIsApproving] = useState(false);
-  const [depositHash, setDepositHash] = useState(null);
-  const [buttonText, setButtonText] = useState("Approve");
+  const [isOpen, setIsOpen] = useState(false)
+  const [depositAmount, setDepositAmount] = useState("")
+  const [tokenBalance, setTokenBalance] = useState("0")
+  const [isApproving, setIsApproving] = useState(false)
+  const [depositHash, setDepositHash] = useState(null)
   
   // Use the shared reward status from the provider
   const { isRewardsDeposited, totalReward } = useRewardStatus()
   
   const { address, chainId } = useAccount()
   const { data: hash, isPending, writeContract } = useWriteContract()
-  const { isLoading, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
+
+  // Transaction confirmation for the deposit transaction
+  const { isSuccess: isDepositConfirmed } = useWaitForTransactionReceipt({
+    hash: depositHash,
+  });
+
+  // Effect to handle successful deposit confirmation
+  useEffect(() => {
+    if (isDepositConfirmed && depositHash) {
+      toast({
+        title: "Deposit successful!",
+        description: `You have successfully deposited ${depositAmount} $BLOG to the campaign`,
+        variant: "success"
+      })
+      setIsOpen(false)
+      setDepositAmount("")
+      setDepositHash(null)
+    }
+  }, [isDepositConfirmed, depositHash, depositAmount])
 
   const { data: balance } = useReadContract({
     address: contracts[chainId]?.blog?.address,
@@ -51,63 +56,73 @@ export default function DepositDialog({ campaign }) {
 
   // Update token balance when it changes
   useEffect(() => {
-    if (balance && balance !== undefined && balance !== tokenBalance) {
+    if (balance) {
       setTokenBalance(formatEther(balance))
     }
-  }, [balance]);
+  }, [balance])
 
-
-  const handleApproval = async () => {
-    setIsApproving(true);
-    await writeContract({
-      address: contracts[chainId].blog.address,
-      abi: erc20Abi,
-      functionName: 'approve',
-      args: [campaign.campaignAddress, parseInt(depositAmount) * 10 ** 18],
-      // gas: 100000n, // Set reasonable gas limit to avoid high fees
-    });
-  };
-
-  useEffect(() => {
-    if(isConfirmed && hash && depositState === "approval") {
-      setIsApproving(false);
-      setDepositState("deposit");
-      setButtonText("Deposit");
-    };
-    if(isConfirmed && hash && depositState === "deposit") {
-      setDepositHash(hash);
-      setDepositState("finish");
-      toast({
-        title: "Deposit successful!",
-        description: `You have successfully deposited ${depositAmount} $BLOG to the campaign, Transaction: ${hash}`,
-        variant: "success"
-      })
-    }
-    console.log("isLoading", isLoading);
-    console.log("isConfirmed", isConfirmed);
-  },[isLoading, isConfirmed]);
+  const handleMaxAmount = () => {
+    setDepositAmount(totalReward)
+  }
 
   const handleDeposit = async () => {
-    await writeContract({
-      address: campaign.campaignAddress,
-      abi: Campaign,
-      functionName: 'depositReward',
-    });
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid amount to deposit.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      setIsApproving(true)
+      
+      // Step 1: Approve token transfer - Use exact amount instead of unlimited approval
+      await writeContract({
+        address: contracts[chainId].blog.address,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [campaign.campaignAddress, parseInt(depositAmount) * 10 ** 18],
+        // gas: 100000n, // Set reasonable gas limit to avoid high fees
+      })
+      
+      // Wait for approval confirmation
+      toast({
+        title: "Approval confirmed",
+        description: "Now depositing tokens into campaign...",
+      })
+      
+      setIsApproving(false)
+      
+      // Step 2: Deposit tokens to contract
+      const result = await writeContract({
+        address: campaign.campaignAddress,
+        abi: Campaign,
+        functionName: 'depositReward',
+      })
+      
+      // Store the deposit transaction hash for confirmation tracking
+      setDepositHash(result)
+      
+      toast({
+        title: "Transaction submitted",
+        description: "Waiting for blockchain confirmation...",
+      })
+    } catch (error) {
+      console.error('Failed to deposit:', error)
+      toast({
+        title: "Deposit failed",
+        description: error.message || "An error occurred during deposit",
+        variant: "destructive"
+      })
+      setIsApproving(false)
+    }
   }
 
   // Handle dialog open state
   const handleOpenChange = (open) => {
     setIsOpen(open)
-  }
-
-  if(!isRewardsDeposited && totalReward != 0 && depositAmount !== totalReward) {
-    setDepositAmount(totalReward);
-  }
-
-  if(!isRewardsDeposited && tokenBalance < totalReward) {
-    console.log("Insufficient balance")
-  } else{
-    console.log("Sufficient balance")
   }
 
   return (
@@ -141,6 +156,7 @@ export default function DepositDialog({ campaign }) {
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-sm font-medium">Amount ($BLOG)</label>
+                  <span className="text-xs text-gray-400">Required: {parseFloat(totalReward).toFixed(4)} $BLOG</span>
                 </div>
                 <div className="relative">
                   <input
@@ -149,8 +165,15 @@ export default function DepositDialog({ campaign }) {
                     onChange={(e) => setDepositAmount(e.target.value)}
                     placeholder="Enter amount"
                     className="w-full px-4 py-2 bg-[#0a0a0a] border border-gray-800/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    disabled={true}
                   />
+                  <Button 
+                    type="button"
+                    onClick={handleMaxAmount}
+                    variant="ghost" 
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 text-xs text-emerald-400 hover:bg-emerald-600/20"
+                  >
+                    MAX
+                  </Button>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
                   <span>Available: {parseFloat(tokenBalance).toFixed(4)} $BLOG</span>
@@ -164,19 +187,16 @@ export default function DepositDialog({ campaign }) {
                   )}
                 </div>
               </div>
-              {tokenBalance < totalReward && (<InsufficientBalance />)}
-
-              {(tokenBalance >= totalReward && depositState !== 'finish') && (
-                <Button 
-                  onClick={() =>{
-                    depositState === "approval" ? handleApproval() : handleDeposit()
-                  }}
-                  disabled={isPending || isLoading || isApproving || !depositAmount || parseFloat(depositAmount) <= 0 || parseFloat(depositAmount) > parseFloat(tokenBalance)}
-                  className="w-full rounded-full"
-                >
-                  {buttonText}
-                </Button>
-              )}
+              <Button 
+                onClick={handleDeposit}
+                disabled={isPending || isConfirming || isApproving || !depositAmount || parseFloat(depositAmount) <= 0 || parseFloat(depositAmount) > parseFloat(tokenBalance)}
+                className="w-full rounded-full"
+              >
+                {isApproving ? "Approving..." :
+                 isPending ? "Confirming..." : 
+                 depositHash && !isDepositConfirmed ? "Waiting for confirmation..." :
+                 "Deposit"}
+              </Button>
             </>
           )}
         </div>
