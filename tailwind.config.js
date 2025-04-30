@@ -165,7 +165,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-  important: true,
   content:[
     "./app/**/*.{js,ts,jsx,tsx,css}",
     "./components/**/*.{js,ts,jsx,tsx}",
