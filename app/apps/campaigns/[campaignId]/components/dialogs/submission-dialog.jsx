@@ -144,8 +144,10 @@ export default function SubmissionDialog({campaign}) {
                   },
                 }}
               />
-              <Button type="submit" variant="secondary" className="flex items-center space-x-2 rounded-full">
-                Submit Entry {isLoading && <span className="loader"></span>}
+                <Button type="submit" variant="outline"
+                  className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+                >
+                Submit Entry {isLoading && <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>}
               </Button>
             </form>
           </Form>
