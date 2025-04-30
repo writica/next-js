@@ -110,6 +110,9 @@ export default function SubmissionDialog({campaign}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(false);
+  const [isResultExpanded, setIsResultExpanded] = useState(false);
+  const [isQualified, setIsQualified] = useState(false);
+  const [qualifiedText, setQualifiedText] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(submissionSchema),
@@ -119,11 +122,22 @@ export default function SubmissionDialog({campaign}) {
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
+    setResult(false);
+    setIsResultExpanded(false);
+    setIsQualified(false);
+    setQualifiedText(false);
     try{
       const res = await fetchApi(campaign.id, values.link, address);
       setResult(res);
-      console.log(res);
+      console.log(res.result.AIContent.score);
+      const AIScore = res?.result.AIContent.score < 70 ? false : true;
+      const campaignFit = res?.result.score.campaign_fit_score < 60 ? false : true;
 
+      const text = !AIScore || !campaignFit ? "Your entry does not meet the requirements for this campaign." : "Your entry meets the requirements for this campaign.";
+      setIsQualified(AIScore && campaignFit);
+      setQualifiedText(text);
+
+      console.log(res?.result);
     }catch (error) {
       console.error("Error submitting entry:", error);
       // Handle error (e.g., show a notification)
@@ -136,7 +150,7 @@ export default function SubmissionDialog({campaign}) {
   useEffect(() => {
     console.log("isLoading:", isLoading);
     console.log("result:", result);
-  },[isLoading, result]);
+  },[isLoading, result, qualifiedText]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -175,38 +189,62 @@ export default function SubmissionDialog({campaign}) {
                   },
                 }}
               />
-              {/* {(result && (result !== false && result !== null && result !== undefined)) && ( */}
-                <Collapsible open={true} className="relative overflow-x-hidden">
-                  <CollapsibleTrigger className="text-sm font-bold text-muted-foreground">Result</CollapsibleTrigger>
-                  <CollapsibleContent className="text-sm font-bold text-muted-foreground">
-                    <div className="w-full !block h-96 overflow-auto">
-                    <SyntaxHighlighter language="json" style={atomOneDark}
-                    wrapLines={true}
-                    >
-                      {JSON.stringify({
-  "submissionId": "cma3ngp1x0005t4ko9ezxjsdo",
-  "link": "https://x.com/YustineMelinda/status/1917365551330124257",
-  "result": {
-    "AIContent": {
-      "score": 40,
-      "explanation": "Lacks detailed content; mostly brief, repetitive phrases."
-    },
-    "score": {
-      "virality_score": 40,
-      "virality_reason": "The tweet has some emotional appeal due to humor and a relatable fear but lacks trending crypto keywords and a strong hook.",
-      "quality_score": 30,
-      "quality_reason": "The content is informal, lacks depth and clarity, and does not provide educational or actionable crypto insights.",
-      "campaign_fit_score": 10,
-      "campaign_fit_reason": "The tweet does not align with the vague campaign description or keywords and does not target the specified audience meaningfully."
-    },
-    "contentUrl": "https://x.com/YustineMelinda/status/1917365551330124257"
-  }
-}, null, 2)}
-                    </SyntaxHighlighter>
+              {/* Display qualified status when result is available */}
+              {qualifiedText && (
+                <div className={`p-4 mb-4 rounded-xl border ${isQualified 
+                  ? 'border-emerald-800/40 bg-emerald-950/20' 
+                  : 'border-red-800/40 bg-red-950/20'}`}>
+                  <p className={`text-sm font-medium ${isQualified 
+                    ? 'text-emerald-400' 
+                    : 'text-red-400'}`}>
+                    {qualifiedText}
+                  </p>
+                </div>
+              )}
+              {/* Conditional rendering for result output */}
+              {(result && (result !== false && result !== null && result !== undefined)) && (
+              <Collapsible
+                open={isResultExpanded}
+                onOpenChange={setIsResultExpanded}
+                className="w-full relative overflow-hidden border border-gray-800/20 rounded-md mb-4"
+              >
+                <div className="flex items-center justify-between p-2 bg-transparent">
+                  <h4 className="text-sm font-bold text-muted-foreground">Result</h4>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`transition-transform duration-200 ${isResultExpanded ? 'rotate-180' : ''}`}
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent>
+                  <div className="border-t border-gray-800">
+                    <div className="max-h-96 overflow-x-hidden max-w-[460px]">
+                      <SyntaxHighlighter 
+                        language="json" 
+                        style={atomOneDark}
+                        wrapLines={true}
+                        customStyle={{ overflowWrap: 'break-word', fontSize: '12px', }}
+                      >
+                        {JSON.stringify(result?.result, null, 2)}
+                      </SyntaxHighlighter>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              {/* )} */}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+              )}
                 <Button type="submit" variant="outline"
                   className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
                   disabled={isLoading || !form.formState.isValid}
