@@ -107,6 +107,25 @@ const formSchema = z.object({
     message: "End date must be later than start date",
     path: ["endDate"],
   }
+).refine(
+  (data) => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    return data.endDate > today;
+  },
+  {
+    message: "End date must be after today",
+    path: ["endDate"],
+  }
+).refine(
+  (data) => {
+    const minDate = new Date(2025, 0, 1); // January 1, 2025
+    return data.startDate >= minDate;
+  },
+  {
+    message: "Start date cannot be before 2025",
+    path: ["startDate"],
+  }
 )
 
 export default function CreateCampaignPage() {
