@@ -7,7 +7,7 @@ import { useUser } from "@/hooks/use-user"
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
 import { z } from "zod";
 import FormFieldInput from "@/components/FormFieldInput";
-import { Form, FormField } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import { WordRotate } from '@/components/magicui/word-rotate';
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/collapsible";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { toast } from '@/hooks/use-toast';
 
 
 const LoadingWord = () => {
@@ -103,6 +104,22 @@ const fetchApi = async (submissionId, link, address) => {
   return response.json();
 };
 
+const submissionApi = async ({submissionId, link, address, totalScore, result}) => {
+  const response = await fetch("/api/campaigns/submission/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ submissionId, link, userWalletAddress: address, totalScore, result }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to submit entry");
+  }
+
+  return response.json();
+};
+
 
 export default function SubmissionDialog({campaign}) {
   const { address, isConnected, chainId } = useAccount();
@@ -113,6 +130,7 @@ export default function SubmissionDialog({campaign}) {
   const [isResultExpanded, setIsResultExpanded] = useState(false);
   const [isQualified, setIsQualified] = useState(false);
   const [qualifiedText, setQualifiedText] = useState(false);
+  const [totalScore, setTotalScore] = useState(0);
 
   const form = useForm({
     resolver: zodResolver(submissionSchema),
@@ -120,22 +138,27 @@ export default function SubmissionDialog({campaign}) {
     mode: "onSubmit",
   });
 
-  const handleSubmit = async (values) => {
+  const handleCheck = async (values) => {
     setIsLoading(true);
     setResult(false);
     setIsResultExpanded(false);
     setIsQualified(false);
     setQualifiedText(false);
+    setTotalScore(0);
     try{
       const res = await fetchApi(campaign.id, values.link, address);
       setResult(res);
-      console.log(res.result.AIContent.score);
       const AIScore = res?.result.AIContent.score < 70 ? false : true;
       const campaignFit = res?.result.score.campaign_fit_score < 60 ? false : true;
 
       const text = !AIScore || !campaignFit ? "Your entry does not meet the requirements for this campaign." : "Your entry meets the requirements for this campaign.";
       setIsQualified(AIScore && campaignFit);
       setQualifiedText(text);
+      if(AIScore && campaignFit){
+        const total = res?.result.score.campaign_fit_score * 0.6 + res?.result.score.virality_score * 0.2 + res?.result.score.quality_score * 0.2 ;
+        console.log("Total Score:", total);
+        setTotalScore(total);
+      }
 
       console.log(res?.result);
     }catch (error) {
@@ -145,6 +168,37 @@ export default function SubmissionDialog({campaign}) {
       setIsLoading(false);
     }
     // setIsOpen(false);
+  };
+
+  const handlePost = async () => {
+    setIsLoading(true);
+    try{
+      await submissionApi({submissionId: campaign.id, link: form.getValues("link"), address, totalScore, result});
+      toast({
+        title: "Entry Submitted",
+        description: "Your entry has been successfully submitted.",
+        duration: 5000,
+      });
+      setIsOpen(false);
+      // set form link to empty
+      form.setValue("link", "");
+      setResult(false);
+      setIsResultExpanded(false);
+      setIsQualified(false);
+      setQualifiedText(false);
+      setTotalScore(0);
+    }catch (error) {
+      console.error("Error submitting entry:", error);
+      toast({
+        title: "Error",
+        description: "There was an error submitting your entry.",
+        duration: 5000,
+        variant: "destructive",
+      });
+      // Handle error (e.g., show a notification)
+    }finally{
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -172,7 +226,7 @@ export default function SubmissionDialog({campaign}) {
           />
         ) : (
           <Form {...form} className="block w-full relative">
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="py-4 space-y-4">
+            <form onSubmit={form.handleSubmit(handleCheck)} className="py-4 space-y-4">
               <FormFieldInput
                 formControl={form.control}
                 fieldName="link"
@@ -245,12 +299,29 @@ export default function SubmissionDialog({campaign}) {
                 </CollapsibleContent>
               </Collapsible>
               )}
+              {(isQualified && result) && (
+                <Button variant="outline"
+                  className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+                  disabled={isLoading || !form.formState.isValid}
+                  onClick={handlePost}
+                >
+                  {isLoading
+                  ? (<>
+                    <span className="mr-2">Submiting...</span>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+                  </>)
+                  : "Submit"}
+                </Button>
+              )}
+
+              {(!isQualified && !result) && (
                 <Button type="submit" variant="outline"
                   className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
                   disabled={isLoading || !form.formState.isValid}
                 >
                 {isLoading ? <LoadingWord /> : isQualified ? "Submit" : "Check Entry" }
               </Button>
+              )}
             </form>
           </Form>
         )}
