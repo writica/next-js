@@ -13,6 +13,8 @@ const config = {
     "from-[#F08A24]", "to-[#E67E22]", "hover:from-[#E67E22]", "hover:to-[#D35400]",
     "from-[#F08A24]/50", "to-[#E67E22]/50", "from-[#F08A24]", "to-[#E67E22]",
     "from-[#D9BEA7]", "to-[#CAAF9B]", "md:hidden",
+    // Add arbitrary width class to safelist
+    "max-w-[460px]",
     // Add animation classes to safelist to ensure they're included in production
     "animate-in", "animate-out", "fade-in-0", "fade-out-0", "zoom-in-95", "zoom-out-95",
     "slide-in-from-left-1/2", "slide-in-from-top-[48%]", "slide-out-to-left-1/2", "slide-out-to-top-[48%]"
@@ -163,6 +165,16 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  important: true,
+  content:[
+    "./app/**/*.{js,ts,jsx,tsx,css}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./lib/**/*.{js,ts,jsx,tsx}",
+    "./hooks/**/*.{js,ts,jsx,tsx}",
+    "./public/**/*.html",
+  ],
 }
 
 export default config
