@@ -3,17 +3,54 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { useAccount, useSignMessage, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
+import { useUser } from "@/hooks/use-user"
+import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
+
+
+const ConnectDialogContent = ({ isCheckingUser, isConnected, userExists }) => {
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+        <p className="text-gray-400 mb-2">Please connect your wallet to create a campaign</p>
+        <CustomConnectButton />
+      </div>
+    );
+  }
+
+  if (isCheckingUser) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+        <p className="text-gray-400">Checking your account status...</p>
+      </div>
+    );
+  }
+
+  if (userExists === false) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+        <p className="text-gray-400 mb-2">You need to register before creating campaigns</p>
+        <Button 
+          onClick={() => router.push('/apps/account/register')}
+          variant="outline" 
+          className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+        >
+          Register Now
+        </Button>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 
 export default function SubmissionDialog() {
+  const { address, isConnected, chainId } = useAccount();
+  const { userExists, isCheckingUser } = useUser();
   const [isOpen, setIsOpen] = useState(false)
   const [submissionText, setSubmissionText] = useState("")
-  const [submissionFile, setSubmissionFile] = useState(null)
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSubmissionFile(e.target.files[0])
-    }
-  }
 
   const handleSubmit = () => {
     // TODO: Implement submission logic
@@ -35,7 +72,10 @@ export default function SubmissionDialog() {
         <DialogHeader>
           <DialogTitle>Submit Your Entry</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
+
+        {(isCheckingUser || !userExists || !isConnected)
+        ? (<ConnectDialogContent isCheckingUser={isCheckingUser} userExists={userExists} isConnected={isConnected} />)
+        : (        <div className="py-4">
           <div className="mb-4">
             <label className="text-sm font-medium mb-2 block">Description</label>
             <Textarea 
@@ -45,37 +85,14 @@ export default function SubmissionDialog() {
               onChange={(e) => setSubmissionText(e.target.value)}
             />
           </div>
-          
-          <div className="mb-6">
-            <label className="text-sm font-medium mb-2 block">Upload Files</label>
-            <div className="border border-dashed border-gray-800/40 rounded-lg p-8 text-center bg-[#0a0a0a] hover:bg-[#111] transition-colors">
-              <input
-                type="file"
-                id="fileUpload"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <label htmlFor="fileUpload" className="cursor-pointer">
-                <div className="text-sm text-gray-400">
-                  {submissionFile ? (
-                    <span>{submissionFile.name}</span>
-                  ) : (
-                    <>
-                      <span className="font-medium">Click to upload</span> or drag and drop
-                    </>
-                  )}
-                </div>
-              </label>
-            </div>
-          </div>
-          
           <Button 
             onClick={handleSubmit} 
             className="w-full rounded-full"
           >
             Submit Entry
           </Button>
-        </div>
+        </div>)
+        }
       </DialogContent>
     </Dialog>
   )
