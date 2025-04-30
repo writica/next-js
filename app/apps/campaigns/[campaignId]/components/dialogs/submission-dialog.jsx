@@ -10,6 +10,25 @@ import FormFieldInput from "@/components/FormFieldInput";
 import { Form, FormField } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
+import { WordRotate } from '@/components/magicui/word-rotate';
+
+const LoadingWord = ({link="medium"}) => {
+  return (<>
+  <div className='flex items-center justify-center'>
+    <WordRotate
+    className="text-sm font-bold text-muted-foreground"
+    words={[`Fetch Content on ${link}`, "Analyzing Content", "Checking Score", "Fetching Data"]}
+    duration={1500}
+    motionProps={{
+      initial: { opacity: 0, y: -50 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: 50 },
+      transition: { duration: 0.25, ease: "easeOut" },
+    }}
+  />
+</div>
+  </>)
+};
 
 const submissionSchema = z.object({
   link: z
@@ -146,8 +165,9 @@ export default function SubmissionDialog({campaign}) {
               />
                 <Button type="submit" variant="outline"
                   className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+                  disabled={isLoading || !form.formState.isValid}
                 >
-                Submit Entry {isLoading && <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>}
+                {isLoading ? <LoadingWord /> : "Submit"}
               </Button>
             </form>
           </Form>
