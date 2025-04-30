@@ -2,6 +2,7 @@
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 /**
  * Enhanced form field input component with support for icons, descriptions, and different input types
@@ -28,14 +29,16 @@ const FormFieldInput = ({
   type = "text",
   required = false,
   validation = {},
-  rows = 3
+  rows = 3,
+  parentClassName = "",
+  className = "",
 }) => {
   return (
     <FormField
       control={formControl}
       name={fieldName}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={cn(parentClassName)}>
           <FormLabel className="flex items-center gap-2">
             {icon && <span className="text-cyan-400/80">{icon}</span>}
             {title} {required && <span className="text-cyan-700">*</span>}
@@ -44,7 +47,7 @@ const FormFieldInput = ({
             {type === "textarea" ? (
               <Textarea
                 placeholder={placeholder || `Enter ${title.toLowerCase()}`}
-                className="bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500"
+                className={cn("bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500", className)}
                 rows={rows}
                 {...field}
               />
@@ -52,7 +55,8 @@ const FormFieldInput = ({
               <Input
                 type={type === "date" ? "datetime-local" : type}
                 placeholder={placeholder || `Enter ${title.toLowerCase()}`}
-                className="bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500"
+                className={cn(className)}
+                // className={cn("bg-black/50 backdrop-blur-sm border-gray-800/40 rounded-xl hover:border-gray-700/60 focus:border-cyan-900/30 transition-all duration-300 placeholder:text-gray-500", className)}
                 {...field}
                 value={
                   type === "date" && field.value instanceof Date 
@@ -73,7 +77,7 @@ const FormFieldInput = ({
               />
             )}
           </FormControl>
-          {description && <FormDescription className="text-gray-500">{description}</FormDescription>}
+          {description && <FormDescription className={cn("text-gray-500")}>{description}</FormDescription>}
           <FormMessage className="text-cyan-700" />
         </FormItem>
       )}

@@ -244,6 +244,8 @@ export default function CreateCampaignPage() {
       const contractABI = contracts[chainId].campaignManager.abi;
 
       console.log("Using contract:", contractAddress);
+      console.log(Math.floor(values.startDate.getTime() / 1000))
+      console.log(Math.floor(values.endDate.getTime() / 1000))
       
       // Execute contract transaction
       await writeContract({
