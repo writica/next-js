@@ -249,7 +249,7 @@ export default function SubmissionDialog({campaign}) {
                   className="rounded-full w-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
                   disabled={isLoading || !form.formState.isValid}
                 >
-                {isLoading ? <LoadingWord /> : "Submit"}
+                {isLoading ? <LoadingWord /> : isQualified ? "Submit" : "Check Entry" }
               </Button>
             </form>
           </Form>
