@@ -20,9 +20,9 @@ export function useRewardStatus() {
 export function RewardStatusProvider({ children, campaignAddress }) {
   const [isRewardsDeposited, setIsRewardsDeposited] = useState(false)
   const [totalReward, setTotalReward] = useState("0")
-  
+
   // Read rewardsDeposited state from contract
-  const { data: rewardsDepositedData } = useReadContract({
+  const { data: rewardsDepositedData, refetch: refetchRewardsDeposited } = useReadContract({
     address: campaignAddress,
     abi: Campaign,
     functionName: 'rewardsDeposited',
@@ -30,12 +30,20 @@ export function RewardStatusProvider({ children, campaignAddress }) {
   })
 
   // Read totalReward from contract
-  const { data: totalRewardData } = useReadContract({
+  const { data: totalRewardData, refetch: refetchTotalReward } = useReadContract({
     address: campaignAddress,
     abi: Campaign,
     functionName: 'totalReward',
     watch: true,
   })
+
+  // Function to manually update reward status
+  const updateRewardStatus = async () => {
+    await Promise.all([
+      refetchRewardsDeposited(),
+      refetchTotalReward()
+    ])
+  }
 
   // Update rewardsDeposited and totalReward state when data changes
   useEffect(() => {
@@ -48,7 +56,7 @@ export function RewardStatusProvider({ children, campaignAddress }) {
   }, [rewardsDepositedData, totalRewardData])
 
   return (
-    <RewardStatusContext.Provider value={{ isRewardsDeposited, totalReward }}>
+    <RewardStatusContext.Provider value={{ isRewardsDeposited, totalReward, updateRewardStatus }}>
       {children}
     </RewardStatusContext.Provider>
   )

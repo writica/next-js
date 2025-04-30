@@ -33,7 +33,7 @@ export default function DepositDialog({ campaign }) {
   const [buttonText, setButtonText] = useState("Approve");
   
   // Use the shared reward status from the provider
-  const { isRewardsDeposited, totalReward } = useRewardStatus()
+  const { isRewardsDeposited, totalReward, updateRewardStatus } = useRewardStatus()
   
   const { address, chainId } = useAccount()
   const { data: hash, isPending, writeContract } = useWriteContract()
@@ -82,7 +82,9 @@ export default function DepositDialog({ campaign }) {
         description: `You have successfully deposited ${depositAmount} $BLOG to the campaign, Transaction: ${hash}`,
         variant: "success"
       })
+      updateRewardStatus();
     }
+    
     console.log("isLoading", isLoading);
     console.log("isConfirmed", isConfirmed);
   },[isLoading, isConfirmed]);
