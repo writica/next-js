@@ -120,7 +120,7 @@ export default function AccountDrawer() {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mb-3 overflow-hidden">
                   {userData?.image ? (
                     <img 
-                      src={userData.image} 
+                      src={'/api'+userData.image} 
                       alt={userData?.username || userData?.name || "User"}
                       className="w-full h-full object-cover"
                     />

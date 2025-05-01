@@ -17,7 +17,7 @@ const Campaign = ({campaign})=> {
     >
       <div className="relative h-56 overflow-hidden">
         <img
-          src={campaign.image || "/placeholder.svg"}
+          src={campaign.image ? `api/${campaign.image}` : "/placeholder.svg"}
           alt={campaign.title}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
         />
