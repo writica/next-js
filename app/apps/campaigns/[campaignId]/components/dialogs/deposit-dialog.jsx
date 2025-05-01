@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { Coins } from "lucide-react"
 import { useWriteContract, useWaitForTransactionReceipt, useReadContract, useAccount } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
-import { erc20Abi } from 'viem'
 import Campaign from '@/lib/abi/Campaign.json'
 import contracts from '@/lib/contracts'
 import { Button } from "@/components/ui/button"
@@ -41,9 +40,9 @@ export default function DepositDialog({ campaign }) {
     hash,
   });
 
-  const { data: balance } = useReadContract({
+  const { data: balance, isLoading: balanceLoading } = useReadContract({
     address: contracts[chainId]?.blog?.address,
-    abi: erc20Abi,
+    abi: contracts[chainId]?.blog?.abi,
     functionName: 'balanceOf',
     args: [address],
     watch: true,
@@ -52,16 +51,17 @@ export default function DepositDialog({ campaign }) {
   // Update token balance when it changes
   useEffect(() => {
     if (balance && balance !== undefined && balance !== tokenBalance) {
+      console.log("Token balance updated:", balance, formatEther(balance));
       setTokenBalance(formatEther(balance))
     }
-  }, [balance]);
+  }, [balance, balanceLoading]);
 
 
   const handleApproval = async () => {
     setIsApproving(true);
     await writeContract({
       address: contracts[chainId].blog.address,
-      abi: erc20Abi,
+      abi: contracts[chainId].blog.abi,
       functionName: 'approve',
       args: [campaign.campaignAddress, parseInt(depositAmount) * 10 ** 18],
       // gas: 100000n, // Set reasonable gas limit to avoid high fees
@@ -110,7 +110,8 @@ export default function DepositDialog({ campaign }) {
     setDepositAmount(totalReward);
   }
 
-  if(!isRewardsDeposited && tokenBalance < totalReward) {
+  if(!isRewardsDeposited && Number(tokenBalance) < Number(totalReward)) {
+    console.log(tokenBalance, typeof tokenBalance, totalReward, typeof totalReward);
     console.log("Insufficient balance")
   } else{
     console.log("Sufficient balance")
@@ -170,9 +171,9 @@ export default function DepositDialog({ campaign }) {
                   )}
                 </div>
               </div>
-              {tokenBalance < totalReward && (<InsufficientBalance />)}
+              { Number(tokenBalance) < Number(totalReward) && (<InsufficientBalance />)}
 
-              {(tokenBalance >= totalReward && depositState !== 'finish') && (
+              {(Number(tokenBalance) >= Number(totalReward) && depositState !== 'finish') && (
                 <Button 
                   onClick={() =>{
                     depositState === "approval" ? handleApproval() : handleDeposit()
