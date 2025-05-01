@@ -1,6 +1,7 @@
 'use client';
 import Header from "@/components/Header";
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
+import MintBlog from "@/components/wallet/MintBlog";
 
 const AppsLayout = ({ children }) => {
     return (
@@ -13,6 +14,7 @@ const AppsLayout = ({ children }) => {
 
                   ]}
                   rightItems={[
+                    <MintBlog key="mint-blog" />,
                     <CustomConnectButton key="connect" />,
                   ]}
                   glassMorphism={true}
