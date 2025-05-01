@@ -3,8 +3,11 @@ import { prisma } from '@/lib/prisma/client';
 
 import axios from "axios";
 
-async function checkScore({ contentUrl, campaignDescription, campaign_keywords, target_audience, CTA_goal   }) {
+async function checkScore(params) {
+  let { contentUrl, campaignDescription, campaign_keywords, target_audience, CTA_goal } = params;
+  console.log("params", params);  
   try {
+
     const params = {};
     if (contentUrl) params.contentUrl = contentUrl;
     if (campaignDescription) params.campaignDescription = campaignDescription;
@@ -48,9 +51,19 @@ export async function POST(request) {
     if(!user) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
+    console.log(typeof campaign.aiDescription, campaign.aiDescription)
+    console.log(campaign.description);
+
+    let description = '';
+    if(typeof campaign.aiDescription === 'string' && campaign.aiDescription.length > 0) {
+      description = campaign.aiDescription;
+    } else{
+      description = campaign.description;
+    }
+
     const result = await checkScore({
       contentUrl: link,
-      campaignDescription: campaign.aiDescription ?? campaign.description,
+      campaignDescription: description,
       campaign_keywords: campaign.keywords,
       target_audience: campaign.targetAudience,
       CTA_goal: campaign.callToAction,
