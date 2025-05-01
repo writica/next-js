@@ -151,15 +151,6 @@ export default function SubmissionList({ submissions = [], onSubmissionSelect, c
   // Render submission items through the AnimatedList component
   return (
     <div className={`submission-list-container ${className}`}>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Submissions</h2>
-        {!isOwner && (
-          <Button variant="outline" size="sm" className="rounded-full">
-          <Edit size={14} className="mr-1.5" />
-          New Submission
-        </Button>
-        )}
-        </div>
       
       {submissions.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 backdrop-blur-sm bg-black/30 rounded-xl border border-gray-800/20">
