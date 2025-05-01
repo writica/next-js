@@ -16,7 +16,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
       <div className="h-96 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10"></div>
         <img
-          src={campaign.coverImage ? `/api/${campaign.coverImage}` : "/placeholder.svg"}
+          src={campaign.coverImage ? `/api/${campaign.coverImage}` : "/img/default-banner.jpg"}
           alt={campaign.title}
           className="object-cover w-full h-full"
         />
