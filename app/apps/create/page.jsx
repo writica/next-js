@@ -50,6 +50,10 @@ const ButtonCreateCampaign = ({ state, setState, isSubmitting, form }) => {
     } else if (state === "requirements") {
       fieldsToValidate = ["startDate", "endDate", "targetAudience"];
     }
+    // form.setValue("startDate", new Date(form.getValues("startDate")));
+    // form.setValue("endDate", new Date(form.getValues("endDate")));
+    console.log(form);
+    console.log(form.getValues());
     
     // Trigger validation for the specific fields
     const result = await form.trigger(fieldsToValidate);
@@ -92,8 +96,8 @@ const ButtonCreateCampaign = ({ state, setState, isSubmitting, form }) => {
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z.string().min(10, "Description must be at least 10 characters long"),
-  startDate: z.date({ required_error: "Start date is required" }),
-  endDate: z.date({ required_error: "End date is required" }),
+  startDate: z.string().datetime(),
+  endDate: z.string().datetime(),
   campaignAddress: z.string().optional(),
   aiDescription: z.string().optional(),
   keywords: z.string().min(3, "Keywords are required"),
@@ -489,7 +493,7 @@ export default function CreateCampaignPage() {
                             formControl={form.control}
                             fieldName="startDate"
                             title="Start Date"
-                            type="date"
+                            type="datetime-local"
                             icon={<Calendar className="h-4 w-4" />}
                             description="When the campaign starts"
                             required={true}
@@ -501,7 +505,7 @@ export default function CreateCampaignPage() {
                             formControl={form.control}
                             fieldName="endDate"
                             title="End Date"
-                            type="date"
+                            type="datetime-local"
                             icon={<Calendar className="h-4 w-4" />}
                             description="When the campaign ends"
                             required={true}
@@ -581,7 +585,7 @@ export default function CreateCampaignPage() {
                   </Form>
                   {activeTab !== "media" && (
                   <div className="flex justify-end space-x-4 pt-4">
-                        <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
+                      <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
                   </div>
                   )}
                 </Tabs>
