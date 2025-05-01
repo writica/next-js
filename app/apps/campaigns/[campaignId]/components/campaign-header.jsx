@@ -11,8 +11,6 @@ import SubmissionDialog from './dialogs/submission-dialog'
 export default function CampaignHeader({ campaign, isOwner }) {
   const { isRewardsDeposited, totalReward } = useRewardStatus();
 
-  console.log(campaign.coverImage)
-  
   return (
     <>
       <div className="h-96 relative overflow-hidden">

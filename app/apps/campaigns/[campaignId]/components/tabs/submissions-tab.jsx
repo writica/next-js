@@ -2,8 +2,15 @@
 import { Users } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useSubmissions } from "../providers/submission-provider"
 
 export default function SubmissionsTab({ campaign }) {
+  const {      submissions, 
+    isLoading, 
+    error, 
+    refreshSubmissions } = useSubmissions(campaign.id);
+  console.log("Submissions:", submissions)
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {campaign.submissions?.map((submission) => (
