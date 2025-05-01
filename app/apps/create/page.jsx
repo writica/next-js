@@ -1,39 +1,72 @@
-"use client"
-import { useState, useEffect, useReducer } from "react"
-import { ImageIcon, Upload, Calendar, Users, Info, Tag } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "@/hooks/use-toast"
-import { motion } from "framer-motion"
-import FormFieldInput from "@/components/FormFieldInput"
-import FormImageUpload from "@/components/FormImageUpload"
-import { useAccount, useSignMessage, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi"
-import { CustomConnectButton } from "@/components/wallet/CustomConnectButton"
-import { useUser } from "@/hooks/use-user"
-import { useRouter } from "next/navigation"
-import contracts from '@/lib/contracts'
-import TransactionErrorDisplay from "@/app/components/TransactionErrorDisplay"
+"use client";
+import { useState, useEffect, useReducer } from "react";
+import { Calendar, Users, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Form,
+  FormField,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import FormFieldInput from "@/components/FormFieldInput";
+import FormImageUpload from "@/components/FormImageUpload";
+import {
+  useAccount,
+  useSignMessage,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  usePublicClient,
+} from "wagmi";
+import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
+import { useUser } from "@/hooks/use-user";
+import { useRouter } from "next/navigation";
+import contracts from "@/lib/contracts";
+import TransactionErrorDisplay from "@/app/components/TransactionErrorDisplay";
+import { changeDateTimeZoneToUTC } from "@/lib/utils";
 
 // Define transaction state reducer
 const transactionReducer = (state, action) => {
   switch (action.type) {
-    case 'TRANSACTION_START':
+    case "TRANSACTION_START":
       return { ...state, isProcessing: true, error: null };
-    case 'TRANSACTION_SUCCESS':
-      return { ...state, isProcessing: false, isSuccess: true, hash: action.payload };
-    case 'CONTRACT_ADDRESS_RECEIVED':
+    case "TRANSACTION_SUCCESS":
+      return {
+        ...state,
+        isProcessing: false,
+        isSuccess: true,
+        hash: action.payload,
+      };
+    case "CONTRACT_ADDRESS_RECEIVED":
       return { ...state, contractAddress: action.payload };
-    case 'SET_CONTRACT_ADDRESS':  // Add matching case for SET_CONTRACT_ADDRESS
+    case "SET_CONTRACT_ADDRESS": // Add matching case for SET_CONTRACT_ADDRESS
       return { ...state, contractAddress: action.payload };
-    case 'TRANSACTION_ERROR':
-      return { ...state, isProcessing: false, error: action.payload, isError: true };
-    case 'RESET':
-      return { isProcessing: false, isSuccess: false, isError: false, hash: null, error: null, contractAddress: null };
+    case "TRANSACTION_ERROR":
+      return {
+        ...state,
+        isProcessing: false,
+        error: action.payload,
+        isError: true,
+      };
+    case "RESET":
+      return {
+        isProcessing: false,
+        isSuccess: false,
+        isError: false,
+        hash: null,
+        error: null,
+        contractAddress: null,
+      };
     default:
       return state;
   }
@@ -43,113 +76,160 @@ const ButtonCreateCampaign = ({ state, setState, isSubmitting, form }) => {
   // Handles validation before moving to next tab
   const handleNextTab = async () => {
     let fieldsToValidate = [];
-    
+
     // Determine which fields to validate based on current tab
     if (state === "details") {
       fieldsToValidate = ["title", "description", "keywords", "rewardPool"];
     } else if (state === "requirements") {
       fieldsToValidate = ["startDate", "endDate", "targetAudience"];
     }
-    // form.setValue("startDate", new Date(form.getValues("startDate")));
-    // form.setValue("endDate", new Date(form.getValues("endDate")));
     console.log(form);
     console.log(form.getValues());
-    
+
     // Trigger validation for the specific fields
     const result = await form.trigger(fieldsToValidate);
-    
+
     if (result) {
       // If validation passes, move to next tab
-      const nextTab = state === "details" ? "requirements" : state === "requirements" ? "media" : "media";
+      const nextTab =
+        state === "details"
+          ? "requirements"
+          : state === "requirements"
+          ? "media"
+          : "media";
       setState(nextTab);
     }
   };
 
-  if(state === "media") {
-    return (<Button 
-      type="submit" 
-      disabled={isSubmitting} 
+  if (state === "media") {
+    return (
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        variant="outline"
+        className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
+      >
+        {isSubmitting ? (
+          <>
+            <span className="mr-2">Creating...</span>
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
+          </>
+        ) : (
+          "Create Campaign"
+        )}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      type="button"
+      onClick={handleNextTab}
+      disabled={isSubmitting}
       variant="outline"
       className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
     >
-      {isSubmitting ? (
-        <>
-          <span className="mr-2">Creating...</span>
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
-        </>
-      ) : (
-        "Create Campaign"
-      )}
-    </Button>);
-  }
-  
-  return (<Button 
-    type="button" 
-    onClick={handleNextTab} 
-    disabled={isSubmitting} 
-    variant="outline"
-    className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
-  >Next</Button>);
-
+      Next
+    </Button>
+  );
 };
 
-const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters long"),
-  description: z.string().min(10, "Description must be at least 10 characters long"),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  campaignAddress: z.string().optional(),
-  aiDescription: z.string().optional(),
-  keywords: z.string().min(3, "Keywords are required"),
-  targetAudience: z.string().optional(),
-  ctaGoal: z.string().optional(),
-  coverImage: z.any().optional(),
-  rewardPool: z.number().min(0, "Reward pool must be a positive number"),
-}).refine(
-  (data) => data.endDate > data.startDate,
-  {
+const formSchema = z
+  .object({
+    title: z.string().min(3, "Title must be at least 3 characters long"),
+    description: z
+      .string()
+      .min(10, "Description must be at least 10 characters long"),
+    startDate: z
+      .string()
+      .refine(
+        (value) => {
+          // Validate date format from datetime-local input (YYYY-MM-DDThh:mm)
+          const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+          return regex.test(value);
+        },
+        {
+          message: "Invalid date format",
+        }
+      )
+      .transform((value) => new Date(value)),
+    endDate: z
+      .string()
+      .refine(
+        (value) => {
+          // Validate date format from datetime-local input (YYYY-MM-DDThh:mm)
+          const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+          return regex.test(value);
+        },
+        {
+          message: "Invalid date format",
+        }
+      )
+      .transform((value) => new Date(value)),
+    campaignAddress: z.string().optional(),
+    aiDescription: z.string().optional(),
+    keywords: z.string().min(3, "Keywords are required"),
+    targetAudience: z.string().optional(),
+    ctaGoal: z.string().optional(),
+    coverImage: z.any().optional(),
+    rewardPool: z.number().min(0, "Reward pool must be a positive number"),
+  })
+  .refine((data) => data.endDate > data.startDate, {
     message: "End date must be later than start date",
     path: ["endDate"],
-  }
-).refine(
-  (data) => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    return data.endDate > today;
-  },
-  {
-    message: "End date must be after today",
-    path: ["endDate"],
-  }
-).refine(
-  (data) => {
-    const minDate = new Date(2025, 0, 1); // January 1, 2025
-    return data.startDate >= minDate;
-  },
-  {
-    message: "Start date cannot be before 2025",
-    path: ["startDate"],
-  }
-)
+  })
+  .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      return data.endDate > today;
+    },
+    {
+      message: "End date must be after today",
+      path: ["endDate"],
+    }
+  )
+  .refine(
+    (data) => {
+      const minDate = new Date(2025, 0, 1); // January 1, 2025
+      return data.startDate >= minDate;
+    },
+    {
+      message: "Start date cannot be before 2025",
+      path: ["startDate"],
+    }
+  );
 
 export default function CreateCampaignPage() {
-  const [activeTab, setActiveTab] = useState("details")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { address, isConnected, chainId } = useAccount()
-  const { userExists, isCheckingUser } = useUser()
-  const router = useRouter()
-  const { data: signatureData, error: signError, isLoading: isSignLoading, signMessage } = useSignMessage();
+  const [activeTab, setActiveTab] = useState("details");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { address, isConnected, chainId } = useAccount();
+  const { userExists, isCheckingUser } = useUser();
+  const router = useRouter();
+  const {
+    data: signatureData,
+    error: signError,
+    isLoading: isSignLoading,
+    signMessage,
+  } = useSignMessage();
   const resWriteContract = useWriteContract();
-  const { data: hash, isPending, isError, error: writeError, writeContract } = resWriteContract;
-  
+  const {
+    data: hash,
+    isPending,
+    isError,
+    error: writeError,
+    writeContract,
+  } = resWriteContract;
+
   // Add public client to get transaction receipt
   const publicClient = usePublicClient();
   // Add hook to wait for transaction receipt
-  const { data: txReceipt, isLoading: isWaitingForReceipt } = useWaitForTransactionReceipt({
-    hash,
-    enabled: Boolean(hash),
-  });
-  
+  const { data: txReceipt, isLoading: isWaitingForReceipt } =
+    useWaitForTransactionReceipt({
+      hash,
+      enabled: Boolean(hash),
+    });
+
   // Initialize transaction state with useReducer
   const initialTransactionState = {
     isProcessing: false,
@@ -157,10 +237,13 @@ export default function CreateCampaignPage() {
     isError: false,
     hash: null,
     error: null,
-    contractAddress: null
+    contractAddress: null,
   };
-  
-  const [txState, dispatchTx] = useReducer(transactionReducer, initialTransactionState);
+
+  const [txState, dispatchTx] = useReducer(
+    transactionReducer,
+    initialTransactionState
+  );
 
   // Redirect unregistered users to the registration page
   useEffect(() => {
@@ -169,22 +252,22 @@ export default function CreateCampaignPage() {
         title: "Registration Required",
         description: "You need to register before creating campaigns.",
         duration: 5000,
-      })
-      router.push('/apps/account/register')
+      });
+      router.push("/apps/account/register");
     }
-  }, [isConnected, isCheckingUser, userExists, router])
+  }, [isConnected, isCheckingUser, userExists, router]);
 
   // Monitor contract interaction states
   useEffect(() => {
     if (isPending) {
-      dispatchTx({ type: 'TRANSACTION_START' });
+      dispatchTx({ type: "TRANSACTION_START" });
       toast({
         title: "Processing Transaction",
         description: "Your transaction is being processed on the blockchain.",
         duration: 5000,
       });
     } else if (hash) {
-      dispatchTx({ type: 'TRANSACTION_SUCCESS', payload: hash });
+      dispatchTx({ type: "TRANSACTION_SUCCESS", payload: hash });
       toast({
         title: "Transaction Submitted",
         description: "Your transaction has been submitted to the blockchain.",
@@ -192,20 +275,20 @@ export default function CreateCampaignPage() {
       });
       console.log("Transaction hash:", hash);
     } else if (isError) {
-      dispatchTx({ type: 'TRANSACTION_ERROR', payload: writeError });
-      
+      dispatchTx({ type: "TRANSACTION_ERROR", payload: writeError });
+
       // Extract meaningful error message
       let errorMessage = "Unknown error occurred";
       if (writeError) {
-        if (typeof writeError === 'object' && writeError.shortMessage) {
+        if (typeof writeError === "object" && writeError.shortMessage) {
           errorMessage = writeError.shortMessage;
-        } else if (typeof writeError === 'object' && writeError.message) {
+        } else if (typeof writeError === "object" && writeError.message) {
           errorMessage = writeError.message;
-        } else if (typeof writeError === 'string') {
+        } else if (typeof writeError === "string") {
           errorMessage = writeError;
         }
       }
-      
+
       // Show error toast with detailed message and retry option
       toast({
         variant: "destructive",
@@ -213,7 +296,7 @@ export default function CreateCampaignPage() {
         description: `${errorMessage}. Please try again.`,
         duration: 10000,
       });
-      
+
       console.error("Transaction error:", writeError);
       setIsSubmitting(false);
     }
@@ -221,12 +304,12 @@ export default function CreateCampaignPage() {
 
   // Effect to extract contract address from transaction receipt
   useEffect(() => {
-    if(txReceipt){
+    if (txReceipt) {
       console.log("Transaction receipt:", txReceipt);
-      const contractAddress = txReceipt.logs[0].address;  // new contaract address
-      
+      const contractAddress = txReceipt.logs[0].address; // new contaract address
+
       console.log("Contract address:", contractAddress);
-      dispatchTx({ type: 'SET_CONTRACT_ADDRESS', payload: contractAddress });
+      dispatchTx({ type: "SET_CONTRACT_ADDRESS", payload: contractAddress });
     }
   }, [txReceipt, chainId]);
 
@@ -242,11 +325,10 @@ export default function CreateCampaignPage() {
       targetAudience: "",
       ctaGoal: "",
       coverImage: undefined,
-      rewardPool: 0
+      rewardPool: 0,
     },
     mode: "onSubmit",
   });
-
 
   async function onSubmit(values) {
     if (!isConnected || !address) {
@@ -254,46 +336,45 @@ export default function CreateCampaignPage() {
         variant: "destructive",
         title: "Wallet not connected",
         description: "Please connect your wallet to create a campaign.",
-      })
-      return
+      });
+      return;
     }
-    
+
     try {
       // Reset any previous transaction state
-      dispatchTx({ type: 'RESET' });
+      dispatchTx({ type: "RESET" });
       setIsSubmitting(true);
-      
+
       const contractAddress = contracts[chainId].campaignManager.address;
       const contractABI = contracts[chainId].campaignManager.abi;
 
-      console.log("Using contract:", contractAddress);
-      console.log(Math.floor(values.startDate.getTime() / 1000))
-      console.log(Math.floor(values.endDate.getTime() / 1000))
+      // Convert dates to UTC timestamps (in seconds)
+      const startTimestamp = Math.floor(values.startDate.getTime() / 1000);
+      const endTimestamp = Math.floor(values.endDate.getTime() / 1000);
       
       // Execute contract transaction
       await writeContract({
         address: contractAddress,
         abi: contractABI,
-        functionName: 'createCampaign',
+        functionName: "createCampaign",
         args: [
           values.title || "Campaign",
-          Math.floor(values.startDate.getTime() / 1000),
-          Math.floor(values.endDate.getTime() / 1000),
-          parseInt(values.rewardPool) * 10 ** 18
+          startTimestamp,
+          endTimestamp,
+          parseInt(values.rewardPool) * 10 ** 18,
         ],
       });
-      
+
       // The transaction state and receipt handling is now done in the useEffect hooks
       // We'll wait for the transaction to be confirmed before proceeding
-      
     } catch (error) {
-      console.error('Error creating campaign:', error)
+      console.error("Error creating campaign:", error);
       toast({
         variant: "destructive",
         title: "Error creating campaign",
         description: error.message || "Something went wrong. Please try again.",
-      })
-      setIsSubmitting(false)
+      });
+      setIsSubmitting(false);
     }
   }
 
@@ -305,55 +386,61 @@ export default function CreateCampaignPage() {
       if (txState.isSuccess && txState.hash && txState.contractAddress) {
         try {
           const values = form.getValues();
-          
+
           // Prepare form data for API submission
-          const formData = new FormData()
+          const formData = new FormData();
           Object.entries(values).forEach(([key, value]) => {
-            if (key === 'coverImage') {
+            if (key === "coverImage") {
               if (value) {
-                formData.append('coverImage', value)
+                formData.append("coverImage", value);
               }
-            } else if (key === 'startDate' || key === 'endDate') {
+            } else if (key === "startDate" || key === "endDate") {
               // Format dates as ISO strings for consistent parsing
               if (value instanceof Date) {
-                formData.append(key, value.toISOString())
+                formData.append(key, value.toISOString());
               }
             } else if (value !== undefined && value !== null) {
-              formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value)
+              formData.append(
+                key,
+                typeof value === "object" ? JSON.stringify(value) : value
+              );
             }
-          })
+          });
 
           // Add wallet address, transaction hash and contract address to form data
-          formData.append('walletAddress', address)
-          formData.append('txHash', txState.hash)
-          formData.append('campaignAddress', txState.contractAddress)
-
-          const response = await fetch('/api/campaigns/create', {
-            method: 'POST',
+          formData.append("walletAddress", address);
+          formData.append("txHash", txState.hash);
+          formData.append("campaignAddress", txState.contractAddress);
+          console.log(`formData before post`);
+          
+          const response = await fetch("/api/campaigns/create", {
+            method: "POST",
             body: formData,
-          })
+          });
 
-          const data = await response.json()
+          const data = await response.json();
 
           if (data.success) {
             toast({
               title: "Campaign created!",
               description: "Your campaign has been created successfully.",
-            })
+            });
             // Navigate to the campaigns list after successful creation
-            router.push('/apps')
+            router.push("/apps");
           } else {
-            throw new Error(data.message || 'Failed to create campaign')
+            throw new Error(data.message || "Failed to create campaign");
           }
         } catch (apiError) {
-          console.error('Error submitting campaign to API:', apiError)
+          console.error("Error submitting campaign to API:", apiError);
           toast({
             variant: "destructive",
             title: "Error saving campaign details",
-            description: apiError.message || "Campaign was created on blockchain but we couldn't save all details.",
-          })
+            description:
+              apiError.message ||
+              "Campaign was created on blockchain but we couldn't save all details.",
+          });
         } finally {
-          setIsSubmitting(false)
+          setIsSubmitting(false);
         }
       }
     };
@@ -370,7 +457,7 @@ export default function CreateCampaignPage() {
       </div>
 
       <div className="container px-4 sm:px-6 py-12 relative z-10">
-        <motion.div 
+        <motion.div
           className="max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -387,35 +474,48 @@ export default function CreateCampaignPage() {
 
           <Card className="bg-black/40 backdrop-blur-lg border-gray-800/40 overflow-hidden rounded-3xl transition-all duration-300 hover:border-gray-700/60 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-white">Campaign Information</CardTitle>
+              <CardTitle className="text-2xl font-bold text-white">
+                Campaign Information
+              </CardTitle>
               <CardDescription className="text-gray-400">
-                Fill in the details below to create your campaign. Be descriptive to attract writers.
+                Fill in the details below to create your campaign. Be
+                descriptive to attract writers.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {!isConnected ? (
                 <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                  <p className="text-gray-400 mb-2">Please connect your wallet to create a campaign</p>
+                  <p className="text-gray-400 mb-2">
+                    Please connect your wallet to create a campaign
+                  </p>
                   <CustomConnectButton />
                 </div>
               ) : isCheckingUser ? (
                 <div className="flex flex-col items-center justify-center py-8 space-y-4">
                   <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-500 border-t-white"></div>
-                  <p className="text-gray-400">Checking your account status...</p>
+                  <p className="text-gray-400">
+                    Checking your account status...
+                  </p>
                 </div>
               ) : userExists === false ? (
                 <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                  <p className="text-gray-400 mb-2">You need to register before creating campaigns</p>
-                  <Button 
-                    onClick={() => router.push('/apps/account/register')}
-                    variant="outline" 
+                  <p className="text-gray-400 mb-2">
+                    You need to register before creating campaigns
+                  </p>
+                  <Button
+                    onClick={() => router.push("/apps/account/register")}
+                    variant="outline"
                     className="rounded-full px-8 py-6 bg-black/40 hover:bg-black/60 border-gray-700/40 hover:border-cyan-700/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(8,145,178,0.2)]"
                   >
                     Register Now
                   </Button>
                 </div>
               ) : (
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="w-full"
+                >
                   <TabsList className="grid w-full grid-cols-3 mb-8 bg-[#060606]/80 p-1 rounded-full">
                     <TabsTrigger
                       value="details"
@@ -438,8 +538,14 @@ export default function CreateCampaignPage() {
                   </TabsList>
 
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                      <TabsContent value="details" className="space-y-6 animate-fade-in">
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-8"
+                    >
+                      <TabsContent
+                        value="details"
+                        className="space-y-6 animate-fade-in"
+                      >
                         <FormFieldInput
                           formControl={form.control}
                           fieldName="title"
@@ -467,7 +573,7 @@ export default function CreateCampaignPage() {
                           description="Keywords help categorize your campaign"
                           required={true}
                         />
-                        
+
                         <FormFieldInput
                           formControl={form.control}
                           fieldName="rewardPool"
@@ -477,7 +583,7 @@ export default function CreateCampaignPage() {
                           description="Payment will be made in $BLOG tokens"
                           required={true}
                         />
-                        
+
                         {signError && (
                           <div className="rounded-lg bg-red-900/20 p-3 border border-red-800/30">
                             <p className="text-sm text-red-400">
@@ -487,7 +593,10 @@ export default function CreateCampaignPage() {
                         )}
                       </TabsContent>
 
-                      <TabsContent value="requirements" className="space-y-6 animate-fade-in">
+                      <TabsContent
+                        value="requirements"
+                        className="space-y-6 animate-fade-in"
+                      >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <FormFieldInput
                             formControl={form.control}
@@ -530,7 +639,7 @@ export default function CreateCampaignPage() {
                           description="The desired outcome for readers"
                           placeholder="What action should readers take?"
                         />
-                        
+
                         <FormFieldInput
                           formControl={form.control}
                           fieldName="aiDescription"
@@ -542,7 +651,10 @@ export default function CreateCampaignPage() {
                         />
                       </TabsContent>
 
-                      <TabsContent value="media" className="space-y-6 animate-fade-in">
+                      <TabsContent
+                        value="media"
+                        className="space-y-6 animate-fade-in"
+                      >
                         <FormField
                           control={form.control}
                           name="coverImage"
@@ -554,17 +666,17 @@ export default function CreateCampaignPage() {
                             />
                           )}
                         />
-                        
+
                         {txState.isError && (
-                          <TransactionErrorDisplay 
+                          <TransactionErrorDisplay
                             error={txState.error}
                             onRetry={() => {
-                              dispatchTx({ type: 'RESET' });
+                              dispatchTx({ type: "RESET" });
                               form.handleSubmit(onSubmit)();
                             }}
                           />
                         )}
-                        
+
                         <div className="pt-2">
                           <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 p-3 border border-blue-800/30">
                             <div className="flex-shrink-0">
@@ -578,15 +690,25 @@ export default function CreateCampaignPage() {
                       </TabsContent>
                       {activeTab == "media" && (
                         <div className="flex justify-end space-x-4 pt-4">
-                              <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
+                          <ButtonCreateCampaign
+                            state={activeTab}
+                            setState={setActiveTab}
+                            isSubmitting={isSubmitting || isSignLoading}
+                            form={form}
+                          />
                         </div>
-                        )}
+                      )}
                     </form>
                   </Form>
                   {activeTab !== "media" && (
-                  <div className="flex justify-end space-x-4 pt-4">
-                      <ButtonCreateCampaign state={activeTab} setState={setActiveTab} isSubmitting={isSubmitting || isSignLoading} form={form} />
-                  </div>
+                    <div className="flex justify-end space-x-4 pt-4">
+                      <ButtonCreateCampaign
+                        state={activeTab}
+                        setState={setActiveTab}
+                        isSubmitting={isSubmitting || isSignLoading}
+                        form={form}
+                      />
+                    </div>
                   )}
                 </Tabs>
               )}
@@ -595,5 +717,5 @@ export default function CreateCampaignPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
