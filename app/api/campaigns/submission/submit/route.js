@@ -36,7 +36,7 @@ export async function POST(request) {
       update: {
         blog_url: link,
         total_score: totalScore,
-        status: "ACCEPTED",
+        status: "PENDING",
         data: JSON.stringify(result),
       },
       create: {
@@ -44,7 +44,7 @@ export async function POST(request) {
         campaignId: submissionId,
         blog_url: link,
         total_score: totalScore,
-        status: "ACCEPTED",
+        status: "PENDING",
         data: JSON.stringify(result),
       },
     });

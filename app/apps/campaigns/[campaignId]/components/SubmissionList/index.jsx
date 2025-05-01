@@ -94,18 +94,6 @@ const SubmissionItem = ({ submission, isSelected, onClick }) => {
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            {scoreData && (
-              <>
-                <div className="flex items-center text-gray-400 text-sm">
-                  <ThumbsUp size={14} className="mr-1.5" />
-                  <span>{scoreData.virality_score || 0}</span>
-                </div>
-                <div className="flex items-center text-gray-400 text-sm">
-                  <MessageSquare size={14} className="mr-1.5" />
-                  <span>{scoreData.quality_score || 0}</span>
-                </div>
-              </>
-            )}
             {submission.total_score && (
               <div className="flex items-center text-white text-sm font-medium">
                 Score: {submission.total_score}

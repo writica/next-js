@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
 import { useSubmissions } from "../providers/submission-provider"
 import SubmissionList from "../SubmissionList"
+import { useAccount } from "wagmi"
 
 // Parse JSON data from submission if needed
 const parseSubmissionData = (submission) => {
@@ -26,6 +27,8 @@ export default function SubmissionsTab({ campaign }) {
     error, 
     refreshSubmissions } = useSubmissions(campaign?.id);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const { address } = useAccount();
+  const isOwner = campaign?.owner.walletAddress === address;
   
   const handleSubmissionSelect = (submission) => {
     setSelectedSubmission(submission);
@@ -67,7 +70,7 @@ export default function SubmissionsTab({ campaign }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+    <div className="flex gap-6">
       <div className="md:col-span-8">
         <SubmissionList 
           submissions={submissions} 
@@ -156,6 +159,8 @@ export default function SubmissionsTab({ campaign }) {
             )}
 
             {/* Action buttons */}
+            {isOwner &&(
+
             <div className="space-y-3 mt-6">
               <Button 
                 variant="outline" 
@@ -167,18 +172,12 @@ export default function SubmissionsTab({ campaign }) {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full rounded-full border-amber-500/20 text-amber-500 hover:bg-amber-500/10"
-              >
-                Request Revision
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
                 className="w-full rounded-full border-red-500/20 text-red-500 hover:bg-red-500/10"
               >
                 Reject Submission
               </Button>
             </div>
+            )}
           </div>
         ) : (
           <div className="bg-[#060606]/50 border border-gray-800/10 p-6 rounded-xl sticky top-6">
