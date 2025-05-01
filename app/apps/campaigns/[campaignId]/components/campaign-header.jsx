@@ -7,9 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import { useRewardStatus } from './providers/reward-status-provider'
 import DepositDialog from './dialogs/deposit-dialog'
 import SubmissionDialog from './dialogs/submission-dialog'
+import { useAccount } from 'wagmi'
 
-export default function CampaignHeader({ campaign, isOwner }) {
+export default function CampaignHeader({ campaign, isOwner, isCampaignActive }) {
   const { isRewardsDeposited, totalReward } = useRewardStatus();
+  const {address} = useAccount();
 
   return (
     <>
@@ -25,6 +27,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
       <div className="container mx-auto px-4 relative -mt-40 z-20">
         <Card className="bg-[#060606]/90 border-gray-800/40 backdrop-blur-lg shadow-xl">
           <CardContent className="p-8">
+
             <div className="mb-6 -mt-6">
               <Link 
                 href="/apps"
@@ -34,15 +37,26 @@ export default function CampaignHeader({ campaign, isOwner }) {
                 Back to Campaigns
               </Link>
             </div>
+
             <div className="flex flex-col md:flex-row justify-between gap-6">
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <Badge variant="secondary" className="rounded-full">
-                    {campaign.status}
+                  <Badge variant={isCampaignActive ? "secondary" : "outline"} className="rounded-full">
+                    {isCampaignActive ? "Active" : "Ended"}
                   </Badge>
                   <span className="text-xs text-gray-400">
                     Ends: {new Date(campaign.endDate).toLocaleDateString()}
                   </span>
+                </div>
+                <h1 className="text-3xl font-light mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  {campaign.title}
+                </h1>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center text-cyan-400">
+                    <Users size={16} className="mr-2" />
+                    <span>{campaign.participants?.length || 0} writers</span>
+                  </div>
+
                   {campaign.campaignAddress && (
                     <Badge 
                       variant="outline"
@@ -65,15 +79,7 @@ export default function CampaignHeader({ campaign, isOwner }) {
                       )}
                     </Badge>
                   )}
-                </div>
-                <h1 className="text-3xl font-light mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  {campaign.title}
-                </h1>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center text-cyan-400">
-                    <Users size={16} className="mr-2" />
-                    <span>{campaign.participants?.length || 0} writers</span>
-                  </div>
+
                 </div>
               </div>
 
@@ -81,10 +87,19 @@ export default function CampaignHeader({ campaign, isOwner }) {
                 <div className="text-xl font-medium text-emerald-400">
                   {campaign.rewardPool} $BLOG
                 </div>
-                {!isOwner && <SubmissionDialog campaign={campaign}/>}
+
+                {!isOwner && (<>
+                  {!isCampaignActive && address && (
+                    <Button variant="outline">
+                    Withdraw
+                  </Button>
+                  )}
+                  <SubmissionDialog campaign={campaign}/>
+                </>)}
+
                 {isOwner && (
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
+                    {/* <Button
                       variant="outline"
                       className="rounded-full border-gray-800/40 hover:bg-gray-800/20"
                       asChild
@@ -92,8 +107,8 @@ export default function CampaignHeader({ campaign, isOwner }) {
                       <Link href={`/apps/campaigns/${campaign.id}/edit`}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit Campaign
-                      </Link>
-                    </Button>
+                      </Link> 
+                    </Button>*/}
                     <DepositDialog campaign={campaign} />
                   </div>
                 )}

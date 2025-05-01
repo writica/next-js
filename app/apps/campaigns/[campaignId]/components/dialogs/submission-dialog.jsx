@@ -121,7 +121,7 @@ const submissionApi = async ({submissionId, link, address, totalScore, result}) 
 };
 
 
-export default function SubmissionDialog({campaign}) {
+export default function SubmissionDialog({campaign, isCampaignActive}) {
   const { address, isConnected, chainId } = useAccount();
   const { userExists, isCheckingUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
@@ -209,9 +209,10 @@ export default function SubmissionDialog({campaign}) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full transition-all duration-500">
+        
+        {isCampaignActive &&(<Button className="rounded-full transition-all duration-500" variant={"outline"}>
           Submit Entry
-        </Button>
+        </Button>)}
       </DialogTrigger>
       <DialogContent className="bg-[#060606]/95 border-gray-800/40">
         <DialogHeader>

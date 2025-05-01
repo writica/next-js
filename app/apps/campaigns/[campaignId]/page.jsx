@@ -11,13 +11,15 @@ import CampaignHeader from './components/campaign-header'
 import OverviewTab from './components/tabs/overview-tab'
 import RequirementsTab from './components/tabs/requirements-tab'
 import SubmissionsTab from './components/tabs/submissions-tab'
+import { isCampaignEnded } from "@/lib/utils";
 
 export default function CampaignDetailPage({ params }) {
   const resolvedParams = use(params)
   const [campaign, setCampaign] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isCampaignActive, setIsCampaignActive] = useState(true)
 
   const { address } = useAccount()
   const { userData } = useUser()
@@ -35,6 +37,7 @@ export default function CampaignDetailPage({ params }) {
         }
         
         setCampaign(result.data)
+        setIsCampaignActive(!isCampaignEnded(result.data.endDate))
       } catch (err) {
         console.error("Error fetching campaign:", err)
         setError(err.message)
@@ -72,8 +75,8 @@ export default function CampaignDetailPage({ params }) {
     <div className="relative min-h-screen pt-14 bg-black">
       {campaign.campaignAddress && (
         <RewardStatusProvider campaignAddress={campaign.campaignAddress}>
-          <SubmissionProvider campaignId={resolvedParams.campaignId}>
-            <CampaignHeader campaign={campaign} isOwner={isOwner} />
+          <SubmissionProvider campaignId={resolvedParams.campaignId} address={address}>
+            <CampaignHeader campaign={campaign} isOwner={isOwner} isCampaignActive={isCampaignActive} />
 
             <div className="container mx-auto px-4 py-12">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -84,15 +87,15 @@ export default function CampaignDetailPage({ params }) {
                 </TabsList>
 
                 <TabsContent value="overview" className="mt-0">
-                  <OverviewTab campaign={campaign} />
+                  <OverviewTab campaign={campaign}   isCampaignActive={isCampaignActive}/>
                 </TabsContent>
 
                 <TabsContent value="requirements" className="mt-0">
-                  <RequirementsTab campaign={campaign} />
+                  <RequirementsTab campaign={campaign}  isCampaignActive={isCampaignActive} />
                 </TabsContent>
 
                 <TabsContent value="submissions" className="mt-0">
-                  <SubmissionsTab campaign={campaign} />
+                  <SubmissionsTab campaign={campaign}  isCampaignActive={isCampaignActive} />
                 </TabsContent>
               </Tabs>
             </div>
@@ -101,7 +104,7 @@ export default function CampaignDetailPage({ params }) {
       )}
       {!campaign.campaignAddress && (
         <SubmissionProvider campaignId={resolvedParams.campaignId}>
-          <CampaignHeader campaign={campaign} isOwner={isOwner} />
+          <CampaignHeader campaign={campaign} isOwner={isOwner} isCampaignActive={isCampaignActive} />
 
           <div className="container mx-auto px-4 py-12">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -112,15 +115,15 @@ export default function CampaignDetailPage({ params }) {
               </TabsList>
 
               <TabsContent value="overview" className="mt-0">
-                <OverviewTab campaign={campaign} />
+                <OverviewTab campaign={campaign}  isCampaignActive={isCampaignActive}/>
               </TabsContent>
 
               <TabsContent value="requirements" className="mt-0">
-                <RequirementsTab campaign={campaign} />
+                <RequirementsTab campaign={campaign}  isCampaignActive={isCampaignActive}/>
               </TabsContent>
 
               <TabsContent value="submissions" className="mt-0">
-                <SubmissionsTab campaign={campaign} />
+                <SubmissionsTab campaign={campaign}  isCampaignActive={isCampaignActive}/>
               </TabsContent>
             </Tabs>
           </div>

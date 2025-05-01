@@ -21,6 +21,30 @@ export const formatNiceNumber = (num: number | string) => {
   return num.toString();
 };
 
+/**
+ * Checks if a campaign has ended by comparing deadline to current date
+ * @param deadline - Campaign deadline string in various formats (ISO or human-readable)
+ * @returns boolean - True if campaign has ended, false otherwise
+ */
+export const isCampaignEnded = (deadline: string): boolean => {
+  if (!deadline) return false;
+  
+  // Parse the deadline string into a Date object - handles both format types
+  let deadlineDate: Date;
+  
+  // Handle different date formats
+  if (deadline.includes('-')) {
+    // For ISO format like "2025-04-30T13:00:00.000Z"
+    deadlineDate = new Date(deadline);
+  } else {
+    // For human-readable format like "May 1, 2025"
+    deadlineDate = new Date(deadline);
+  }
+  
+  const now = new Date();
+  return deadlineDate < now;
+};
+
 // Function to check and parse special message format
 export const processMessageText = (messageText: string) => {
   // Regular expression to match the specific object format

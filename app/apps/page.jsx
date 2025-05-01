@@ -1,14 +1,18 @@
 'use client'
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { PlusCircle, Search, Filter, Calendar, Users, ChevronRight } from "lucide-react"
+import { PlusCircle, Search, Filter, Calendar, Users, ChevronRight, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
+import { isCampaignEnded } from "@/lib/utils";
 
 const Campaign = ({campaign})=> {
+  // Use the utility function to check if campaign has ended
+  const campaignEnded = isCampaignEnded(campaign.deadline);
+  
   return (
     <div className="relative">
     <Link href={`/apps/campaigns/${campaign.id}`}>
@@ -22,17 +26,27 @@ const Campaign = ({campaign})=> {
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+        
+        {/* Ended banner if campaign has ended */}
+        {campaignEnded && (
+          <div className="absolute top-0 right-0 m-4">
+            <Badge variant="destructive" className="px-3 py-1.5 text-xs font-semibold rounded-full bg-red-500/90 backdrop-blur-sm border-red-400/20 shadow-glow-sm">
+              <Clock size={12} className="mr-1" />
+              Ended
+            </Badge>
+          </div>
+        )}
       </div>
       
       <CardHeader className="pb-2 relative">
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center text-sm text-cyan-400">
             <Users size={14} className="mr-1.5" />
-            <span>{campaign.participants?.length || 0} writers</span>
+            <span>{campaign.participants?.length || campaign.participants || 0} writers</span>
           </div>
           <div className="flex items-center text-sm text-emerald-400">
             <Calendar size={14} className="mr-1.5" />
-            <span>{new Date(campaign.endDate).toLocaleDateString()}</span>
+            <span>{campaign.deadline}</span>
           </div>
         </div>
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -55,12 +69,13 @@ const Campaign = ({campaign})=> {
       
       <CardFooter className="pt-4">
         <Button 
-          className="w-full rounded-full transition-all duration-500 flex items-center justify-center" 
-          variant={"outline"}
+          className={`w-full rounded-full transition-all duration-500 flex items-center justify-center ${campaignEnded ? 'opacity-75' : ''}`} 
+          variant={campaignEnded ? "secondary" : "outline"}
           size="lg"
+          disabled={campaignEnded}
         >
-            <span className="mr-2">Join Campaign</span>
-            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+            <span className="mr-2">{campaignEnded ? "Campaign Ended" : "Join Campaign"}</span>
+            {!campaignEnded && <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />}
         </Button>
       </CardFooter>
     </Card>
