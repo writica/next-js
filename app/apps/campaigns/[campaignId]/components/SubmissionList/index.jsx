@@ -49,7 +49,7 @@ const formatDate = (dateString) => {
   }
 };
 
-const SubmissionItem = ({ submission, isSelected, onClick }) => {
+const SubmissionItem = ({ submission, isSelected, onClick, isOwner }) => {
   const parsedData = parseSubmissionData(submission);
   const scoreData = parsedData?.result?.score;
   
@@ -138,7 +138,7 @@ function formatStatus(status) {
   return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 }
 
-export default function SubmissionList({ submissions = [], onSubmissionSelect, className = '' }) {
+export default function SubmissionList({ submissions = [], onSubmissionSelect, className = '', isOwner }) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const handleSelect = (submission, index) => {
@@ -153,11 +153,13 @@ export default function SubmissionList({ submissions = [], onSubmissionSelect, c
     <div className={`submission-list-container ${className}`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Submissions</h2>
-        <Button variant="outline" size="sm" className="rounded-full">
+        {!isOwner && (
+          <Button variant="outline" size="sm" className="rounded-full">
           <Edit size={14} className="mr-1.5" />
           New Submission
         </Button>
-      </div>
+        )}
+        </div>
       
       {submissions.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 backdrop-blur-sm bg-black/30 rounded-xl border border-gray-800/20">

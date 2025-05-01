@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Edit, AlertCircle, ThumbsUp, MessageSquare, Zap, ExternalLink, BarChart } from "lucide-react"
@@ -7,7 +7,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
 import { useSubmissions } from "../providers/submission-provider"
 import SubmissionList from "../SubmissionList"
-import { useAccount } from "wagmi"
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { toast } from "@/hooks/use-toast"
+import CampaignAbi from "@/lib/abi/Campaign.json";
 
 // Parse JSON data from submission if needed
 const parseSubmissionData = (submission) => {
@@ -20,6 +22,32 @@ const parseSubmissionData = (submission) => {
   }
 };
 
+const approveSubmissionAPI = async (campaignId, submissionId, hash, walletSigner, callbackSuccess=()=>{}) => {
+  try {
+    const response = await fetch(`/api/campaigns/approve_submission`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ campaignId, submissionId, hash, walletSigner }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to approve submission');
+    }
+    const data = await response.json();
+    console.log("Submission approved successfully:", data);
+    callbackSuccess();
+    return data;
+  } catch (error) {
+    console.error("Error approving submission:", error);
+    toast({
+      title: "Error approving submission",
+      description: "There was an error approving the submission. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
+
 export default function SubmissionsTab({ campaign }) {
   const {      
     submissions, 
@@ -29,10 +57,75 @@ export default function SubmissionsTab({ campaign }) {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const { address } = useAccount();
   const isOwner = campaign?.owner.walletAddress === address;
+
+  const resWriteContract = useWriteContract();
+  const {
+    data: hash,
+    isSuccess,
+    error: writeError,
+    writeContract,
+  } = resWriteContract;
+  const { data: txReceipt, isSuccess: receiptSuccess, isError: receiptError } =
+    useWaitForTransactionReceipt({
+      hash,
+      enabled: Boolean(hash),
+    });
   
   const handleSubmissionSelect = (submission) => {
     setSelectedSubmission(submission);
   };
+
+
+  const approveSubmission = async ({ campaign, selectedSubmission }) => {
+    if (!selectedSubmission || !campaign ) return;
+    const uwa = selectedSubmission.user.walletAddress;
+    const total_score = selectedSubmission.total_score;
+    const campaignAddress = campaign.campaignAddress;
+
+    console.log(uwa, total_score, campaignAddress);
+    await writeContract({
+      address: campaignAddress,
+      abi: CampaignAbi,
+      functionName: "addContributor",
+      args: [uwa, total_score],
+    });
+  };
+
+
+  useEffect(() => {
+    if(writeError) {
+      toast({
+        title: "Error approving submission",
+        description: writeError.message,
+        variant: "destructive",
+      });
+    }
+    if (isSuccess) {
+      toast({
+        title: "Waiting for transaction",
+        description: "Please wait while we process your transaction.",
+        variant: "default",
+      });
+    };
+
+    if (receiptSuccess) {
+      toast({
+        title: "Transaction Successful",
+        description: "The submission has been approved successfully.",
+        variant: "success",
+      });
+      approveSubmissionAPI(campaign.id, selectedSubmission.id, hash, address, refreshSubmissions);
+    }
+
+    if (receiptError) {
+      toast({
+        title: "Transaction Failed",
+        description: "There was an error processing your transaction.",
+        variant: "destructive",
+      });
+    };
+
+  },[isSuccess, writeError, receiptSuccess, receiptError]);
 
   if (isLoading) {
     return (
@@ -74,7 +167,8 @@ export default function SubmissionsTab({ campaign }) {
       <div className="md:col-span-8">
         <SubmissionList 
           submissions={submissions} 
-          onSubmissionSelect={handleSubmissionSelect} 
+          onSubmissionSelect={handleSubmissionSelect}
+          isOwner={isOwner} 
           className="w-full"
         />
       </div>
@@ -162,20 +256,25 @@ export default function SubmissionsTab({ campaign }) {
             {isOwner &&(
 
             <div className="space-y-3 mt-6">
+              {selectedSubmission.status == "PENDING" && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 className="w-full rounded-full border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10"
+                onClick={async ()=>{
+                  await approveSubmission({campaign, selectedSubmission });
+                }}
               >
                 Approve Submission
               </Button>
-              <Button 
+              )}
+              {/* <Button 
                 variant="outline" 
                 size="sm" 
                 className="w-full rounded-full border-red-500/20 text-red-500 hover:bg-red-500/10"
               >
                 Reject Submission
-              </Button>
+              </Button> */}
             </div>
             )}
           </div>
@@ -185,10 +284,12 @@ export default function SubmissionsTab({ campaign }) {
             <p className="text-gray-500 mb-6">
               Select a submission from the list to view its details and take action
             </p>
-            <Button variant="outline" size="sm" className="w-full rounded-full">
+            {!isOwner && (
+              <Button variant="outline" size="sm" className="w-full rounded-full">
               <Edit className="mr-2 h-4 w-4" />
               Create New Submission
             </Button>
+            )}
           </div>
         )}
       </div>
