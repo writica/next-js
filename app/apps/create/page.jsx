@@ -178,17 +178,17 @@ const formSchema = z
     message: "End date must be later than start date",
     path: ["endDate"],
   })
-  .refine(
-    (data) => {
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
-      return data.endDate > today;
-    },
-    {
-      message: "End date must be after today",
-      path: ["endDate"],
-    }
-  )
+  // .refine(
+  //   (data) => {
+  //     const today = new Date();
+  //     today.setHours(23, 59, 59, 999);
+  //     return data.endDate > today;
+  //   },
+  //   {
+  //     message: "End date must be after today",
+  //     path: ["endDate"],
+  //   }
+  // )
   .refine(
     (data) => {
       const minDate = new Date(2025, 0, 1); // January 1, 2025
@@ -386,6 +386,7 @@ export default function CreateCampaignPage() {
       if (txState.isSuccess && txState.hash && txState.contractAddress) {
         try {
           const values = form.getValues();
+          console.log("Form values:", values);
 
           // Prepare form data for API submission
           const formData = new FormData();
@@ -395,9 +396,11 @@ export default function CreateCampaignPage() {
                 formData.append("coverImage", value);
               }
             } else if (key === "startDate" || key === "endDate") {
-              // Format dates as ISO strings for consistent parsing
-              if (value instanceof Date) {
-                formData.append(key, value.toISOString());
+              // Parse the date values and create new Date objects
+              if (value) {
+                const dateValue = (new Date(value)).toISOString();
+                console.log(`Parsed ${key}:`, dateValue);
+                formData.append(key, dateValue);
               }
             } else if (value !== undefined && value !== null) {
               formData.append(
@@ -411,7 +414,12 @@ export default function CreateCampaignPage() {
           formData.append("walletAddress", address);
           formData.append("txHash", txState.hash);
           formData.append("campaignAddress", txState.contractAddress);
-          console.log(`formData before post`);
+          
+          // Log the final form data before submission
+          console.log("Final form data prepared for API:");
+          for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value instanceof File ? value.name : value}`);
+          }
           
           const response = await fetch("/api/campaigns/create", {
             method: "POST",
