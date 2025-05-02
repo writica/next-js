@@ -431,43 +431,41 @@ export default function ASCIIText({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // measure container
-    const { width, height } = containerRef.current.getBoundingClientRect();
+    // Add timeout to ensure container is fully rendered and measured correctly
+    const timeoutId = setTimeout(() => {
+      // measure container
+      const { width, height } = containerRef.current.getBoundingClientRect();
 
-    // create the ASCII scene
-    asciiRef.current = new CanvAscii(
-      { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves, mouseMove },
-      containerRef.current,
-      width,
-      height
-    );
-    asciiRef.current.load();
+      // create the ASCII scene
+      asciiRef.current = new CanvAscii(
+        { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves, mouseMove },
+        containerRef.current,
+        width,
+        height
+      );
+      asciiRef.current.load();
 
-    const ro = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
-      const { width: w, height: h } = entries[0].contentRect;
-      asciiRef.current.setSize(w, h);
-    });
-    ro.observe(containerRef.current);
+      const ro = new ResizeObserver((entries) => {
+        if (!entries[0]) return;
+        const { width: w, height: h } = entries[0].contentRect;
+        asciiRef.current.setSize(w, h);
+      });
+      ro.observe(containerRef.current);
+    }, 500); // 500ms delay
 
     return () => {
-      ro.disconnect();
+      clearTimeout(timeoutId);
       if (asciiRef.current) {
         asciiRef.current.dispose();
       }
     };
-  }, [text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves]);
+  }, [text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves, mouseMove]);
 
   return (
     <div
       ref={containerRef}
       className={cn('', className)}
       style={{...style}}
-      // style={{
-      //   position: 'absolute',
-      //   width: '100%',
-      //   height: '100%'
-      // }}
     >
       {/* Inline style or move to global CSS */}
       <style>{`

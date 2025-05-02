@@ -75,10 +75,10 @@ export const Header = ({
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 ${
-        glassMorphism ? 'backdrop-blur-lg' : ''
+        glassMorphism ? 'backdrop-blur-sm' : ''
       } ${
         isScrolled 
-          ? 'bg-black/80 shadow-lg' 
+          ? 'bg-black/10 shadow-md' 
           : glassMorphism ? 'bg-black/10' : 'bg-black'
       } ${className}`}
     >

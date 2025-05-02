@@ -23,6 +23,8 @@ import Logo from "@/components/Logo";
 import NoiseBg from "@/components/NoiseBg";
 import DecryptedText from "@/components/DecryptedText";
 import { motion } from "framer-motion";
+import Waves from "@/components/Waves";
+import HowItWorksBlocks from './components/HowItWorksBlocks.jsx';
 
 export default function Home() {
   // Animation variants for staggered entrance
@@ -72,7 +74,7 @@ export default function Home() {
             </Button>
           </Link>,
           <Link key="apps" href="/apps">
-            <Button className="rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 border-0 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
+            <Button className="rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-720 hover:to-cyan-720 border-0 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
               Explore Apps
             </Button>
           </Link>,
@@ -89,7 +91,8 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+      {/* <section className="h-[80vh] relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden"> */}
+      <section className="h-[100vh] flex flex-row justify-end items-center overflow-hidden">
         <div className="container px-4 sm:px-6">
           <motion.div
             className="min-h-[400px] w-full block"
@@ -101,10 +104,10 @@ export default function Home() {
               <DecryptedText
                 text="WRITE."
                 speed={100}
-                maxIterations={30}
+                maxIterations={20}
                 characters="z!?<>:@'+]{]|*^%$#@!~`"
-                className="revealed font-extrabold text-9xl text-transparent text-white"
-                parentClassName="font-extrabold text-9xl text-transparent text-white opacity-30"
+                className="revealed font-extrabold text-9xl text-transparent text-white opacity-80 hover:opacity-30 duration-300"
+                parentClassName="font-extrabold text-9xl text-transparent text-white"
                 encryptedClassName="encrypted"
                 animateOn="view"
               />
@@ -114,10 +117,10 @@ export default function Home() {
               <DecryptedText
                 text="CONTRIBUTE."
                 speed={100}
-                maxIterations={40}
+                maxIterations={25}
                 characters="&918KL\\;MS)XK0981!?"
-                className="revealed font-extrabold text-9xl text-transparent text-white"
-                parentClassName="font-extrabold text-9xl text-transparent text-white opacity-30"
+                className="revealed font-extrabold text-9xl text-transparent text-white opacity-80 hover:opacity-30 duration-300"
+                parentClassName="font-extrabold text-9xl text-transparent text-white "
                 encryptedClassName="encrypted"
                 animateOn="view"
               />
@@ -126,10 +129,10 @@ export default function Home() {
               <DecryptedText
                 text="EARN."
                 speed={100}
-                maxIterations={50}
+                maxIterations={30}
                 characters="20klkcas09128[\\!/?xsasd902,,<>"
-                className="revealed font-extrabold text-9xl text-transparent text-white"
-                parentClassName="font-extrabold text-9xl text-transparent text-white opacity-30"
+                className="revealed font-extrabold text-9xl text-transparent text-white "
+                parentClassName="font-extrabold text-9xl text-transparent text-white "
                 encryptedClassName="encrypted"
                 animateOn="view"
               />
@@ -148,87 +151,86 @@ export default function Home() {
       {/* How It Works Section */}
       <section className="py-20 md:py-32 relative">
         <div className="container px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <Badge
-              variant="outline"
-              className="mb-6 py-1.5 px-4 border-cyan-500/30 bg-cyan-500/5 text-cyan-400"
-            >
-              Simple Process
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-6">
-              How Write-to-Earn Works
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Our platform connects content creators with campaigns, rewarding
-              quality writing with cryptocurrency rewards.
+          <div className="text-center mb-24 pt-8">
+            <p className="text-3xl leading-relaxed text-white text-center max-w-4xl mx-auto">
+              Connects content creators with campaigns, rewarding quality
+              writing with cryptocurrency rewards.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-            {[
-              {
-                title: "Join Campaigns",
-                desc: "Browse and join campaigns from brands and DAOs looking for quality content on specific topics.",
-                icon: <PlusCircle className="h-6 w-6" />,
-                color: "from-purple-400 to-blue-400",
-                bgColor: "bg-purple-500/10",
-                borderColor: "border-purple-500/20",
-              },
-              {
-                title: "Create Content",
-                desc: "Write high-quality articles, threads or tutorials that match campaign requirements and objectives.",
-                icon: <Edit3 className="h-6 w-6" />,
-                color: "from-emerald-400 to-cyan-400",
-                bgColor: "bg-emerald-500/10",
-                borderColor: "border-emerald-500/20",
-              },
-              {
-                title: "Earn Rewards",
-                desc: "Get paid in crypto based on AI-scored quality metrics and post-performance analytics.",
-                icon: <Award className="h-6 w-6" />,
-                color: "from-amber-400 to-orange-400",
-                bgColor: "bg-amber-500/10",
-                borderColor: "border-amber-500/20",
-              },
-            ].map((step, index) => (
-              <div key={index} className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-900/60 to-gray-800/60 rounded-3xl blur-[20px] opacity-0 group-hover:opacity-80 transition-all duration-700 -z-10"></div>
-                <Card
-                  className={`p-1 bg-gradient-to-br ${step.bgColor} rounded-3xl h-full hover:shadow-[0_0_25px_rgba(0,0,0,0.3)] transition-all duration-500 border-none`}
-                >
-                  <CardContent className="bg-gray-900/90 rounded-3xl p-8 h-full flex flex-col">
-                    <div
-                      className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.bgColor} backdrop-blur-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-500 border ${step.borderColor}`}
-                    >
-                      <div
-                        className={`text-transparent bg-clip-text bg-gradient-to-r ${step.color}`}
-                      >
-                        {step.icon}
-                      </div>
-                    </div>
-                    <h3
-                      className={`text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r ${step.color}`}
-                    >
-                      {step.title}
-                    </h3>
-                    <p className="text-gray-400 mb-6 flex-grow">{step.desc}</p>
-                    <div className="flex items-center text-sm">
-                      <div className="flex -space-x-2 mr-4">
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-7 h-7 rounded-full bg-gray-700/80 border border-gray-800"
-                          ></div>
-                        ))}
-                      </div>
-                      <p className="text-gray-500">
-                        +{(index + 1) * 540} writers
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
+          <div className="flex justify-between w-full max-w-6xl mx-auto">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+              <HowItWorksBlocks 
+                text='Join Campaigns'
+                className="border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-400 group backdrop-blur-sm"
+                children={
+                  <div className="absolute inset-0 z-0">
+                    <Waves   
+                      lineColor="#10b981"
+                      backgroundColor="rgba(0, 0, 0, 0)"
+                      waveSpeedX={0.02}
+                      waveSpeedY={0.04}
+                      waveAmpX={50}
+                      waveAmpY={10}
+                      friction={0.9}
+                      tension={0.01}
+                      maxCursorMove={90}
+                      xGap={12}
+                      yGap={36}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  </div>
+                }
+              />
+              
+              <HowItWorksBlocks 
+                text='CONTRIBUTE <br /> CONTENT'
+                className="border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-400 group backdrop-blur-sm"
+                children={
+                  <div className="absolute inset-0 z-0">
+                    <Waves   
+                      lineColor="#06b6d4"
+                      backgroundColor="rgba(0, 0, 0, 0)"
+                      waveSpeedX={0.03}
+                      waveSpeedY={0.05}
+                      waveAmpX={40}
+                      waveAmpY={15}
+                      friction={0.85}
+                      tension={0.02}
+                      maxCursorMove={80}
+                      xGap={14}
+                      yGap={30}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  </div>
+                }
+              />
+              
+              <HowItWorksBlocks 
+                text='EARN <br /> REWARDS'
+                className="border-amber-500/30 bg-amber-500/5 hover:border-amber-400 group backdrop-blur-sm"
+                children={
+                  <div className="absolute inset-0 z-0">
+                    <Waves   
+                      lineColor="#f59e0b"
+                      backgroundColor="rgba(0, 0, 0, 0)"
+                      waveSpeedX={0.04}
+                      waveSpeedY={0.03}
+                      waveAmpX={45}
+                      waveAmpY={12}
+                      friction={0.92}
+                      tension={0.015}
+                      maxCursorMove={70}
+                      xGap={16}
+                      yGap={32}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  </div>
+                }
+              />
+            </div>
+
           </div>
         </div>
       </section>
@@ -296,7 +298,7 @@ export default function Home() {
               },
             ].map((role, index) => (
               <div key={index} className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-900/60 to-gray-800/60 rounded-3xl blur-[20px] opacity-0 group-hover:opacity-80 transition-all duration-700 -z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-900/72 to-gray-800/72 rounded-3xl blur-[20px] opacity-0 group-hover:opacity-80 transition-all duration-700 -z-10"></div>
                 <Card
                   className={`p-1 ${role.bgColor} rounded-3xl hover:shadow-[0_0_25px_rgba(0,0,0,0.3)] transition-all duration-500 overflow-hidden border-none`}
                 >
@@ -373,7 +375,7 @@ export default function Home() {
                   <div className="flex flex-wrap gap-4">
                     <Button
                       asChild
-                      className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 border-0 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 text-base"
+                      className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-720 hover:to-cyan-720 border-0 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 text-base"
                     >
                       <Link href="/apps/account/register">
                         Create Free Account
@@ -390,7 +392,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="lg:w-1/3 relative">
-                  <div className="relative w-60 h-60 md:w-72 md:h-72">
+                  <div className="relative w-72 h-72 md:w-72 md:h-72">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 animate-pulse"></div>
                     <div className="absolute inset-4 rounded-full border-2 border-dashed border-emerald-500/30 animate-spin-slow"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
