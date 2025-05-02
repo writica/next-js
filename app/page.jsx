@@ -319,108 +319,90 @@ export default function Home() {
               fillContainer={true}
             />
           </div>
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <motion.div
-              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="mb-6 bg-emerald-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
-                <PlusCircle className="w-8 h-8 text-emerald-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-white">Campaign Creators</h3>
-              <p className="text-gray-400 mb-6">
-                Brands and organizations who need quality content and are willing to reward creators
-                for their contributions.
-              </p>
-              <div className="flex items-center text-sm text-emerald-400">
-                <CheckCircle className="w-4 h-4 mr-2" />
-                <span>Set campaign goals & budgets</span>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div className="mb-6 bg-cyan-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-cyan-400">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-white">Content Writers</h3>
-              <p className="text-gray-400 mb-6">
-                Talented writers who create high-quality content for campaigns and earn crypto rewards
-                for their contributions.
-              </p>
-              <div className="flex items-center text-sm text-cyan-400">
-                <CheckCircle className="w-4 h-4 mr-2" />
-                <span>Get paid directly in crypto</span>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <div className="mb-6 bg-amber-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-amber-400">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-white">Community Readers</h3>
-              <p className="text-gray-400 mb-6">
-                Readers who engage with content, provide feedback, and help ensure 
-                quality through ratings and reviews.
-              </p>
-              <div className="flex items-center text-sm text-amber-400">
-                <CheckCircle className="w-4 h-4 mr-2" />
-                <span>Discover quality content</span>
-              </div>
-            </motion.div>
-          </div> */}
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 md:py-32 relative">
+      <section className="py-20 md:py-32 relative overflow-hidden">
         <div className="container px-4 sm:px-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-3xl blur-[50px] opacity-70"></div>
-            <div className="relative bg-gradient-to-r from-gray-900/95 to-black rounded-3xl overflow-hidden border border-gray-800/50 backdrop-blur-sm shadow-2xl">
-              <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-20 pointer-events-none">
-                <div className="absolute right-0 bottom-0 w-full h-full bg-[radial-gradient(#222_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
+          <motion.div 
+            className="relative"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            {/* Background elements */}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-3xl blur-[80px] opacity-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(#222_1px,transparent_1px)] [background-size:16px_16px] opacity-20 rounded-3xl"></div>
+            
+            {/* Main content container */}
+            <div className="relative bg-gradient-to-b from-gray-900/80 to-black/90 rounded-3xl overflow-hidden border border-gray-800/30 backdrop-blur-sm shadow-2xl">
+              {/* Decorative elements */}
+              <div className="absolute -top-20 -right-20 w-60 h-60">
+                <Particles 
+                  particleColors={["#10b981", "#22d3ee"]}
+                  particleCount={100}
+                  particleSpread={8}
+                  speed={0.05}
+                  particleBaseSize={80}
+                  moveParticlesOnHover={false}
+                  alphaParticles={true}
+                />
               </div>
-              <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/30 rounded-full blur-[80px]"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-cyan-500/30 rounded-full blur-[80px]"></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40">
+                <MetaBalls
+                  color="#10b981"
+                  cursorBallColor="#10b981"
+                  cursorBallSize={2}
+                  ballCount={6}
+                  animationSize={20}
+                  enableMouseInteraction={false}
+                  enableTransparency={true}
+                  hoverSmoothness={0.1}
+                  clumpFactor={0.8}
+                  speed={0.2}
+                />
+              </div>
 
-              <div className="p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12">
-                <div className="lg:w-2/3">
-                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-6">
-                    Ready to start earning with your writing?
-                  </h2>
-                  <p className="text-lg text-gray-400 mb-8 max-w-xl">
-                    Join thousands of writers already earning crypto rewards for
-                    their content. Create an account today and start browsing
-                    campaigns that match your expertise.
-                  </p>
-                  <div className="flex flex-wrap gap-4">
+              <div className="p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
+                <div className="lg:w-3/5">
+                  <Badge variant="outline" className="mb-6 px-4 py-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 rounded-full">
+                    Start Today
+                  </Badge>
+                  <motion.h2 
+                    className="text-3xl md:text-5xl font-bold mb-6"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                      Transform your writing into crypto rewards
+                    </span>
+                  </motion.h2>
+                  
+                  <motion.p 
+                    className="text-lg text-gray-300 mb-8 max-w-xl"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    viewport={{ once: true }}
+                  >
+                    Join thousands of writers already earning crypto for their content. 
+                    Create an account today and discover campaigns that match your expertise.
+                  </motion.p>
+                  
+                  <motion.div 
+                    className="flex flex-wrap gap-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    viewport={{ once: true }}
+                  >
                     <Button
                       asChild
-                      className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-720 hover:to-cyan-720 border-0 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 text-base"
+                      className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 border-0 shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 text-base font-medium"
                     >
                       <Link href="/apps/account/register">
                         Create Free Account
@@ -430,24 +412,41 @@ export default function Home() {
                     <Button
                       asChild
                       variant="outline"
-                      className="rounded-full py-6 px-8 border-gray-800 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all duration-300 text-base"
+                      className="rounded-full py-6 px-8 border-gray-700 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all duration-300 text-base font-medium"
                     >
-                      <Link href="/apps">Browse Campaigns</Link>
+                      <Link href="/apps">
+                        Browse Campaigns
+                      </Link>
                     </Button>
-                  </div>
+                  </motion.div>
                 </div>
-                <div className="lg:w-1/3 relative">
-                  <div className="relative w-72 h-72 md:w-72 md:h-72">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 animate-pulse"></div>
+                
+                <motion.div 
+                  className="lg:w-2/5 relative"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto">
+                    {/* Inner decorative layers */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-transparent animate-pulse"></div>
                     <div className="absolute inset-4 rounded-full border-2 border-dashed border-emerald-500/30 animate-spin-slow"></div>
+                    <div className="absolute inset-8 rounded-full border border-cyan-500/20 animate-reverse-spin"></div>
+                    <div className="absolute inset-16 rounded-full bg-gradient-to-tr from-emerald-500/5 to-cyan-500/5"></div>
+                    
+                    {/* Center icon */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Shield className="w-16 h-16 text-emerald-400/80" />
+                      <div className="relative">
+                        <div className="absolute -inset-6 bg-emerald-500/20 rounded-full blur-lg"></div>
+                        <Shield className="w-20 h-20 text-emerald-400" strokeWidth={1.5} />
+                      </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
