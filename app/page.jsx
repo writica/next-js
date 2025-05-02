@@ -5,18 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@components/Header/index.jsx";
 import { Button } from "@/components/ui/button";
-import {
-  PlusCircle,
-  Edit3,
-  TrendingUp,
-  Award,
-  ArrowRight,
-  DollarSign,
-  Star,
-  Code,
-  Shield,
-  CheckCircle,
-} from "lucide-react";
+import { PlusCircle, ArrowRight, Shield, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Logo from "@/components/Logo";
@@ -24,7 +13,9 @@ import NoiseBg from "@/components/NoiseBg";
 import DecryptedText from "@/components/DecryptedText";
 import { motion } from "framer-motion";
 import Waves from "@/components/Waves";
-import HowItWorksBlocks from './components/HowItWorksBlocks.jsx';
+import MetaBalls from "@/components/MetaBalls";
+import Particles from "@/components/Particles";
+import HowItWorksBlocks from "./components/HowItWorksBlocks.jsx";
 
 export default function Home() {
   // Animation variants for staggered entrance
@@ -159,14 +150,13 @@ export default function Home() {
           </div>
 
           <div className="flex justify-between w-full max-w-6xl mx-auto">
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-              <HowItWorksBlocks 
-                text='Join Campaigns'
+              <HowItWorksBlocks
+                text="Join Campaigns"
                 className="border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-400 group backdrop-blur-sm"
                 children={
                   <div className="absolute inset-0 z-0">
-                    <Waves   
+                    <Waves
                       lineColor="#10b981"
                       backgroundColor="rgba(0, 0, 0, 0)"
                       waveSpeedX={0.02}
@@ -183,54 +173,49 @@ export default function Home() {
                   </div>
                 }
               />
-              
-              <HowItWorksBlocks 
-                text='CONTRIBUTE <br /> CONTENT'
+
+              <HowItWorksBlocks
+                text="Create Content"
                 className="border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-400 group backdrop-blur-sm"
                 children={
                   <div className="absolute inset-0 z-0">
-                    <Waves   
-                      lineColor="#06b6d4"
-                      backgroundColor="rgba(0, 0, 0, 0)"
-                      waveSpeedX={0.03}
-                      waveSpeedY={0.05}
-                      waveAmpX={40}
-                      waveAmpY={15}
-                      friction={0.85}
-                      tension={0.02}
-                      maxCursorMove={80}
-                      xGap={14}
-                      yGap={30}
+                    <MetaBalls
+                      color="#22d3ee"
+                      cursorBallColor="#22d3ee"
+                      cursorBallSize={4}
+                      ballCount={15}
+                      animationSize={30}
+                      enableMouseInteraction={true}
+                      enableTransparency={false}
+                      hoverSmoothness={0.05}
+                      clumpFactor={1}
+                      speed={0.3}
                     />
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
                 }
               />
-              
-              <HowItWorksBlocks 
-                text='EARN <br /> REWARDS'
+
+              <HowItWorksBlocks
+                text="Earn Rewards"
                 className="border-amber-500/30 bg-amber-500/5 hover:border-amber-400 group backdrop-blur-sm"
                 children={
                   <div className="absolute inset-0 z-0">
-                    <Waves   
-                      lineColor="#f59e0b"
-                      backgroundColor="rgba(0, 0, 0, 0)"
-                      waveSpeedX={0.04}
-                      waveSpeedY={0.03}
-                      waveAmpX={45}
-                      waveAmpY={12}
-                      friction={0.92}
-                      tension={0.015}
-                      maxCursorMove={70}
-                      xGap={16}
-                      yGap={32}
-                    />
+                      <Particles
+                        particleColors={['#fbbf24']}
+                        particleCount={200}
+                        particleSpread={10}
+                        speed={0.1}
+                        particleBaseSize={100}
+                        moveParticlesOnHover={true}
+                        alphaParticles={false}
+                        disableRotation={false}
+                      />
                     <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
                 }
               />
             </div>
-
           </div>
         </div>
       </section>
