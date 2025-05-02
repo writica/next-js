@@ -204,7 +204,7 @@ export default function SubmissionsTab({ campaign }) {
           </Button>
         )} */}
       </div>
-      <div className="flex gap-6 w-full">
+      <div className="grid grid-cols-12 gap-6 w-full">
         <div className="md:col-span-8">
           <SubmissionList
             submissions={submissions}

@@ -153,7 +153,7 @@ export default function SubmissionList({ submissions = [], onSubmissionSelect, c
     <div className={`submission-list-container ${className}`}>
       
       {submissions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 backdrop-blur-sm bg-black/30 rounded-xl border border-gray-800/20">
+        <div className="w-full flex flex-col items-center justify-center py-16 backdrop-blur-sm bg-black/30 rounded-xl border border-gray-800/20">
           <p className="text-gray-400 mb-6">No submissions found</p>
           <Button variant="secondary" className="rounded-full">
             <Edit className="mr-2 h-4 w-4" />

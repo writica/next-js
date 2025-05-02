@@ -41,22 +41,32 @@ export async function GET(request) {
           },
         },
       },
+      include: {
+        _count: {
+          select: { participants: true },
+        },
+      },
+
+
+
     });
     
     // Get total count for pagination
     const total = await prisma.campaign.count({ where });
     
     // Format response data to match frontend expectations
+    console.log(campaigns[1])
     const formattedCampaigns = campaigns.map(campaign => ({
       id: campaign.id,
       title: campaign.title,
       description: campaign.description,
-      participants: campaign.participantCount || 0, // Default to 0 if null
+      participants: campaign._count.participants || 0, // Default to 0 if null
       deadline: campaign.endDate.toLocaleDateString('en-US', { 
         month: 'short', 
         day: 'numeric', 
         year: 'numeric' 
       }),
+      endDate: campaign.endDate,
       image: campaign.coverImage || null,
       featured: campaign.featured || false,
       // Additional fields that might be useful

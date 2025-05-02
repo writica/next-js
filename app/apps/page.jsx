@@ -11,7 +11,7 @@ import { isCampaignEnded } from "@/lib/utils";
 
 const Campaign = ({campaign})=> {
   // Use the utility function to check if campaign has ended
-  const campaignEnded = isCampaignEnded(campaign.deadline);
+  const campaignEnded = isCampaignEnded(campaign.endDate);
   
   return (
     <div className="relative">
