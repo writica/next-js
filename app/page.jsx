@@ -365,84 +365,58 @@ export default function Home() {
                 />
               </div>
 
-              <div className="p-8 md:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
-                <div className="lg:w-3/5">
-                  <Badge variant="outline" className="mb-6 px-4 py-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 rounded-full">
-                    Start Today
-                  </Badge>
-                  <motion.h2 
-                    className="text-3xl md:text-5xl font-bold mb-6"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    viewport={{ once: true }}
-                  >
-                    <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                      Transform your writing into crypto rewards
-                    </span>
-                  </motion.h2>
-                  
-                  <motion.p 
-                    className="text-lg text-gray-300 mb-8 max-w-xl"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    viewport={{ once: true }}
-                  >
-                    Join thousands of writers already earning crypto for their content. 
-                    Create an account today and discover campaigns that match your expertise.
-                  </motion.p>
-                  
-                  <motion.div 
-                    className="flex flex-wrap gap-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    viewport={{ once: true }}
-                  >
-                    <Button
-                      asChild
-                      className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 border-0 shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 text-base font-medium"
-                    >
-                      <Link href="/apps/account/register">
-                        Create Free Account
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="rounded-full py-6 px-8 border-gray-700 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all duration-300 text-base font-medium"
-                    >
-                      <Link href="/apps">
-                        Browse Campaigns
-                      </Link>
-                    </Button>
-                  </motion.div>
-                </div>
-                
-                <motion.div 
-                  className="lg:w-2/5 relative"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
+              <div className="p-8 md:p-16 flex flex-col items-center text-center justify-center relative z-10">
+                <Badge variant="outline" className="mb-6 px-4 py-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 rounded-full">
+                  Start Today
+                </Badge>
+                <motion.h2 
+                  className="text-3xl md:text-5xl font-bold mb-6 max-w-3xl"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
                 >
-                  <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto">
-                    {/* Inner decorative layers */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-transparent animate-pulse"></div>
-                    <div className="absolute inset-4 rounded-full border-2 border-dashed border-emerald-500/30 animate-spin-slow"></div>
-                    <div className="absolute inset-8 rounded-full border border-cyan-500/20 animate-reverse-spin"></div>
-                    <div className="absolute inset-16 rounded-full bg-gradient-to-tr from-emerald-500/5 to-cyan-500/5"></div>
-                    
-                    {/* Center icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="relative">
-                        <div className="absolute -inset-6 bg-emerald-500/20 rounded-full blur-lg"></div>
-                        <Shield className="w-20 h-20 text-emerald-400" strokeWidth={1.5} />
-                      </div>
-                    </div>
-                  </div>
+                  <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                    Transform your writing into crypto rewards
+                  </span>
+                </motion.h2>
+                
+                <motion.p 
+                  className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                >
+                  Join thousands of writers already earning crypto for their content. 
+                  Create an account today and discover campaigns that match your expertise.
+                </motion.p>
+                
+                <motion.div 
+                  className="flex flex-wrap gap-4 justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                >
+                  <Button
+                    asChild
+                    className="rounded-full py-6 px-8 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 border-0 shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 text-base font-medium"
+                  >
+                    <Link href="/apps/account/register">
+                      Create Free Account
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="rounded-full py-6 px-8 border-gray-700 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all duration-300 text-base font-medium"
+                  >
+                    <Link href="/apps">
+                      Browse Campaigns
+                    </Link>
+                  </Button>
                 </motion.div>
               </div>
             </div>
