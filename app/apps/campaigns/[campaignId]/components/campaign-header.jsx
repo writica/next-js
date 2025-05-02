@@ -49,7 +49,6 @@ export default function CampaignHeader({
         address: campaign.campaignAddress,
         abi: CampaignAbi,
         functionName: "withdraw",
-        args: [],
       });
       console.log("Transaction sent:", tx);
     } catch (error) {
