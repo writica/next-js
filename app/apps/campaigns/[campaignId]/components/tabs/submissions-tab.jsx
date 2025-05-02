@@ -197,14 +197,14 @@ export default function SubmissionsTab({ campaign }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Submissions</h2>
-        {!isOwner && (
+        {/* {!isOwner && (
           <Button variant="outline" size="sm" className="rounded-full">
             <Edit size={14} className="mr-1.5" />
             New Submission
           </Button>
-        )}
+        )} */}
       </div>
-      <div className="flex gap-6">
+      <div className="flex gap-6 w-2/3">
         <div className="md:col-span-8">
           <SubmissionList
             submissions={submissions}

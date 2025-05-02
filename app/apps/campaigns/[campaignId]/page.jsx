@@ -36,8 +36,11 @@ export default function CampaignDetailPage({ params }) {
           throw new Error(result.message || 'Failed to fetch campaign')
         }
         
-        setCampaign(result.data)
-        setIsCampaignActive(!isCampaignEnded(result.data.endDate))
+        setCampaign(result.data);
+
+        const act = !isCampaignEnded(result.data.endDate);
+        console.log(`campaign Active`, act )
+        setIsCampaignActive(act)
       } catch (err) {
         console.error("Error fetching campaign:", err)
         setError(err.message)
@@ -47,7 +50,7 @@ export default function CampaignDetailPage({ params }) {
     }
 
     fetchCampaign()
-  }, [resolvedParams.campaignId])
+  }, [resolvedParams.campaignId]);
 
   if (loading) {
     return (

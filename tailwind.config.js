@@ -1,10 +1,10 @@
 const config = {
   darkMode: ["class"],
   content: [
-    './app/**/*.{js,jsx,ts,tsx}',
+    './app/**/*.{js,jsx,ts,tsx,css}',
     './lib/**/*.{js,jsx,ts,tsx}',
     './pages/**/*.{js,jsx,ts,tsx}',
-    './components/**/*.{js,jsx,ts,tsx}',
+    './components/**/*.{js,jsx,ts,tsx,css}',
     './src/**/*.{js,jsx,ts,tsx}',
     './hooks/**/*.{js,ts,jsx,tsx}',
     './public/**/*.html',

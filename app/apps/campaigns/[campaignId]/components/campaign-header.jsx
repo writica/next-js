@@ -166,7 +166,7 @@ export default function CampaignHeader({
                     {!isCampaignActive && address && isUserSubmitted && (
                       <Button variant="outline" onClick={async()=> { await handleWithdraw()}}>Withdraw</Button>
                     )}
-                    <SubmissionDialog campaign={campaign} />
+                    <SubmissionDialog campaign={campaign} isCampaignActive={isCampaignActive} />
                   </>
                 )}
 

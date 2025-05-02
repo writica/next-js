@@ -204,12 +204,12 @@ export default function SubmissionDialog({campaign, isCampaignActive}) {
   useEffect(() => {
     console.log("isLoading:", isLoading);
     console.log("result:", result);
-  },[isLoading, result, qualifiedText]);
+    console.log(`isCampaignActive: ${isCampaignActive}`);
+  },[isLoading, result, qualifiedText, isCampaignActive]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        
+      <DialogTrigger>
         {isCampaignActive &&(<Button className="rounded-full transition-all duration-500" variant={"outline"}>
           Submit Entry
         </Button>)}

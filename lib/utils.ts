@@ -27,6 +27,7 @@ export const formatNiceNumber = (num: number | string) => {
  * @returns boolean - True if campaign has ended, false otherwise
  */
 export const isCampaignEnded = (deadline: string): boolean => {
+  console.log(new Date(deadline), new Date(), deadline);
   if (!deadline) return false;
   
   // Parse the deadline string into a Date object - handles both format types
