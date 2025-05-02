@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import Waves from "@/components/Waves";
 import MetaBalls from "@/components/MetaBalls";
 import Particles from "@/components/Particles";
+import Orb from "@/components/Orbs";
 import HowItWorksBlocks from "./components/HowItWorksBlocks.jsx";
 import "./page.css";
 
@@ -142,6 +143,10 @@ export default function Home() {
 
       {/* How It Works Section */}
       <section className="py-20 md:py-32 relative">
+        <div className="grids absolute top-[25%] z-[-1] inset-0">
+          <div className="grids-fade"></div>
+          <div className="grids-lines"></div>
+        </div>
         <div className="container px-4 sm:px-6">
           <motion.div
             className="text-center mb-24 pt-8"
@@ -286,10 +291,6 @@ export default function Home() {
 
       {/* Core Roles Section */}
       <section className="py-20 md:py-32 relative overflow-hidden">
-        <div className="grids absolute top-[25%] inset-0">
-          <div className="grids-fade"></div>
-          <div className="grids-lines"></div>
-        </div>
         <div className="container px-4 sm:px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
@@ -305,7 +306,20 @@ export default function Home() {
               Let our AI analyze, and validate your work—instantly.
             </p>
           </motion.div>
-          
+
+          <div className="w-full h-[400px] relative mb-16">
+            <h4 className="text-white text-4xl font-extrabold absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+              Hello!
+            </h4>
+            <Orb
+              hoverIntensity={0.5}
+              rotateOnHover={true}
+              hue={0}
+              forceHoverState={false}
+              fillContainer={true}
+            />
+          </div>
+
           {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <motion.div
               className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300"
@@ -442,38 +456,31 @@ export default function Home() {
         <div className="container px-4 sm:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-gray-800/50 pt-8">
             <div className="mb-6 md:mb-0">
-              <Image
-                src="/img/logo.png"
-                alt="WriteToEarn"
-                width={150}
-                height={40}
-                className="h-8 w-auto"
-              />
               <p className="text-sm text-gray-500 mt-2">
-                © 2025 Write-to-Earn. All rights reserved.
+                © 2025 Writica. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap gap-6">
               <Link
-                href="/about"
+                href="#"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 About
               </Link>
               <Link
-                href="/docs"
+                href="#"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Docs
               </Link>
               <Link
-                href="/privacy"
+                href="#"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Privacy
               </Link>
               <Link
-                href="/terms"
+                href="#"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 Terms
