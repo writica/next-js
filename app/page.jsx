@@ -142,65 +142,127 @@ export default function Home() {
       {/* How It Works Section */}
       <section className="py-20 md:py-32 relative">
         <div className="container px-4 sm:px-6">
-          <div className="text-center mb-24 pt-8">
-            <p className="text-3xl leading-relaxed text-white text-center max-w-4xl mx-auto">
+          <motion.div 
+            className="text-center mb-24 pt-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-4xl leading-relaxed text-white text-center mx-auto">
               Connects content creators with campaigns, rewarding quality
               writing with cryptocurrency rewards.
             </p>
-          </div>
+          </motion.div>
 
           <div className="flex justify-between w-full max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-              <HowItWorksBlocks
-                text="Join Campaigns"
-                className="border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-400 group backdrop-blur-sm"
-                children={
-                  <div className="absolute inset-0 z-0">
-                    <Waves
-                      lineColor="#10b981"
-                      backgroundColor="rgba(0, 0, 0, 0)"
-                      waveSpeedX={0.02}
-                      waveSpeedY={0.04}
-                      waveAmpX={50}
-                      waveAmpY={10}
-                      friction={0.9}
-                      tension={0.01}
-                      maxCursorMove={90}
-                      xGap={12}
-                      yGap={36}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  </div>
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.2,
+                    delayChildren: 0.3
+                  }
                 }
-              />
+              }}
+            >
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 50 },
+                  visible: {
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.6,
+                      ease: [0.22, 1, 0.36, 1]
+                    }
+                  }
+                }}
+              >
+                <HowItWorksBlocks
+                  text="Join Campaigns"
+                  className="border-emerald-500/30 bg-emerald-500/5 hover:border-emerald-400 group backdrop-blur-sm"
+                  children={
+                    <div className="absolute inset-0 z-0">
+                      <Waves
+                        lineColor="#10b981"
+                        backgroundColor="rgba(0, 0, 0, 0)"
+                        waveSpeedX={0.02}
+                        waveSpeedY={0.04}
+                        waveAmpX={50}
+                        waveAmpY={10}
+                        friction={0.9}
+                        tension={0.01}
+                        maxCursorMove={90}
+                        xGap={12}
+                        yGap={36}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                  }
+                />
+              </motion.div>
 
-              <HowItWorksBlocks
-                text="Create Content"
-                className="border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-400 group backdrop-blur-sm"
-                children={
-                  <div className="absolute inset-0 z-0">
-                    <MetaBalls
-                      color="#22d3ee"
-                      cursorBallColor="#22d3ee"
-                      cursorBallSize={4}
-                      ballCount={15}
-                      animationSize={30}
-                      enableMouseInteraction={true}
-                      enableTransparency={false}
-                      hoverSmoothness={0.05}
-                      clumpFactor={1}
-                      speed={0.3}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  </div>
-                }
-              />
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 50 },
+                  visible: {
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.6,
+                      ease: [0.22, 1, 0.36, 1]
+                    }
+                  }
+                }}
+              >
+                <HowItWorksBlocks
+                  text="Create Content"
+                  className="border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-400 group backdrop-blur-sm"
+                  children={
+                    <div className="absolute inset-0 z-0">
+                      <MetaBalls
+                        color="#22d3ee"
+                        cursorBallColor="#22d3ee"
+                        cursorBallSize={4}
+                        ballCount={15}
+                        animationSize={30}
+                        enableMouseInteraction={true}
+                        enableTransparency={false}
+                        hoverSmoothness={0.05}
+                        clumpFactor={1}
+                        speed={0.3}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                  }
+                />
+              </motion.div>
 
-              <HowItWorksBlocks
-                text="Earn Rewards"
-                className="border-amber-500/30 bg-amber-500/5 hover:border-amber-400 group backdrop-blur-sm"
-                children={
-                  <div className="absolute inset-0 z-0">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 50 },
+                  visible: {
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.6,
+                      ease: [0.22, 1, 0.36, 1]
+                    }
+                  }
+                }}
+              >
+                <HowItWorksBlocks
+                  text="Earn Rewards"
+                  className="border-amber-500/30 bg-amber-500/5 hover:border-amber-400 group backdrop-blur-sm"
+                  children={
+                    <div className="absolute inset-0 z-0">
                       <Particles
                         particleColors={['#fbbf24']}
                         particleCount={200}
@@ -211,11 +273,12 @@ export default function Home() {
                         alphaParticles={false}
                         disableRotation={false}
                       />
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  </div>
-                }
-              />
-            </div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                  }
+                />
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
