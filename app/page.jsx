@@ -16,6 +16,7 @@ import Waves from "@/components/Waves";
 import MetaBalls from "@/components/MetaBalls";
 import Particles from "@/components/Particles";
 import HowItWorksBlocks from "./components/HowItWorksBlocks.jsx";
+import "./page.css";
 
 export default function Home() {
   // Animation variants for staggered entrance
@@ -142,7 +143,7 @@ export default function Home() {
       {/* How It Works Section */}
       <section className="py-20 md:py-32 relative">
         <div className="container px-4 sm:px-6">
-          <motion.div 
+          <motion.div
             className="text-center mb-24 pt-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -156,7 +157,7 @@ export default function Home() {
           </motion.div>
 
           <div className="flex justify-between w-full max-w-6xl mx-auto">
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full"
               initial="hidden"
               whileInView="visible"
@@ -167,22 +168,22 @@ export default function Home() {
                   opacity: 1,
                   transition: {
                     staggerChildren: 0.2,
-                    delayChildren: 0.3
-                  }
-                }
+                    delayChildren: 0.3,
+                  },
+                },
               }}
             >
               <motion.div
                 variants={{
                   hidden: { opacity: 0, y: 50 },
                   visible: {
-                    opacity: 1, 
+                    opacity: 1,
                     y: 0,
-                    transition: { 
+                    transition: {
                       duration: 0.6,
-                      ease: [0.22, 1, 0.36, 1]
-                    }
-                  }
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                  },
                 }}
               >
                 <HowItWorksBlocks
@@ -213,13 +214,13 @@ export default function Home() {
                 variants={{
                   hidden: { opacity: 0, y: 50 },
                   visible: {
-                    opacity: 1, 
+                    opacity: 1,
                     y: 0,
-                    transition: { 
+                    transition: {
                       duration: 0.6,
-                      ease: [0.22, 1, 0.36, 1]
-                    }
-                  }
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                  },
                 }}
               >
                 <HowItWorksBlocks
@@ -249,13 +250,13 @@ export default function Home() {
                 variants={{
                   hidden: { opacity: 0, y: 50 },
                   visible: {
-                    opacity: 1, 
+                    opacity: 1,
                     y: 0,
-                    transition: { 
+                    transition: {
                       duration: 0.6,
-                      ease: [0.22, 1, 0.36, 1]
-                    }
-                  }
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                  },
                 }}
               >
                 <HowItWorksBlocks
@@ -264,7 +265,7 @@ export default function Home() {
                   children={
                     <div className="absolute inset-0 z-0">
                       <Particles
-                        particleColors={['#fbbf24']}
+                        particleColors={["#fbbf24"]}
                         particleCount={200}
                         particleSpread={10}
                         speed={0.1}
@@ -284,117 +285,99 @@ export default function Home() {
       </section>
 
       {/* Core Roles Section */}
-      <section className="py-20 md:py-32 relative">
-        <div className="container px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
-            <div>
-              <Badge
-                variant="outline"
-                className="mb-6 py-1.5 px-4 border-emerald-500/30 bg-emerald-500/5 text-emerald-400"
-              >
-                For Everyone
-              </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-6">
-                Core Platform Roles
-              </h2>
-              <p className="text-lg text-gray-400 max-w-2xl">
-                Our ecosystem thrives with two key participants working together
-                to create value.
-              </p>
-            </div>
-            <div className="mt-8 md:mt-0">
-              <Button
-                variant="outline"
-                asChild
-                className="rounded-full py-6 px-8 border-gray-800 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all duration-300 text-base"
-              >
-                <Link href="/about">
-                  Learn More About Roles
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
-            {[
-              {
-                role: "Writer",
-                desc: "Create content aligned with campaigns and earn crypto rewards based on AI scores and post-performance metrics.",
-                features: [
-                  "Earn crypto for quality writing",
-                  "Choose campaigns matching your expertise",
-                  "Get transparent, AI-based scoring",
-                  "Receive performance bonuses for viral content",
-                ],
-                image: "/img/coffee-2.png",
-                color: "from-emerald-400 to-cyan-400",
-                bgColor: "bg-emerald-500/10",
-              },
-              {
-                role: "Campaign Creator",
-                desc: "Brands, DAOs, or influencers who launch campaigns to promote specific topics or products with defined metrics.",
-                features: [
-                  "Create targeted content campaigns",
-                  "Pay only for quality content that delivers",
-                  "Access detailed analytics dashboards",
-                  "Staked tokens ensure accountability",
-                ],
-                image: "/img/coffee-1.png",
-                color: "from-amber-400 to-orange-400",
-                bgColor: "bg-amber-500/10",
-              },
-            ].map((role, index) => (
-              <div key={index} className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-900/72 to-gray-800/72 rounded-3xl blur-[20px] opacity-0 group-hover:opacity-80 transition-all duration-700 -z-10"></div>
-                <Card
-                  className={`p-1 ${role.bgColor} rounded-3xl hover:shadow-[0_0_25px_rgba(0,0,0,0.3)] transition-all duration-500 overflow-hidden border-none`}
-                >
-                  <CardContent className="bg-gray-900/90 rounded-3xl p-0 flex flex-col h-full">
-                    <div className="relative h-48 overflow-hidden rounded-t-3xl">
-                      <Image
-                        src={role.image}
-                        alt={role.role}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                      <div className="absolute bottom-0 left-0 p-6">
-                        <h3
-                          className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${role.color}`}
-                        >
-                          {role.role}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="p-8">
-                      <p className="text-gray-400 mb-6">{role.desc}</p>
-                      <ul className="space-y-3 mb-6">
-                        {role.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
-                            <CheckCircle
-                              className={`h-5 w-5 mr-3 mt-0.5 text-transparent bg-clip-text bg-gradient-to-r ${role.color}`}
-                            />
-                            <span className="text-gray-300">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Button
-                        asChild
-                        variant="outline"
-                        className={`w-full rounded-full mt-4 border-gray-800 hover:bg-${role.bgColor} hover:border-${role.borderColor} transition-all duration-300`}
-                      >
-                        <Link href={index === 0 ? "/apps" : "/apps/create"}>
-                          {index === 0 ? "Start Writing" : "Create Campaign"}
-                          <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+      <section className="py-20 md:py-32 relative overflow-hidden">
+        <div className="grids absolute top-[25%] inset-0">
+          <div className="grids-fade"></div>
+          <div className="grids-lines"></div>
+        </div>
+        <div className="container px-4 sm:px-6 relative z-10">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              AI-Powered Precision
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Let our AI analyze, and validate your work—instantly.
+            </p>
+          </motion.div>
+          
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <motion.div
+              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-6 bg-emerald-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                <PlusCircle className="w-8 h-8 text-emerald-400" />
               </div>
-            ))}
-          </div>
+              <h3 className="text-2xl font-bold mb-4 text-white">Campaign Creators</h3>
+              <p className="text-gray-400 mb-6">
+                Brands and organizations who need quality content and are willing to reward creators
+                for their contributions.
+              </p>
+              <div className="flex items-center text-sm text-emerald-400">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                <span>Set campaign goals & budgets</span>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-6 bg-cyan-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-cyan-400">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-white">Content Writers</h3>
+              <p className="text-gray-400 mb-6">
+                Talented writers who create high-quality content for campaigns and earn crypto rewards
+                for their contributions.
+              </p>
+              <div className="flex items-center text-sm text-cyan-400">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                <span>Get paid directly in crypto</span>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              className="bg-gradient-to-b from-gray-900/40 to-black/40 backdrop-blur-sm p-8 rounded-2xl border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-6 bg-amber-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-amber-400">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-white">Community Readers</h3>
+              <p className="text-gray-400 mb-6">
+                Readers who engage with content, provide feedback, and help ensure 
+                quality through ratings and reviews.
+              </p>
+              <div className="flex items-center text-sm text-amber-400">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                <span>Discover quality content</span>
+              </div>
+            </motion.div>
+          </div> */}
         </div>
       </section>
 
