@@ -2,14 +2,13 @@
 import Header from "@/components/Header";
 import { CustomConnectButton } from "@/components/wallet/CustomConnectButton";
 import MintBlog from "@/components/wallet/MintBlog";
+import Logo from "@/components/Logo";
 
 const AppsLayout = ({ children }) => {
     return (
             <main>
                 <Header
-                  logo="/your-logo.svg"
-                  logoAlt="Your Company"
-                  logoHref="/apps"
+                  LogoComponent={<Logo href="/apps" />}
                   menuItems={[
 
                   ]}

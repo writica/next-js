@@ -16,6 +16,7 @@ export const Header = ({
   logo = "/assets/reactbits-logo-CJ9BJbLk.svg",
   logoAlt = "Logo",
   logoHref = "/",
+  LogoComponent = null,
   menuItems = [],
   rightItems = [],
   glassMorphism = true,
@@ -84,20 +85,24 @@ export const Header = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={fadeInVariants}
-            className="flex-shrink-0"
-          >
-            <Link href={logoHref} className="flex items-center">
-              <img 
-                src={logo} 
-                alt={logoAlt} 
-                className="h-8 md:h-10 w-auto" 
-              />
-            </Link>
-          </motion.div>
+          {!LogoComponent && (
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={fadeInVariants}
+              className="flex-shrink-0"
+            >
+              <Link href={logoHref} className="flex items-center">
+                <img 
+                  src={logo} 
+                  alt={logoAlt} 
+                  className="h-8 md:h-10 w-auto" 
+                />
+              </Link>
+            </motion.div>
+          )}
+
+          {LogoComponent && (<>{LogoComponent}</>)}
 
           {/* Desktop Navigation */}
           <motion.nav

@@ -25,7 +25,7 @@ const TopLink = ({ href, text, target = "_self" }) => {
 };
 
 export const metadata = {
-  title: 'WriteTo Earn',
+  title: 'Writica - Earn by Writing',
   description: 'A platform to earn by writing',
 };
 
