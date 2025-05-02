@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "formidable": "^3.5.4",
     "framer-motion": "^12.6.2",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.483.0",
     "motion": "^12.9.2",
     "natural": "^8.0.1",

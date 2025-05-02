@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import Waves from "@/components/Waves";
 import MetaBalls from "@/components/MetaBalls";
 import Particles from "@/components/Particles";
-import Orb from "@/components/Orbs";
+import OrbWithTextTrail from "@/components/Orbs";
 import HowItWorksBlocks from "./components/HowItWorksBlocks.jsx";
 import "./page.css";
 
@@ -308,14 +308,14 @@ export default function Home() {
           </motion.div>
 
           <div className="w-full h-[400px] relative mb-16">
-            <h4 className="text-white text-4xl font-extrabold absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+            <h4 className="text-white text-4xl font-extrabold absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
               Hello!
             </h4>
-            <Orb
+            <OrbWithTextTrail
               hoverIntensity={0.5}
               rotateOnHover={true}
               hue={0}
-              forceHoverState={false}
+              forceHoverState={true}
               fillContainer={true}
             />
           </div>
