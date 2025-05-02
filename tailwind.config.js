@@ -6,8 +6,8 @@ const config = {
     './pages/**/*.{js,jsx,ts,tsx}',
     './components/**/*.{js,jsx,ts,tsx}',
     './src/**/*.{js,jsx,ts,tsx}',
-    './app/chat/**/*.{js,jsx,ts,tsx}',
-    './app/chat/components/**/*.{js,jsx,ts,tsx}',
+    './hooks/**/*.{js,ts,jsx,tsx}',
+    './public/**/*.html',
   ],
   safelist: [
     "from-[#F08A24]", "to-[#E67E22]", "hover:from-[#E67E22]", "hover:to-[#D35400]",
@@ -165,15 +165,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-  content:[
-    "./app/**/*.{js,ts,jsx,tsx,css}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./lib/**/*.{js,ts,jsx,tsx}",
-    "./hooks/**/*.{js,ts,jsx,tsx}",
-    "./public/**/*.html",
-  ],
 }
 
 export default config
