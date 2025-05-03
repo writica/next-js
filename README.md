@@ -1,120 +1,95 @@
-![Luwak AI Banner](/public/img/jb-banner.jpg)
+![Writica Banner](/public/img/writica-banner.png)
 
-# Java Bridge: Cross-Chain Brilliance Powered by Luwak AI ☕🦝
+# WRITICA: Write, Contribute, Earn – AI-Powered Content Campaigns
 
-## Overview  
-**Java Bridge** is a next-gen cross-chain platform built with **Next.js**, enabling seamless and secure ETH bridging across multiple rollup chains. At its core is **Luwak AI**, your intelligent assistant for everything EduChain—combining blockchain expertise with an engaging user experience.
-
----
-
-## Supported Chains
-
-| Chain | RPC URL | Icon |
-|-------|---------|------|
-| **Arbitrum Sepolia** | `https://arbitrum-sepolia-rpc.publicnode.com` | ![Arbitrum Sepolia](https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png) |
-| **Gayo Roll** | `https://rpc-gayo-roll.javabridge.fun` | <img src="public/img/coffee-1.png" height="64" /> |
-| **Bali Beans** | `https://rpc-bali-beans.javabridge.fun` | <img src="public/img/coffee-2.png" height="64" /> |
+## Overview
+**Writica** is a next-generation platform connecting content creators with crypto-funded campaigns. Writers earn rewards for high-quality content, while campaign creators (brands, DAOs, influencers) launch targeted campaigns and fund reward pools. AI scoring ensures fair, transparent payouts based on content quality and performance.
 
 ---
 
-## ☕ Meet Luwak AI: Your On-Chain Crypto Assistant
+## 🚀 Core Roles
 
-**Luwak AI** is your 24/7 AI-powered guide to the EduChain ecosystem. Whether you're new to Web3 or a seasoned dev, Luwak AI delivers instant answers, bridging support, real-time data, and protocol guidance—all with a cyberpunk raccoon twist.
-
-### 🧠 *Core Capabilities:*
-
-- 📚 *EduChain Documentation* – Get instant, accurate answers from the official EduChain docs.  
-  → No more digging—Luwak brings the docs to you.
-
-- 🧩 *EduChain Ecosystem Guide* – Explore protocols, tools, and projects within the EduChain universe.  
-  → Discover what's possible, from rollups to dApps.
-
-- 📖 *Crypto Glossary* – Understand complex blockchain terms with simple explanations.  
-  → Jargon-free learning for devs and curious minds alike.
-
-- 🔁 *Chat-Based Asset Bridging* – Move assets across chains directly through chat—fast, secure, and user-friendly.  
-  → One chat, one command—done.
-
-- 💸 *Live Coin Prices* – Track real-time market prices and make smarter decisions.  
-  → Get live data with zero delay, right when you need it.
-
-- 🤖 *Custom Persona* – Luwak responds in a helpful, engaging tone—tailored for both devs and newcomers.  
-  → A smart assistant that speaks your language.
+- **Writer**: Creates articles, threads, or tutorials for campaigns. Earns crypto rewards based on AI scores and post-performance.
+- **Campaign Creator**: Launches campaigns, funds reward pools, and defines success metrics (e.g., virality, education, engagement).
 
 ---
 
-## 🛠️ Technology Stack
+## ⚙️ Workflow & Mechanics
 
-- **RAG (Retrieval-Augmented Generation)**: Custom knowledge base powered by local PDF ingestion & vector search  
-- **OpenAI o1-mini**: Custom prompt-engineered AI for crypto conversations  
-- **Pyth Network**: Secure, live price feeds across multiple chains  
-- **Next.js & Tailwind**: Lightning-fast UI/UX frontend
+1. **Campaign Creation**
+   - Creators set objectives, fund reward pools, and define AI scoring metrics.
+2. **Content Submission**
+   - Writers submit content (e.g., Medium, Twitter) tagged to campaigns.
+   - AI analyzes for virality, quality, and campaign fit.
+3. **Reward Distribution**
+   - Upfront rewards based on AI scores; performance bonuses for hitting KPIs.
+   - Creators get analytics dashboards to track ROI.
 
 ---
 
-## 🚀 Getting Started
+## 💸 Tokenomics & Incentives
 
-### Prerequisites  
-- Node.js (v18+)  
-- MetaMask or other Web3 wallet  
-- Test ETH on supported chains
+- **Campaign Staking**: Creators stake tokens to fund rewards. Unused tokens are refunded if KPIs aren’t met.
+- **Dynamic Payouts**: Writers earn 70% upfront (AI score) + 30% post-performance.
+- **Platform Fees**: 5% of rewards fund platform development and moderation.
 
-### Setup Steps  
+---
+
+## 🧠 Technology Stack
+
+- **AI Scoring**: Automated content analysis for quality, virality, and fit.
+- **Next.js & Tailwind**: Modern, responsive frontend.
+- **Web3**: Crypto rewards, wallet integration, and campaign funding.
+- **Prisma**: Database ORM for campaign and user management.
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- MetaMask or compatible Web3 wallet
+
+### Setup
 ```bash
-git clone https://github.com/your-username/javabridge-nextjs.git
-cd javabridge-nextjs
+git clone https://github.com/your-username/writica.git
+cd writica
 npm install
 cp env-example .env.local  # Configure your API keys
 npm run dev
 ```
-
 > Access the app at `http://localhost:3000`
 
 ---
 
-## 🔧 Usage Guide
+## 📝 Usage Guide
 
-### How to Bridge  
-1. Connect your wallet  
-2. Choose source/destination chains  
-3. Enter ETH amount  
-4. Hit "Bridge" and confirm  
-5. Monitor transaction in real time
+### For Writers
+1. Register an account
+2. Browse active campaigns
+3. Submit content linked to a campaign
+4. Earn crypto rewards based on AI scoring and performance
 
-### Chat with Luwak AI  
-- Open the "Chat" menu  
-- Ask questions about EduChain, bridging, or crypto concepts  
-- Get fast answers and actionable steps  
-- Enjoy the cyberpunk raccoon vibes
+### For Campaign Creators
+1. Create a campaign (set objectives, fund pool, define metrics)
+2. Review analytics and content submissions
+3. Distribute rewards automatically via the platform
 
 ---
 
-## 🧪 Developer Mode: Expand Luwak’s Knowledge
-
-### Add New Docs  
-1. Drop PDFs into `embedding_docs/input/`  
-2. Run the app locally or build for production  
-3. Visit:  
-   ```
-   http://localhost:3000/api/embedding/create
-   ```  
-4. Verify in terminal, test your queries—Luwak now knows your docs
-
-> Embedding may take time depending on doc size.
-
-### Dev Customizations  
-- Supported chains → `/lib/chains.js`  
-- Token configs → `/lib/contracts.js`  
-- Luwak’s persona → `/app/api/agent/characters.js`
+## 🌟 Why Writica?
+- **For Writers**: Targeted opportunities, transparent rewards, and instant payouts.
+- **For Campaign Creators**: Guaranteed quality, cost-effective marketing, and real-time analytics.
+- **For the Ecosystem**: Demand-driven rewards, cross-platform growth, and AI-powered moderation.
 
 ---
 
-## 📄 License  
+## 📄 License
 MIT License – see [LICENSE](LICENSE) for full details.
 
 ---
 
-## 🙏 Acknowledgements  
-- [Edu Chain](https://educhain.xyz/) – A Layer 3 blockchain for consumer-facing education apps
-- [Pyth Network](https://pyth.network/) – decentralized price oracle feeds  
-- [OpenAI](https://openai.com) – powering Luwak’s brain  
+## 🙏 Acknowledgements
+- [Edu Chain](https://educhain.xyz/) – Layer 3 blockchain for education apps
+- [Pyth Network](https://pyth.network/) – Decentralized price oracles
+- [OpenAI](https://openai.com) – AI scoring and moderation
