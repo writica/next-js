@@ -88,8 +88,3 @@ npm run dev
 MIT License – see [LICENSE](LICENSE) for full details.
 
 ---
-
-## 🙏 Acknowledgements
-- [Edu Chain](https://educhain.xyz/) – Layer 3 blockchain for education apps
-- [Pyth Network](https://pyth.network/) – Decentralized price oracles
-- [OpenAI](https://openai.com) – AI scoring and moderation
